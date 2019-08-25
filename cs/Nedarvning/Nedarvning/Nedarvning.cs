@@ -36,6 +36,7 @@ namespace Nedarvning
                     System.Console.WriteLine("Er en anden bil!");
                 System.Console.WriteLine("Med farven {0}",GivFarve(b));
                 System.Console.WriteLine("Af typen {0}", GivVersion(b));
+                System.Console.WriteLine("Maerke {0}", b.Maerke);
 
             }
         }
@@ -55,15 +56,21 @@ namespace Nedarvning
     }
     public class Bil
     {
+        public string Maerke;
         public string Farve;
     }
     public class Skoda : Bil
     {
         public SkodaVersion SkodaType;
+        public Skoda()
+        {
+            Maerke = "Skoda";
+        }
     }
     public class Folkevogn : Bil
     {
         public VwVersion vwType;
+        public Folkevogn() { Maerke = "Volkswagen"; }
     }
     public enum SkodaVersion
     {
