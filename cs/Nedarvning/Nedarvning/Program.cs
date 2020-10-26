@@ -65,4 +65,15 @@ namespace Nedarvning
 
         }
     }
+    class Run
+    {
+        public Run()
+        {
+            TestGenericList2 c = new TestGenericList2();
+            TestGenericList1 d = new TestGenericList1();
+            BilExempler a = new BilExempler();
+            Pro b = new Pro();
+            AbstrakteKlasser k = new AbstrakteKlasser();
+        }
+    }
 }
