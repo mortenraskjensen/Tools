@@ -28,6 +28,39 @@ namespace Nedarvning
         {
             var sq = new Square(12);
             Console.WriteLine($"Area of the square = {sq.GetArea()}");
+            var ab = new Abstrakt2();
         }
+    }
+    class Abstrakt2
+    {
+        public Abstrakt2()
+        {
+
+        }
+    }
+    class prog
+    {
+
+    }
+    abstract class SubProg
+    {
+        public abstract int Metode(Data p);
+    }
+    class SubProg1 : SubProg
+    {
+        public override int Metode(Data p)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    class SubProg2 : SubProg
+    {
+        public override int Metode(Data p)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    class Data
+    {
     }
 }
