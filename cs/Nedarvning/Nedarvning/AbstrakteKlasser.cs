@@ -54,12 +54,14 @@ namespace Nedarvning
 
         public prog()
         {
+            
         }
 
         public int run(int subType)
         {//Her kan man skrive generel kode
             var manager = GetManager((SubType)subType);
             int i = manager.Metode(new Data());//Metode afhaenger derimod af vardien subType
+            manager.test(8);
             return i;
         }
 
@@ -82,21 +84,34 @@ namespace Nedarvning
     abstract class SubProg
     {
         public abstract int Metode(Data p);
+        public abstract void test<T>(T p);
     }
     class SubProg1 : SubProg
     {
         public override int Metode(Data p)
         {
+            //Console.WriteLine("SubProg1.Metode");
+            test(7);
             return 1;
             throw new NotImplementedException();
+        }
+        public override void test<T>(T p)
+        {
+            Console.WriteLine("SubProg1.Test {0}", p);
         }
     }
     class SubProg2 : SubProg
     {
         public override int Metode(Data p)
         {
+            //Console.WriteLine("SubProg2.Metode");
+            test(6);
             return 2;
             throw new NotImplementedException();
+        }
+        public override void test<T>(T p)
+        {
+            Console.WriteLine("SubProg2.Test {0}", p);
         }
     }
     class Data
