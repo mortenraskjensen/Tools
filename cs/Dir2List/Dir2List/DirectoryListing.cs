@@ -1,0 +1,338 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Dir2List
+{
+    class DirectoryListing
+    {
+        #region JsonTests
+        public static bool WriteFileList(DirectoryInfoType pEntry, string fileListOutputPath)
+        {
+            return FileManager.WriteAdjustedNewFile(fileListOutputPath, pEntry.Show());
+        }
+        public static bool WriteFileList(DirectoryInfoType pEntry, string pRootPath, string fileListOutputFileName)
+        {
+            return FileManager.WriteAdjustedNewFile(pRootPath + "/" + fileListOutputFileName, pEntry.Show());
+        }
+        public static bool WriteUniqueFileList(List<string> flist, string pRootPath, string jsonOutputFileName)
+        {
+            return FileManager.WriteAdjustedNewFile(pRootPath + "/" + jsonOutputFileName, flist);
+        }
+        public static bool WriteJsonFile(DirectoryInfoType pEntry, string pRootPath, string jsonOutputFileName)
+        {
+            string outData = jsonString(pEntry, FileManager.normalizeFileName(pRootPath), false);
+            return FileManager.WriteAdjustedNewFile(pRootPath + "/" + jsonOutputFileName, outData);
+        }
+
+        public static bool TestJsonFile(DirectoryInfoType pEntry, string pRootPath, string jsonOutputFileName)
+        {
+            string outData4 = JsonJavaScriptBase.jsonString(pEntry, FileManager.normalizeFileName(pRootPath), false);
+            string outData5 = JsonJavaScriptBase.jsonString(pEntry, FileManager.normalizeFileName(pRootPath), true);
+
+            string outData6 = jsonString_static(pEntry, FileManager.normalizeFileName(pRootPath), false);
+            string outData7 = jsonString_static(pEntry, FileManager.normalizeFileName(pRootPath), true);
+
+            string outData8 = jsonString(pEntry, FileManager.normalizeFileName(pRootPath), false);
+            string outData9 = jsonString(pEntry, FileManager.normalizeFileName(pRootPath), true);
+
+            string outData10 = JsonJavaScriptBase.StrList2Str(jsonString_list(pEntry, FileManager.normalizeFileName(pRootPath), false));
+            string outData11 = JsonJavaScriptBase.StrList2Str(jsonString_list(pEntry, FileManager.normalizeFileName(pRootPath), true));
+
+            if (!(outData4.Equals(outData6) && outData5.Equals(outData7)))
+            {
+
+            }
+
+            if (!(outData8.Equals(outData6) && outData9.Equals(outData7)))
+            {
+
+            }
+
+            if (!(outData10.Equals(outData6) && outData11.Equals(outData7)))
+            {
+
+            }
+
+
+            return outData8.Equals(outData6) && outData9.Equals(outData7);
+        }
+        #endregion JsonTests
+        #region DirSomething
+        public static List<JavaScripFileItem> DirectoryInfoType2JavaScripFileItem(DirectoryInfoType dir, string sWorkingDir)
+        {
+            int fileId = 900001;
+            if (dir != null)
+                return DirectoryInfoType2JavaScripFileItem(dir, sWorkingDir, ref fileId, 0);
+
+            return new List<JavaScripFileItem>();
+        }
+
+        private static List<JavaScripFileItem> DirectoryInfoType2JavaScripFileItem(DirectoryInfoType dir, string sWorkingDir, ref int fileId, int level)
+        {
+            Dictionary<string, string> extFilter = FileManager.GetImageExtensionFilter();
+            List<JavaScripFileItem> ret = new List<JavaScripFileItem>();
+
+
+            foreach (DirectoryInfoType dirItem in dir.ChildDirectories)
+                ret.AddRange(DirectoryInfoType2JavaScripFileItem(dirItem, sWorkingDir, ref fileId, (level + 1)));
+
+            var imgList = dir.ChildFiles.Where(fi => !fi.Name.Contains("'") && !JsonJavaScriptRecord.ExclusionExtensionList.Contains(fi.Extension.ToLower())).ToList();
+            foreach (FileInfoType fi in imgList)
+            {
+                string ext_norm = fi.Extension.ToLower();
+                if (!FileManager.isExtensionExcluded(ext_norm, extFilter) && !fi.Name.Contains("'"))
+                {
+                    string src = FileManager.removeWorkingDirectory(fi.FullName.Replace("\\", "/"), sWorkingDir);
+                    ret.Add(new JavaScripFileItem() { id = (fileId++).ToString(), title = "", src = src, name = fi.Name, size = fi.Length.ToString() });
+                }
+            }
+            return ret;
+        }
+        #endregion DirSomething
+        #region JsonRecursive
+        private static string jsonString(DirectoryInfoType dir, string sWorkingDir, bool withParser)
+        {
+            IJsonJavaScript manager = (withParser ? new JsonHelperRecord0() : new JsonHelperRecord1());
+            manager.SetParameters(0, 900001, "data1", sWorkingDir, FileManager.GetImageExtensionFilter());
+            return manager.RootField(jsonString(dir, manager, true, 0));
+        }
+        private static List<string> jsonString_list(DirectoryInfoType dir, string sWorkingDir, bool withParser)
+        {
+            IJsonJavaScript manager = (withParser ? new JsonHelperRecord0() : new JsonHelperRecord1());
+            manager.SetParameters(0, 900001, "data1", sWorkingDir, FileManager.GetImageExtensionFilter());
+            return manager.RootField(jsonString_list(dir, manager, true, 0));
+        }
+
+        private static string jsonString(DirectoryInfoType dir, IJsonJavaScript manager, bool isFirst, int level)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (dir.ChildDirectories.Count > 0)
+            {
+                sb.Append(manager.PreLine(dir, level, isFirst));
+                bool isFirstInList = true;
+                foreach (DirectoryInfoType dirItem in dir.ChildDirectories)
+                {
+                    sb.Append(jsonString(dirItem, manager, isFirstInList, (level + 1)));
+                    isFirstInList = false;
+                }
+            }
+
+            return sb.ToString() + manager.PostJson(dir, level, isFirst);
+        }
+        private static List<string> jsonString_list(DirectoryInfoType dir, IJsonJavaScript manager, bool isFirst, int level)
+        {
+            List<string> l = new List<string>();
+            if (dir.ChildDirectories.Count > 0)
+            {
+                l.Add(manager.PreLine(dir, level, isFirst));
+                bool isFirstInList = true;
+                foreach (DirectoryInfoType dirItem in dir.ChildDirectories)
+                {
+                    l.AddRange(jsonString_list(dirItem, manager, isFirstInList, (level + 1)));
+                    isFirstInList = false;
+                }
+            }
+            l.AddRange(manager.PostJsonLines(dir, level, isFirst));
+
+            return l;
+        }
+        #endregion JsonRecursive
+        #region JsonRecursiveButStatic
+        private static string jsonString_static(DirectoryInfoType dir, string sWorkingDir, bool withParser)
+        {
+            int fileId = 900001;
+            int dirId = 0;
+            string VarName = "data1";
+            IJsonJavaScript manager = (withParser ? new JsonHelperRecord0() : new JsonHelperRecord1());
+            return "const " + VarName + " = " + manager.StartData + "{\"" + JsonJavaScriptBase.RootName + "\":[" + manager.LineEnd
+                + jsonString_static(dir, sWorkingDir, ref fileId, ref dirId, true, 0, manager.LineStart, manager.LineEnd)
+                + manager.LineStart + "]}" + manager.EndData;
+        }
+        private static string jsonString_static(DirectoryInfoType dir, string sWorkingDir, ref int fileId, ref int dirId, bool isFirst, int level, string start, string end)
+        {
+            bool isFirstInList = isFirst;
+            string sp = "".PadLeft(level, ' ') + start;
+            Dictionary<string, string> extFilter = FileManager.GetImageExtensionFilter();
+            StringBuilder sb = new StringBuilder();
+            var imgList = dir.ChildFiles.Where(fi => !fi.Name.Contains("'") && !JsonJavaScriptRecord.ExclusionExtensionList.Contains(fi.Extension.ToLower())).ToList();
+
+
+            sb.Append(sp + (isFirstInList ? "{" : ",{") + JsonJavaScriptRecord.EntryFields(dirId++, dir.Name) + JsonJavaScriptRecord.DirListStart());
+
+            if (dir.ChildDirectories.Count > 0)
+            {
+                isFirstInList = true;
+                sb.Append(end);
+                foreach (DirectoryInfoType dirItem in dir.ChildDirectories)
+                {
+                    sb.Append(jsonString_static(dirItem, sWorkingDir, ref fileId, ref dirId, isFirstInList, (level + 1), start, end));
+                    isFirstInList = false;
+                }
+                sb.Append(sp);
+            }
+            sb.Append(JsonJavaScriptRecord.ListEnd() + JsonJavaScriptRecord.FileStart());
+            if (imgList.Count > 0)
+            {
+                isFirstInList = true;
+                sb.Append(end);
+                foreach (FileInfoType fi in imgList)
+                {
+                    //string ext_norm = fi.Extension.ToLower();
+                    //if (!FileManager.isExtensionExcluded(ext_norm, extFilter) && !fi.Name.Contains("'"))
+                    {
+                        string src = FileManager.removeWorkingDirectory(fi.FullName.Replace("\\", "/"), sWorkingDir);
+                        sb.Append(sp + (isFirstInList ? "" : ",") + JsonJavaScriptRecord.Data((fileId++).ToString(), "", src, fi.Name, fi.Length) + end);
+                        isFirstInList = false;
+                    }
+                }
+                sb.Append(sp);
+            }
+            sb.Append(JsonJavaScriptRecord.ListEnd() + "}" + end);
+            return sb.ToString();
+        }
+        #endregion JsonRecursiveButStatic
+        #region JsonLimitedOld
+        public static bool WriteJsonFileOnlyOneLevel(DirectoryInfoType pEntry, string pRootPath, string jsonOutputFileName)
+        {
+            string outData = jsonString(pEntry, FileManager.normalizeFileName(pRootPath), FileManager.GetImageExtensionFilter());
+            return FileManager.WriteAdjustedNewFile(pRootPath + "/" + jsonOutputFileName, outData);
+        }
+        public static bool WriteJsonFileOnlyOneLevel(DirectoryInfoType pEntry, string pRootPath, string jsonOutputFileName, Dictionary<string, string> extFilter)
+        {
+            string outData = jsonString(pEntry, FileManager.normalizeFileName(pRootPath), extFilter);
+            return FileManager.WriteAdjustedNewFile(jsonOutputFileName, outData);
+        }
+        public static bool WriteJsonFileOld(DirectoryInfoType pEntry, string pRootPath, string jsonOutputFileName, Dictionary<string, string> extFilter)
+        {
+            string outData = jsonString(pEntry, FileManager.normalizeFileName(pRootPath), extFilter);
+            //string outData2 = jsonString_old(pEntry, FileManager.normalizeFileName(pRootPath), extFilter);
+            return FileManager.WriteAdjustedNewFile(pRootPath + "/" + jsonOutputFileName, outData);
+        }
+        public static bool WriteJsonFileOld(DirectoryInfoType pEntry, string pRootPath, string jsonOutputFileName)
+        {
+            return WriteJsonFileOld(pEntry, pRootPath, jsonOutputFileName, FileManager.GetImageExtensionFilter());
+        }
+        public static bool TestJsonFileOld(DirectoryInfoType pEntry, string pRootPath, string jsonOutputFileName, Dictionary<string, string> extFilter)
+        {
+            string outData1 = jsonString(pEntry, FileManager.normalizeFileName(pRootPath), extFilter);
+            string outData2 = jsonString_old(pEntry, FileManager.normalizeFileName(pRootPath), extFilter);
+            if (!outData1.Equals(outData2))
+            {
+
+            }
+            return outData1.Equals(outData2);
+        }
+        public static bool TestJsonFileOld(DirectoryInfoType pEntry, string pRootPath, string jsonOutputFileName)
+        {
+            return TestJsonFileOld(pEntry, pRootPath, jsonOutputFileName, FileManager.GetImageExtensionFilter());
+        }
+
+
+        
+        private static string jsonString_old(DirectoryInfoType dir, string sWorkingDir, Dictionary<string, string> extFilter)
+        {
+            int fileId = 90001;
+            int listId = 0;
+            bool isFirstInList = true;
+            int fileInList = 0;
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(JsonJavaScriptRecord0.BeginStruct("data1"));
+            sb.AppendLine(JsonJavaScriptRecord0.ListLine(listId++, dir.Name, true));
+            {
+                foreach (FileInfoType fi in dir.ChildFiles)
+                {
+                    string ext_norm = fi.Extension.ToLower();
+                    if (!FileManager.isExtensionExcluded(ext_norm, extFilter)
+                            && !fi.Name.Contains("'"))
+                    {
+                        string src = FileManager.removeWorkingDirectory(fi.FullName.Replace("\\", "/"), sWorkingDir);
+                        sb.AppendLine(JsonJavaScriptRecord0.DataLine((fileId++).ToString(), "", src, fi.Name, isFirstInList));
+                        isFirstInList = false;
+                        fileInList++;
+                    }
+                }
+                foreach (DirectoryInfoType dirItem in dir.ChildDirectories)
+                {
+                    if (fileInList + dirItem.ChildFiles.Count > 300 || fileInList > 100)
+                    {
+                        sb.AppendLine(JsonJavaScriptRecord0.EndList());
+                        sb.AppendLine(JsonJavaScriptRecord0.ListLine(listId++, dirItem.Name, false));
+                        isFirstInList = true;
+                        fileInList = 0;
+                    }
+                    foreach (FileInfoType fi in dirItem.ChildFiles)
+                    {
+                        string ext_norm = fi.Extension.ToLower();
+                        if (!FileManager.isExtensionExcluded(ext_norm, extFilter)
+                                && !fi.Name.Contains("'"))
+                        {
+                            string src = FileManager.removeWorkingDirectory(fi.FullName.Replace("\\", "/"), sWorkingDir);
+                            sb.AppendLine(JsonJavaScriptRecord0.DataLine((fileId++).ToString(), "", src, fi.Name, isFirstInList));
+                            isFirstInList = false;
+                            fileInList++;
+                        }
+                    }
+                }
+            }
+            sb.AppendLine(JsonJavaScriptRecord0.EndList());
+            sb.AppendLine(JsonJavaScriptRecord0.EndStruct());
+            return sb.ToString();
+        }
+        private static string jsonString(DirectoryInfoType dir, string sWorkingDir, Dictionary<string, string> extFilter)
+        {
+            int fileId = 90001;
+            int listId = 0;
+            bool isFirstInList = true;
+            int fileInList = 0;
+
+            IJsonJavaScript manager = new JsonHelperRecord0();
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("const " + "data1" + " = " + manager.StartData + "{\"" + JsonJavaScriptRecord.RootName + "\":[" + manager.LineEnd);
+            //sb.AppendLine(manager.BeginStruct("data1"));
+            sb.Append(manager.LineStart + (true ? "{" : ",{") + manager.EntryFields(listId++, dir.Name) + ",\"ListData\":[" + manager.LineEnd);
+            {
+                foreach (FileInfoType fi in dir.ChildFiles)
+                {
+                    string ext_norm = fi.Extension.ToLower();
+                    if (!FileManager.isExtensionExcluded(ext_norm, extFilter)
+                            && !fi.Name.Contains("'"))
+                    {
+                        string src = FileManager.removeWorkingDirectory(fi.FullName.Replace("\\", "/"), sWorkingDir);
+                        sb.Append(manager.LineStart + (isFirstInList ? "" : ",") + manager.Data((fileId++).ToString(), "", src, fi.Name) + manager.LineEnd);
+                        isFirstInList = false;
+                        fileInList++;
+                    }
+                }
+                foreach (DirectoryInfoType dirItem in dir.ChildDirectories)
+                {
+                    if (fileInList + dirItem.ChildFiles.Count > 300 || fileInList > 100)
+                    {
+                        sb.Append(manager.LineStart + "]}" + manager.LineEnd);
+                        sb.Append(manager.LineStart + (false ? "{" : ",{") + manager.EntryFields(listId++, dirItem.Name) + ",\"ListData\":[" + manager.LineEnd);
+                        isFirstInList = true;
+                        fileInList = 0;
+                    }
+                    foreach (FileInfoType fi in dirItem.ChildFiles)
+                    {
+                        string ext_norm = fi.Extension.ToLower();
+                        if (!FileManager.isExtensionExcluded(ext_norm, extFilter)
+                                && !fi.Name.Contains("'"))
+                        {
+                            string src = FileManager.removeWorkingDirectory(fi.FullName.Replace("\\", "/"), sWorkingDir);
+                            sb.Append(manager.LineStart + (isFirstInList ? "" : ",") + manager.Data((fileId++).ToString(), "", src, fi.Name)  + manager.LineEnd);
+                            isFirstInList = false;
+                            fileInList++;
+                        }
+                    }
+                }
+            }
+            sb.Append(manager.LineStart + "]}" + manager.LineEnd);
+            sb.Append(manager.LineStart + "]}" + manager.EndData);
+            return sb.ToString();
+        }
+        #endregion JsonLimitedOld
+    }
+}
