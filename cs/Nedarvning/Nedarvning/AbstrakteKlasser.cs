@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nedarvning;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -122,4 +123,65 @@ namespace Nedarvning
         SubType1=1,
         SubType2=2,
     }
+    #region nogetandet
+    public interface IX
+    {
+        string XMetode(string par1);
+        int[] var2 { get; }
+    }
+    public abstract class XBase : IX
+    {
+	    protected const string var1 = "";
+        public abstract int[] var2 { get; }
+        public abstract string XMetode(string par1);
+        protected virtual string XMethod2(string var2)
+        {
+            return "";
+        }
+    }
+    public class XType1 : XBase
+    {
+        public XType1()
+          : base()
+        {
+
+        }
+        public override int[] var2 { get; }
+        public override string XMetode(string par1)
+	    {
+            return "";
+	    }
+    }
+    public class XType2 : XBase
+    {
+        public override int[] var2 { get; }
+        public override string XMetode(string par1)
+	    {
+            return "";
+	    }
+        protected override string XMethod2(string var2)
+        {
+            return "";
+        }
+    }
+    public class SomeWhere
+    {
+        void methodSomThing()
+        {
+            string var1 = "1";
+            string var2 = "2";
+            var manager = GetManager(var1);
+            manager.XMetode(var2);
+        }
+        private IX GetManager(string var1)
+        {
+            switch (var1)
+            {
+                case "1": return new XType1();
+                case "2": return new XType2();
+            default: return new XType1();
+        }
+        }
+    }
+    #endregion nogetandet
 }
