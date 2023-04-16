@@ -129,6 +129,8 @@ namespace Nedarvning
     #endregion Generic2
     #region Generic3
     //------------------------------------------------------------------------------------
+    //Dummy list, it can accept new elements, but forget them again (no code in Add method)
+    //------------------------------------------------------------------------------------
     public class GenericList1<T>
     {
         public void Add(T input) { }
@@ -154,6 +156,8 @@ namespace Nedarvning
     //------------------------------------------------------------------------------------
     #endregion Generic3
     #region Generic4
+    //------------------------------------------------------------------------------------
+    //Simple stack like list 
     //------------------------------------------------------------------------------------
     // type parameter T in angle brackets
     public class GenericList2<T>
@@ -235,6 +239,9 @@ namespace Nedarvning
     //------------------------------------------------------------------------------------
     #endregion Generic4
     #region  GenerigInterfaces
+    //------------------------------------------------------------------------------------
+    //    Same as GenericList2, but Node is made inherit-able and made IEnumerable
+    //------------------------------------------------------------------------------------
     //Type parameter T in angle brackets.
     public class GenericList3<T> : System.Collections.Generic.IEnumerable<T>
     {
@@ -244,7 +251,7 @@ namespace Nedarvning
         // Nested class is also generic on T
         protected class Node
         {
-            public Node next;
+            private Node next;
             private T data;  //T as private member datatype
 
             public Node(T t)  //T used in non-generic constructor
@@ -299,6 +306,9 @@ namespace Nedarvning
         }
     }
 
+    //------------------------------------------------------------------------------------
+    //    Inherits from GenericList3, and T has to apply to IComparable
+    //------------------------------------------------------------------------------------
     public class SortedList<T> : GenericList3<T> where T : System.IComparable<T>
     {
         // A simple, unoptimized sort algorithm that 
@@ -318,15 +328,15 @@ namespace Nedarvning
                 Node current = head;
                 swapped = false;
 
-                while (current.next != null)
+                while (current.Next != null)
                 {
                     //  Because we need to call this method, the SortedList
                     //  class is constrained on IEnumerable<T>
-                    if (current.Data.CompareTo(current.next.Data) > 0)
+                    if (current.Data.CompareTo(current.Next.Data) > 0)
                     {
-                        Node tmp = current.next;
-                        current.next = current.next.next;
-                        tmp.next = current;
+                        Node tmp = current.Next;
+                        current.Next = current.Next.Next;
+                        tmp.Next = current;
 
                         if (previous == null)
                         {
@@ -334,7 +344,7 @@ namespace Nedarvning
                         }
                         else
                         {
-                            previous.next = tmp;
+                            previous.Next = tmp;
                         }
                         previous = tmp;
                         swapped = true;
@@ -342,7 +352,7 @@ namespace Nedarvning
                     else
                     {
                         previous = current;
-                        current = current.next;
+                        current = current.Next;
                     }
                 }
             } while (swapped);
@@ -431,84 +441,5 @@ namespace Nedarvning
         }
     }
     #endregion  GenerigInterfaces
-    #region  GenericList
-    // type parameter T in angle brackets
-    public class GenericList<T>
-    {
-        // The nested class is also generic on T.
-        private class Node
-        {
-            // T used in non-generic constructor.
-            public Node(T t)
-            {
-                next = null;
-                data = t;
-            }
-
-            private Node? next;
-            public Node? Next
-            {
-                get { return next; }
-                set { next = value; }
-            }
-
-            // T as private member data type.
-            private T data;
-
-            // T as return type of property.
-            public T Data
-            {
-                get { return data; }
-                set { data = value; }
-            }
-        }
-
-        private Node? head;
-
-        // constructor
-        public GenericList()
-        {
-            head = null;
-        }
-
-        // T as method parameter type:
-        public void AddHead(T t)
-        {
-            Node n = new Node(t);
-            n.Next = head;
-            head = n;
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            Node? current = head;
-
-            while (current != null)
-            {
-                yield return current.Data;
-                current = current.Next;
-            }
-        }
-    }
-    class TestGenericList
-    {
-        static void Go()
-        {
-            // int is the type argument
-            GenericList<int> list = new GenericList<int>();
-
-            for (int x = 0; x < 10; x++)
-            {
-                list.AddHead(x);
-            }
-
-            foreach (int i in list)
-            {
-                System.Console.Write(i + " ");
-            }
-            System.Console.WriteLine("\nDone");
-        }
-    }
-    #endregion  GenericList
 
 }

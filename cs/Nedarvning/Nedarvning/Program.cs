@@ -69,6 +69,13 @@ namespace Nedarvning
     {
         public Run()
         {
+            StackBase<string>.Test();
+            NamedList<DateTime>.Test();
+            GenerigListTest.TestNamedList();
+            GenerigListTest.RunSortTest(new SortedStack<Person>());
+            GenerigListTest.RunSortTest(new SortedList2<Person>());
+            GenerigListTest.RunSortTest(new SortedNamedList<Person>());
+            GenerigInterfacesRun e = new GenerigInterfacesRun();
             TestGenericList2 c = new TestGenericList2();
             TestGenericList1 d = new TestGenericList1();
             BilExempler a = new BilExempler();
