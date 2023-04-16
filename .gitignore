@@ -259,3 +259,11 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+#Priv
+cs/Dir2Struct/Dir2Struct/run_priv.cs
+cs/Dir2Struct/Dir2Struct/App.config
+cs/Dir2List/Dir2List/WorkPriv.cs
+*gitignore
+*.jpg
+*.gif
