@@ -20,6 +20,8 @@ namespace Sort
                 Console.WriteLine("Sort filename\n");
                 Console.WriteLine("Sort distinct line in filename");
                 Console.WriteLine("Sort filename -d\n");
+                Console.WriteLine("Make json from csv (first line in csv has column names and the the rest lines is data)");
+                Console.WriteLine("Sort csvfilename -j\n");
             }
 
         }
