@@ -206,6 +206,11 @@ namespace Nedarvning
             head = n;
         }
 
+	//    You use the yield statement in an iterator to provide the next value 
+	//		from a sequence when iterating the sequence. 
+	//		The yield statement has the two following forms:
+	//			yield return: to provide the next value in iteration, 
+	//			yield break: to explicitly signal the end of iteration, 
         public IEnumerator<T> GetEnumerator()
         {
             Node current = head;
@@ -441,5 +446,47 @@ namespace Nedarvning
         }
     }
     #endregion  GenerigInterfaces
+    #region  DandD
+	public class ItemData
+	{
+		public string ItemName { get; set; }
+	}
+
+	public class WeaponData : ItemData { }
+
+	public class Item
+	{
+		public ItemData Data { get; set; }
+
+		public Item(ItemData data)
+		{
+			Data = data;
+		}
+	}
+
+	public class WeaponItem : Item  
+	{
+		public WeaponItem(WeaponData data) : base(data) { }
+
+		public override string ToString() => Data.ItemName;
+	}
+
+	public class DandDtest
+	{
+	    public static T CreateNewItem<T, TD>(TD data) 
+		    where T : Item 
+		    where TD : ItemData
+	    {
+		    return (T)Activator.CreateInstance(typeof(T), data);
+	    }
+
+		static void Go(string[] args)
+		{
+			var bestWeaponDataEver = new WeaponData() { ItemName = "Dragon Slayer" };
+			var amazingWeapon = CreateNewItem<WeaponItem, WeaponData>(bestWeaponDataEver);
+			Console.WriteLine(amazingWeapon);
+		}
+	}
+    #endregion  DandD
 
 }
