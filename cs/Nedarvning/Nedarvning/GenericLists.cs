@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -685,5 +686,92 @@ namespace Nedarvning
         }
     }
     #endregion  GenericListTest
-
+    public interface ICommonBehavior
+    {
+        List<string> GetEmployee(string emp);
+        string ShowEmployee(string emp);
+    }
+    public class test1 : ICommonBehavior
+    {
+        public List<string> GetEmployee(string emp)
+        {
+            List<string> ret = new List<string>();
+            return ret;
+        }
+        //public string ShowEmployee(string emp)
+            //=> emp;
+        public string ShowEmployee(string emp)
+        {
+            string ret = "";
+            foreach (string s in GetEmployee(emp))
+                ret += s + "\r\n";
+            return ret;
+        }
+    }
+    public class test2 : ICommonBehavior
+    {
+        public List<string> GetEmployee(string emp)
+        {
+            List<string> ret = new List<string>();
+            return ret;
+        }
+        public string ShowEmployee(string emp)
+        {
+            string ret = "";
+            foreach (string s in GetEmployee(emp))
+                ret += s + "\r\n";
+            return ret;
+        }
+    }
+    public class test3 : ICommonBehavior
+    {
+        public List<string> GetEmployee(string emp)
+        {
+            List<string> ret = new List<string>();
+            return ret;
+        }
+        public string ShowEmployee(string emp)
+        {
+            string ret = "";
+            foreach (string s in GetEmployee(emp))
+                ret += s + "\r\n";
+            return ret;
+        }
+    }
+    public class GenericFunctions
+    {
+        public static List<string> GetEmployee<T>(T d, string emp) where T : ICommonBehavior
+        {
+            return d.GetEmployee(emp);
+        }
+        public static void Swap<T>(ref T lhs, ref T rhs)
+        {
+            T temp;
+            temp = lhs;
+            lhs = rhs;
+            rhs = temp;
+        }
+        void SwapIfGreater<T>(ref T lhs, ref T rhs) where T : System.IComparable<T>
+        {
+            T temp;
+            if (lhs.CompareTo(rhs) > 0)
+            {
+                temp = lhs;
+                lhs = rhs;
+                rhs = temp;
+            }
+        }
+        public static void Test1()
+        {
+            var d = new TestGeneric<test3>() { Name = "Davs", Data = new test3() };
+            var a = GenericFunctions.GetEmployee(new test1(), "emp1");
+            var b = GenericFunctions.GetEmployee(new test2(), "emp1");
+            var c = GenericFunctions.GetEmployee(d.Data, "emp1");
+        }
+    }
+    public class TestGeneric<T>
+    {
+        public string Name { get;set;}
+        public T Data { get;set;}
+    }
 }

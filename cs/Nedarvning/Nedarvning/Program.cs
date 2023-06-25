@@ -81,6 +81,7 @@ namespace Nedarvning
             BilExempler a = new BilExempler();
             Pro b = new Pro();
             AbstrakteKlasser k = new AbstrakteKlasser();
+            GenericFunctions.Test1();
         }
     }
 }
