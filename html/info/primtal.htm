@@ -1,0 +1,68 @@
+<HTML>
+<HEAD>
+   <TITLE>Primtal</TITLE>
+<SCRIPT>
+var primtal = new Array();
+var primtal_count=0;
+var max_tal=0;
+
+function tjek_tal(primtal,n) {
+var sqr=Math.sqrt(n);
+var boolPrimtal=1;
+	for(var i=0;i<primtal.length;i++){
+		if(sqr<primtal[i]) break;
+		if(n%primtal[i]==0)boolPrimtal=0;
+	}
+	if(boolPrimtal) primtal_count=primtal.push(n); //	if(boolPrimtal){ primtal[primtal_count]=n;primtal_count++;}
+}
+
+function rens_url(sUrl_orig) {
+var ch_nr;
+var sUrl = sUrl_orig;
+if (sUrl.substr(0,7)=="file://") sUrl=sUrl.substr(7);
+if((ch_nr=sUrl.indexOf('?',ch_nr))>0){
+	if(sUrl.indexOf('=',ch_nr)>0) sUrl=sUrl.substr(0,ch_nr) + "#" + sUrl.substr(sUrl.indexOf('=',ch_nr)+1);
+	else sUrl=sUrl.substr(0,ch_nr) + "#" + sUrl.substr(ch_nr+1)
+}
+else if(! (ch_nr=sUrl.indexOf('#',ch_nr))>0) sUrl=sUrl + "#100";
+return(sUrl);
+}
+
+function opdat(path,id) {
+  document.forms[0].action = path + '#'+document.getElementById(id).value;
+  document.forms[0].submit();
+}
+
+
+var adr = rens_url(document.URL);
+
+
+var ch_nr = adr.indexOf('#',0);
+var argument = adr.substr(ch_nr+1);
+
+adr = adr.substr(0,ch_nr);
+
+max_tal=parseInt(argument,10);if(! max_tal>0) max_tal=100;
+</SCRIPT>
+</HEAD>
+<BODY LANG="Danish" TEXT="#000000" LINK="#FF0000" VLINK="#00FFFF" ALINK="#00FF00">
+<form onReset="opdat(adr,'primmax');" onSubmit="opdat(adr,'primmax');" >Find alle primtal mindre eller ligmed
+<input name="primmax" id="primmax" onChange="opdat(adr,'primmax');" SIZE="4"/>
+.</form><br/>
+
+<table>
+<tr><td>Nr&nbsp;&nbsp;&nbsp;</td><td>Primtal</td></tr>
+<SCRIPT>
+//self.document.write("<tr><td colspan=2>" + adr  + "</td></tr>");
+//self.document.write("<tr><td colspan=2>" + document.URL + "</td></tr>");
+//self.document.write("<tr><td colspan=2>" + argument + "</td></tr>");
+for(var j=2;j<=max_tal;j++) tjek_tal(primtal,j); //Udregn primtal fra 2 og op til max_tal
+for(var i=0;i<primtal.length;i++)
+  self.document.write("<tr><td align='right'>" + (i+1).toString(10) + "</td><td align='right'>" + (primtal[i]).toString(10) + "</td></tr>");
+</SCRIPT>
+</table>
+</BODY>
+<SCRIPT>
+document.getElementById('primmax').value=max_tal;
+</SCRIPT>
+</HTML>

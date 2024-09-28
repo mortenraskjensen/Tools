@@ -1,0 +1,20 @@
+<html>
+<head>
+<SCRIPT language="JavaScript">
+<!--
+function DecHexBin(str,talsystem){
+var i;
+	if(!( i=parseInt(str,talsystem) )) window.alert(str + ' er ikke et tal !');else SetDecHexBin(i);
+}
+function SetDecHexBin(i){
+	document.getElementById('bin').value=i.toString(2);
+	document.getElementById('dec').value=i.toString(10);
+	document.getElementById('hex').value=i.toString(16);
+}
+// -->
+</SCRIPT>
+</head>
+<body><form>
+dec&nbsp;<input id="dec" name="dec" value="" type="text" MAXLENGTH="10" size="10" onChange="DecHexBin(document.getElementById('dec').value,10)" /><br/>
+hex&nbsp;<input id="hex" name="hex" value="" type="text" MAXLENGTH="10" size="10" onChange="DecHexBin(document.getElementById('hex').value,16)" /><br/>
+bin&nbsp;&nbsp;<input id="bin" name="bin" value="" type="text" MAXLENGTH="40" size="34" onChange="DecHexBin(document.getElementById('bin').value,2)"/></form></body></html>

@@ -1,0 +1,21 @@
+<HTML>
+<HEAD>
+<SCRIPT>
+function OpenNetworkObj()
+{
+//    var oExel = new ActiveXObject("Excel.Application");
+//    var objNetwork = new ActiveXObject("SystemMonitor");
+    var objNetwork = new ActiveXObject("WScript.Shell");
+    window.alert (objNetwork.ComputerName() + ' ' + objNetwork.UserName())
+    window.alert ('Hej')
+}
+</SCRIPT>
+
+
+<TITLE>Launch Excel</Title>
+</HEAD>
+<BODY>
+<P>Click the button to open the Excel Spreadsheet</P>
+<INPUT TYPE=BUTTON NAME=Btn2 VALUE="Open Network" onClick="OpenNetworkObj();">
+</BODY>
+</HTML>

@@ -1,0 +1,166 @@
+<html><head><title>Meteorer (regne eksempel)</title>
+<SCRIPT>
+var primtal = new Array();
+var primtal_count=0;
+var max_tal=0;
+var M=5.974e+24;
+var R=6371001;
+var Rm=300000000;
+var G=6.6720e-11;
+var GM=3.986005e+14;
+var rho=2600;
+var d = 10000;
+var PI = Math.PI;//3.1415;
+var MtTNT = 4.184e+15;
+var ktTNT = 4.184e+12;
+var tTNT = 4.184e+9;
+
+function rens_url(sUrl_orig) {
+var ch_nr;
+var sUrl = sUrl_orig;
+if (sUrl.substr(0,7)=="file://") sUrl=sUrl.substr(7);
+if((ch_nr=sUrl.indexOf('?',ch_nr))>0){
+	if(sUrl.indexOf('=',ch_nr)>0) sUrl=sUrl.substr(0,ch_nr) + "#" + sUrl.substr(sUrl.indexOf('=',ch_nr)+1);
+	else sUrl=sUrl.substr(0,ch_nr) + "#" + sUrl.substr(ch_nr+1)
+}
+else if(! (ch_nr=sUrl.indexOf('#',ch_nr))>0) sUrl=sUrl + "#100";
+return(sUrl);
+}
+
+function opdat(path,id) {
+  document.forms[0].action = path + '#'+document.getElementById(id).value;
+  document.forms[0].submit();
+}
+
+function Round( x ) {
+	var y = x;
+	var n = 0;
+	var limit = 10000.0;
+	if(y<-limit||limit<y){while(y<-limit||limit<y){y *= .1;n++;}}
+	else{while(-limit<y&&y<limit){y *= 10.0;n--;}}
+	y = Math.floor(y+0.5);
+	y = Exp( y, n );
+	//return(x);
+	return(y);
+}
+
+function Exp( y, n ) {
+	if(n>=0) for(var i=n;i>0;i--){y *= 10.0;}
+	else for(var i=n;i<0;i++){y *= 0.1;}
+	return(y);
+}
+
+function Log( y ) {
+var n = 0;
+	if((y*y)>1){while(y*y>100.0){y *= .1;n++;}}
+	else{while(y*y<.01){y *= 10.0;n--;}}
+	return(n);
+}
+
+function Log1000( y ) {
+var n = 0;
+	if((y*y)>1){while(y*y>1000000.0){y *= .001;n++;n++;n++;}}
+	else{while(-.1<y&&y<.1){y *= 1000.0;n--;n--;n--;}}
+	//else{while(y*y<.00000001){y *= 1000.0;n--;n--;n--;}}
+	return(n);
+}
+
+function V_kugle( r ) {
+	return((4.0/3.0)*PI*r*r*r);
+}
+
+function E( V ) {
+	return((M*G/R)*rho*V);
+}
+function E2( V ) {
+	return((M*G*rho*V)*(1/R-1/Rm));
+}
+
+function Ekin( m, v ) {
+	return(m*v*v*0.5);
+}
+
+function PrintE( e ) {
+var s = "";
+    switch (Log1000(e)) {
+        case -3:  s = (e*1000.0).toString(10) + " kg TNT";break;
+        case 0:  s = e.toString(10) + " ton TNT";break;
+        case 3:  s = (e/1000.0).toString(10) + " kt TNT";break;
+        case 6:  s = (e/1000000.0).toString(10) + " Mt";break;
+        case 9:  s = (e/1000000000.0).toString(10) + " Gt";break;
+        case 12: s = (e/1000000000000.0).toString(10) + " Tt";break;
+        case 15: s = (e/1000000000000.0).toString(10) + " Tt";break;
+        default: s = (e/1000000000.0).toString(10) + " Gt";break;
+    }
+	return( s );
+}
+
+
+function Prin( d ) {
+var s = "";
+var v = Math.sqrt(2*G*M/R);
+var V = V_kugle(d/2.0);
+	s = "<p>Astroide på " + d.toString(10) + " m i diameter</br>";
+	s += "v=" + (Round(v)).toString(10) + " m/s&nbsp;" + (Round(v*3.6)).toString(10) + "km/t</br>";
+	s += "V=" + (Round(V)).toString(10) + " m^3&nbsp;</br>m=" + (Round(V*rho)).toString(10) + " kg</br>";
+	s += "Energi " + (PrintE( Round(E2(V)/tTNT) )) + "&nbsp;" + "</p>";
+	return( s );
+}
+
+
+var adr = rens_url(document.URL);
+
+
+var ch_nr = adr.indexOf('#',0);
+var argument = adr.substr(ch_nr+1);
+
+adr = adr.substr(0,ch_nr);
+
+max_tal=parseInt(argument,10);if(! max_tal>0) max_tal=100;
+</SCRIPT>
+</head><body>
+<h3>Energiafgivelse ved meteornedslag (minimum)</h3>
+<h4>Minimum energien, da den jo også har en hastighed inden den infanges af jordens gravitationsfelt, som ikke har talt med her.</h4>
+<table>
+<tr><td>M</td><td>Jordens masse</td><td>5,974*10^24 kg</td></tr>
+<tr><td>R</td><td>Jordens middelradius</td><td>6.371e+6 m</td></tr>
+<tr><td>G</td><td>Gravitationskonstanten</td><td>6,6720*10^-11 Nm^2/kg^2</td></tr>
+<tr><td>&rho;</td><td>Jordens massefylden ved jordoverfladen</td><td>2600 kg/m^3</td></tr>
+<tr><td>Mt</td><td>Megaton of TNT</td><td>4.184*10^15 J</td></tr>
+<tr><td>d</td><td>Astroidens diameter</td><td>10000 m</td></tr>
+</table>
+<p>
+Gravitationsfelt F=G*M*m/r^2</br>
+F=-dE/ds</br>
+E=-G*M*m/R</br>
+Volumen af en kugle V=3/4 PI r^3</br>
+Tyngde accelerationen g = F/m=G*M/r^2</br>
+Centripetal acceleration  a = v^2/r = 4 PI^2 r/T^2</br>
+Ligning for cirkulære kredsløb om jorden G*M/r^2 = v^2/r = 4 PI^2 r/T^2
+</p>
+<SCRIPT>
+//<!--
+self.document.write("");
+var s = "";
+d=10000;
+self.document.write(Prin(d));//150km krater
+d=1000;
+self.document.write(Prin(d));
+d=100;
+self.document.write(Prin(d));
+d=80;
+self.document.write(Prin(d));//50000 aar siden
+d=10;
+self.document.write(Prin(d));
+d=1.0;
+self.document.write(Prin(d));
+d=.1;
+self.document.write(Prin(d));
+//-->
+</SCRIPT>
+<!--table>
+<tr><td>Url: </td><td><input size="50" type="text" name="url" id="url" value="" /></td></tr>
+<tr><td>v<input type="button" value="EnCode" onClick="document.getElementById('encurl').value=escape(document.getElementById('url').value)" /></td><td>^<input type="button" value="DeCode" onClick="document.getElementById('url').value=unescape(document.getElementById('encurl').value)" /></td></tr>
+<tr><td>Encoded Url: </td><td><input size="50" type="text" name="encurl" id="encurl" value="" onChange="document.getElementById('url').value=unescape(document.getElementById('encurl').value)"/></td></tr>
+</table-->
+</body></html>

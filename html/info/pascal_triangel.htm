@@ -1,0 +1,71 @@
+<HTML>
+<HEAD>
+   <TITLE>Primtal</TITLE>
+<SCRIPT>
+var data = new Array();
+var max_tal=0;
+data.push(1);
+data.push(1);
+data.push(1);
+
+
+function row(data,n) { //n>1
+var m = (n*n-n)/2;
+data.push(1);
+for(var i=m;i<m+n-1;i++) data.push(data[i]+data[i+1]);
+data.push(1);
+}
+
+function rens_url(sUrl_orig) {
+var ch_nr;
+var sUrl = sUrl_orig;
+if (sUrl.substr(0,7)=="file://") sUrl=sUrl.substr(7);
+if((ch_nr=sUrl.indexOf('?',ch_nr))>0){
+	if(sUrl.indexOf('=',ch_nr)>0) sUrl=sUrl.substr(0,ch_nr) + "#" + sUrl.substr(sUrl.indexOf('=',ch_nr)+1);
+	else sUrl=sUrl.substr(0,ch_nr) + "#" + sUrl.substr(ch_nr+1)
+}
+else if(! (ch_nr=sUrl.indexOf('#',ch_nr))>0) sUrl=sUrl + "#10";
+return(sUrl);
+}
+
+function opdat(path,id) {
+  document.forms[0].action = path + '#'+document.getElementById(id).value;
+  document.forms[0].submit();
+}
+
+
+var adr = rens_url(document.URL);
+
+
+var ch_nr = adr.indexOf('#',0);
+var argument = adr.substr(ch_nr+1);
+adr = adr.substr(0,ch_nr);
+
+max_tal=parseInt(argument,10);if(! max_tal>0) max_tal=10;
+</SCRIPT>
+</HEAD>
+<BODY LANG="Danish" TEXT="#000000" LINK="#FF0000" VLINK="#00FFFF" ALINK="#00FF00">
+<form onReset="opdat(adr,'primmax');" onSubmit="opdat(adr,'primmax');" >Pascals trekant
+<input name="primmax" id="primmax" onChange="opdat(adr,'primmax');" SIZE="4"/>
+.</form><br/>
+
+<table>
+<SCRIPT>
+for(var j=2;j<=max_tal-1;j++) row(data,j);
+
+for(var j=1;j<=max_tal;j++) {
+var m = (j*j-j)/2;
+  self.document.write("<tr>");
+for(var i=j-1;i<max_tal-1;i++) self.document.write( "<td></td>");
+for(var i=m;i<m+j;i++) self.document.write( "<td align='center'>" + (data[i]).toString(10) + "</td><td></td>");
+for(var i=j-1;i<max_tal-2;i++) self.document.write( "<td></td>");
+  self.document.write("</tr>");
+}
+
+</SCRIPT>
+</table>
+</BODY>
+<SCRIPT>
+document.getElementById('primmax').value=max_tal;
+</SCRIPT>
+</HTML>

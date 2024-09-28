@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"><HTML>
+<HEAD><TITLE></TITLE></HEAD>
+<BODY onLoad="start_exel();setTimeout('location.reload();', 300000);" leftMargin=0 topMargin=0 MARGINHEIGHT="0" MARGINWIDTH="0">
+<script language="javascript">
+<!--
+function start_exel()
+{
+    var oExel = new ActiveXObject("Excel.Application");
+    oExel.Application.Visible = True;
+
+//	var oIE   = CreateObject("InternetExplorer.Application")
+//	var oMSXML   = CreateObject("Msxml2.ServerXMLHTTP.3.0");
+}
+
+function tjek_bilind()
+{
+    var Ok=1;
+//ViewValues(document.forms[1]);
+    if(Ok)if(!tjek_regnr(sGetIdFromDoc('regnr','registrerings nummer'))){Ok = 0;}
+    if(Ok)if(!tjek_mva_nr('mva_nr','MVA nr.')){Ok = 0;}
+    if(Ok)if(!tjek_text(document.getElementById('biltype' ).value,'biltype'  ,1,40)){Ok = 0;}
+    if(Ok)if(!tjek_text(document.getElementById('bilgruppe' ).value,'bil gruppe'  ,1,1)){Ok = 0;}
+//    if(Ok)if(!tjek_radio('bil gruppe',1,ci_bilgruppeStart,ci_bilgruppeSlut)){Ok = 0;}
+    if(Ok)if(!tjek_text(document.getElementById('b_stand' ).value,'brændstof stand'  ,1,1)){Ok = 0;}
+//    if(Ok)if(!tjek_radio('brændstof stand',1,ci_b_standStart,ci_b_standSlut)){Ok = 0;}
+    if(Ok)if(!tjek_tal( document.getElementById('km_stand').value,'km. stand',1,9)){Ok = 0;}
+    if(Ok)if(!tjek_text(document.getElementById('b_type' ).value,'brændstof type'  ,1,1)){Ok = 0;}
+//    if(Ok)if(!tjek_radio('brændstof type',1,ci_b_typeStart,ci_b_typeSlut)){Ok = 0;}
+    if(Ok){
+	document.forms[1].submit();
+    }
+}
+
+
+
+function update_special_info(o_Check,n)
+{
+    document.getElementById('special_info').value=update_checkbox(o_Check,n,0);
+    return 0;
+}
+
+
+function tjek_aktiver()
+{
+    var Ok=1;
+    var AntalBiler=tilHeltal(document.getElementById('antal_biler_1').value);
+	if(Ok){
+		if(
+			AntalBiler==0&&
+			document.getElementById('udl_dato').value.length==0&&
+			document.getElementById('udl_tid' ).value.length==0
+		){
+//			document.getElementById('udl_dato').value="";//"01012005";
+//			document.getElementById('udl_tid').value="";//"1015";
+		}
+		else if(!tjek_tid(
+			document.getElementById('udl_dato').value,
+			document.getElementById('udl_tid' ).value,
+			'åbnings'
+			)){Ok = 0;}
+	}
+    if(Ok){
+	document.forms[2].submit();
+    }
+}
+
+document.getElementById("regnr").focus();
+// -->
+</script>
+
+    </BODY></HTML>
