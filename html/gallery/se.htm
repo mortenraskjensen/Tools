@@ -1,0 +1,708 @@
+<HTML><HEAD><TITLE></TITLE>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY bgColor=#ffffff leftMargin=0 topMargin=0 marginwidth="0" onload="viewPicPath(GetUrl())">
+<SCRIPT language=JavaScript>
+var QueryString = function () {
+  // This function is anonymous, is executed immediately and
+  // the return value is assigned to QueryString!
+  var query_string = {};
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i=0;i<vars.length;i++) {
+    var pair = vars[i].split("=");
+        // If first entry with this name
+    if (typeof query_string[pair[0]] === "undefined") {
+      query_string[pair[0]] = pair[1];
+        // If second entry with this name
+    } else if (typeof query_string[pair[0]] === "string") {
+      var arr = [ query_string[pair[0]], pair[1] ];
+      query_string[pair[0]] = arr;
+        // If third or later entry with this name
+    } else {
+      query_string[pair[0]].push(pair[1]);
+    }
+  }
+    return query_string;
+} ();
+
+	function GetQS() {
+  // This function is anonymous, is executed immediately and
+  // the return value is assigned to QueryString!
+  var query_string = {};
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i=0;i<vars.length;i++) {
+    var pair = vars[i].split("=");
+        // If first entry with this name
+    if (typeof query_string[pair[0]] === "undefined") {
+      query_string[pair[0]] = pair[1];
+        // If second entry with this name
+    } else if (typeof query_string[pair[0]] === "string") {
+      var arr = [ query_string[pair[0]], pair[1] ];
+      query_string[pair[0]] = arr;
+        // If third or later entry with this name
+    } else {
+      query_string[pair[0]].push(pair[1]);
+    }
+  }
+    return query_string;
+}
+
+
+	function viewPic(billed) {
+	  var source = billed.src.replace("\\Thumbs\\","\\").replace("/Thumbs/","/");
+          source = source.replace(".gif.jpg",".gif").replace(".bmp.jpg",".bmp").replace(".png.jpg",".png");
+	  document.getElementById("stort").src =source;
+	  document.getElementById("stort").alt =source;
+	  //document.getElementById("stort2").src =source;
+	  //document.getElementById("stort2").alt =source;
+	  //document.getElementById("stort3").src =source;
+	  //document.getElementById("stort3").alt =source;
+	  //document.getElementById("stort4").src =source;
+	  //document.getElementById("stort4").alt =source;
+	  document.getElementById("billedtekst").innerHTML =source.substring(21);
+	}
+	function GetUrl_(str)
+	{
+	   return 'file://///diskstation/Lager/Backup/pic/Logo154720/' + str + '.jpg'
+	}
+	function GetUrl()
+	{
+	   document.getElementById("InputField").value = QueryString.name;
+	   return GetUrl_(QueryString.name);
+	}
+	function GetUrl2()
+	{
+	   return GetUrl_(document.getElementById("InputField").value);
+	}
+	function getNextOld(){
+	   var s = document.getElementById("InputField").value;
+	   var d = parseInt(s.substring(0,2), 10);
+	   var m = parseInt(s.substring(2,4), 10);
+	   var y = parseInt(s.substring(4,8), 10);
+	   if (d>=31 && m==1 || d>=29 && m==2
+	    || d>=31 && m==3 || d>=30 && m==4
+	    || d>=31 && m==5 || d>=30 && m==6
+	    || d>=31 && m==7 || d>=31 && m==8
+	    || d>=30 && m==9 || d>=31 && m==10
+	    || d>=30 && m==11 || d>=31 && m==12 )
+	   {
+	       d = 1;
+	       if (m == 12)
+	       {
+	           m = 1;
+	           y++;
+	       }
+	       else
+	       {
+	           m++;
+	       }
+	   }else{
+	   	   d++;
+	   }
+	   var s2 = "";
+	   s2 = (d+100).toString(10).substring(1) + (m+100).toString(10).substring(1) + y.toString(10);
+	   document.getElementById("InputField").value = s2;
+	}
+	function getNext(){
+	   var s = document.getElementById("InputField").value;
+	   var d = parseInt(s.substring(0,2), 10);
+	   var m = parseInt(s.substring(2,4), 10);
+	   var y = parseInt(s.substring(4,8), 10);
+	   document.getElementById("InputField").value = getNextDay(d,m,y);
+	   viewPicPath(GetUrl2());
+	   document.getElementById("info").innerHTML = "Next";//source.substring(21);
+	}
+	function getPrev(){
+	   var s = document.getElementById("InputField").value;
+	   var d = parseInt(s.substring(0,2), 10);
+	   var m = parseInt(s.substring(2,4), 10);
+	   var y = parseInt(s.substring(4,8), 10);
+	   document.getElementById("InputField").value = getPrevDay(d,m,y);
+	   viewPicPath(GetUrl2());
+	   document.getElementById("info").innerHTML = getfield("a,b_b,c,d",2);//source.substring(21);
+	}
+
+	function maxDay(m){
+		switch(m)
+		{
+		    case 1:return 31;
+		    case 2:return 29;
+		    case 3:return 31;
+		    case 4:return 30;
+		    case 5:return 31;
+		    case 6:return 30;
+		    case 7:return 31;
+		    case 8:return 31;
+		    case 9:return 30;
+		    case 10:return 31;
+		    case 11:return 30;
+		    case 12:return 31;
+		    //case 1,3,5,7,8,10,12:return 31;
+		    //case 4,6,9,11:return 30;
+		    //case 2:return 29;
+		}
+		return 31;
+	}
+
+
+	function getNextDay2(d,m,y){
+	   if (d>=31 && m==1 || d>=29 && m==2
+	    || d>=31 && m==3 || d>=30 && m==4
+	    || d>=31 && m==5 || d>=30 && m==6
+	    || d>=31 && m==7 || d>=31 && m==8
+	    || d>=30 && m==9 || d>=31 && m==10
+	    || d>=30 && m==11 || d>=31 && m==12 )
+	   {
+	       d = 1;
+	       if (m == 12)
+	       {
+	           m = 1;
+	           y++;
+	       }
+	       else
+	       {
+	           m++;
+	       }
+	   }else{
+	   	   d++;
+	   }
+	   return getDay(d,m,y);
+	}
+	function getPrevDay(d,m,y){
+	   if ( d>1 )
+	   {
+	   	   d--;
+	   }else{
+		   if ( d==1 )
+		   {
+		   		if ( m==1 )
+		   		{
+				   m=12;
+				   d=31;
+				   y--;
+				}else{
+				   m = m-1;
+				   d = maxDay(m);
+				}
+	       }
+	   }
+	   return getDay(d,m,y);
+	}
+	function getNextDay(d,m,y){
+	   var md = maxDay(m);
+	   if ( d>=md )
+	   {
+		   d=1;
+			if ( m==12 )
+			{
+			   m=1;
+			   y++;
+			}else{
+			   m++;
+			}
+	   }
+	   else{
+			d++;
+	   }
+	   return getDay(d,m,y);
+	}
+
+	function getDay(d,m,y){
+	   return ((d+100).toString(10).substring(1) + (m+100).toString(10).substring(1) + y.toString(10));
+	}
+
+
+	function viewPicPath(str) {
+	  var source = str;
+	  document.getElementById("stort").src =source;
+	  document.getElementById("stort").alt =source;
+	  //document.getElementById("stort2").src =source;
+	  //document.getElementById("stort2").alt =source;
+	  //document.getElementById("stort3").src =source;
+	  //document.getElementById("stort3").alt =source;
+	  //document.getElementById("stort4").src =source;
+	  //document.getElementById("stort4").alt =source;
+	  document.getElementById("billedtekst").innerHTML =source;
+	}
+	function viewPic2(billed) {
+	  document.getElementById("stort").src =billed.name;//Hvis billed findes i stor version
+	}
+	function changeSize(n) {
+	  document.getElementById("stort").width =document.getElementById("stort").width*n;
+	  //document.getElementById("stort2").width =document.getElementById("stort").width;
+	  //document.getElementById("stort3").width =document.getElementById("stort").width;
+	  //document.getElementById("stort4").width =document.getElementById("stort").width;
+	}
+//	function change(n,size) {
+//document.getElementById("one").style.visibility = "hidden";
+//document.getElementById("two").style.visibility = "visible";// (dom||ie)? "visible"	: "show";
+		//for(var i=1;i<=11;i++){
+		//	document.getElementById("h" + i.toString(10)).width = size;
+		//}
+//	}
+	function change2(knap,open) {
+		var close = document.getElementById("ActiveDiv").value;
+		document.getElementById(close).style.visibility = "hidden";
+		document.getElementById(open).style.visibility = "visible";// (dom||ie)? "visible"	: "show";
+		document.getElementById("ActiveDiv").value = open;
+	}
+	function change3(knap,open) {
+		var close = document.getElementById("ActiveDiv").value;
+		var old_knap = document.getElementById("DisabledButton").value;
+		document.getElementById(old_knap).disabled = false;
+		document.getElementById(close).style.visibility = "hidden";
+		document.getElementById(open).style.visibility = "visible";// (dom||ie)? "visible"	: "show";
+		document.getElementById("ActiveDiv").value = open;
+		document.getElementById(knap).disabled = true;
+		document.getElementById("DisabledButton").value = knap;
+	}
+	function getfield(s,idx) {
+	    var arr = s.split(',');
+	    if (arr.length >= idx)
+	    return arr[idx];
+	}
+
+
+var list = "003,008,014,018,024,030,031,041,048,055,063,070";
+
+
+
+
+
+
+
+
+
+//var idx = [0,19,38,50];
+//var lng = [19,19,11,12];
+//var col = ["a","a","h","h"];
+</SCRIPT>
+<FORM>
+<TABLE cellSpacing=0 cellPadding=0 bgColor=#333333>
+<tr>
+<TD Align=left vAlign=top>
+<table cellSpacing=0 cellPadding=0><tr><td vAlign=top>
+</td><td Align=right vAlign=top>
+<input type="button" value="Show" onClick="viewPicPath(GetUrl2());"/>
+<input type="text" size=8 id="InputField"/>
+<input type="button" value="Mindre" onClick="changeSize(0.8);"/>
+<input type="button" value="Stoerre" onClick="changeSize(1.25);"/>
+<input type="button" value="Prev" onClick="getPrev();"/>
+<input type="button" value="Next" onClick="getNext();"/>
+</td></tr></table>
+<!--br/-->
+<!--/TD><td vAlign=top><IMG width=828 height=0 id="tom" src="..\..\..\source\web\ecblank60.gif.jpg" border=1 /></TD></TR><tr><td vAlign=top-->
+<IMG alt=""
+src=""
+border=0 id="stort"><br/><font Color="#ffffff"><span id="billedtekst"></span></font><br/>
+<span id="info"></span>
+<!--IMG alt="" src="" border=0 id="stort2"><br/-->
+<!--IMG alt="" src="" border=0 id="stort3"><br/-->
+<!--IMG alt="" src="" border=0 id="stort4"><br/-->
+</TD><TD vAlign=top>
+<div id='one' style='visibility:visible;'>
+<TABLE cellSpacing=2 cellPadding=1 align=left bgColor=#333333 id=table3>
+<tr>
+<TD vAlign=top><!-- 1 -->
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-1-1.jpg" border=1 name="unbelievable-places-1-1.jpg,unbelievable-places-10-1.jpg" /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-10-1.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-10-2.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-11.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-12-1.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-13-1.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-13-2.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-15-2.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-16.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-17.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-19-1.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-2.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-21-1.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-23.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-24-2.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-25-2.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-26-1.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-26-2.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-27-3.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-3-1.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-6.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-7-1.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-7-2.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-8.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/unbelievable_places/unbelievable-places-9.jpg" border=1 /><br/>
+<input type="button" width=30 onClick="changeSize(0.8);"/><br/>
+1</TD><td vAlign=top><!-- 3 -->
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/westeros/brTGitI.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/westeros/Westeros1_ap8fmgf1fzcz.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/westeros/westeros2-size-estimates.png" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/westeros/Westeros2_t7pdg-TxHBMAVtx3EG7Pl_T03y5Ho422zFy0rHt0rdU.png" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/westeros/Westeros3_il_570xN.594847656_l04p.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/westeros/Westeros4_alternative_map_of_westeros__game_of_thrones__by_zalringda-dal295u.png" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/westeros/Westeros5_7e2f0aefae75c10297d5a07a81bddc44.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/westeros/Westeros_Screen_Shot_2016-07-04_at_12.37.15_PM.0.0.png" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/westeros/Westeros_t7pdg-TxHBMAVtx3EG7Pl_T03y5Ho422zFy0rHt0rdU.png" border=1 /><br/>
+</TD><td vAlign=top><!-- 4 -->
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot/00NewSpring.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot/01EyeOfTheWorld.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot/02TheGreatHunt.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot/03DragonReborn.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot/04ShadowRising.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot/05FiresOfHeaven.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot/06LordOfChaos.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot/07CrownOfSwords.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot/08PathOfDaggers.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot/09WintersHeart.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot/10CrossroadsOfTwilight.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot/11KnifeOfDreams.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot/12TheGatheringStorm.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot/13TowersOfMidnight.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot/14AMemoryOfLight.jpg" border=1 /><br/>
+
+
+
+</TD><td vAlign=top><!-- 3 -->
+
+
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/10c2c26b2f7c4965986786b230a933e7.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/1579165312701_0620x0435_0x0x0x0_1579165339270.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/1V58nVNi.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/2019.08.18-06.13-themixnet-5d59956413633.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/24bu3ibhtgi31.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/295968_abouttime_myrddraal.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/359021add2d52d3288f446f40d972d1f.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/4154255-5449795998-wot-c.png" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/641246e70801f63a38099fe2542eb249.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/72a3cfa84fee703843a11f97487ad085.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/84341718_2876874168999662_5657668111583674368_n.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/91oT9WK-DsL.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/97e331b80fcb0c038ed71d110a27b151.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/9c2fcff7bf044307bfdab0d4d5b0b032.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/9ecd9a2b57b7d1d57f83646323b7d0e9.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/amazon-wheel-of-time-cast.jpeg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/aviendha-e1438102808166.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Aviendha.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/aviendha_progress_by_reddera_d3f6wn8-fullview.jpg" border=1 /><br/>
+</TD><td vAlign=top><!-- 3 -->
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Berlaine_d9a3cbce2064e4b0e977e67336e9e518.jpg" border=1 /><br/>
+
+
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/cagdas-demiralp-lanfear-cagdasdemiralp.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/ChildrenOfTheLight_8f5d624d0d6a6d122e1da3f4a9d924e0.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/d27vfls-85fd83d1-2ac3-454a-9146-777aebe44d8e.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/d4fea579733968586d19471cc129460b.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/download90000.jpg" border=1 /><br/>
+
+
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/e6f3e4431d2f239a7e9423658b2d9852.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/EEl6lKzXoAAsbua.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Elaine_3ed32a790fb3b03aa5a1a2dde73b7e01.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Elayne_Trakand.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/elayne_trakand_by_pollyuranus_d3od3yr-fullview.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/EO3ziJGU8AAnnAZ.jfif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/fa4754ed54d67abe4bb8df70a50986f7.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/gallery_18950_154_2801.jpg" border=1 /><br/>
+</TD><td vAlign=top><!-- 3 -->
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/ij9apdvla7jiv2zzeqif.jfif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/illyustraciya-k-knige-robert-2062.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/images.jfif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Ishamael (1).jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Ishamael.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Ishamael.JPG.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/lanfear.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Lanfear_b5494722ddbb53475918c5fe32a66763.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Lanfear_bac5163ec821b4aef7663bd86e4b7dd8.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Lanfear_d1m7d31-3155a3c7-ad09-4c71-96ec-713b4e48b415.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Lanfear_srwAP610_400x400.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Logo1655836_3.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/markstrong-ishamael.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/maxresdefault.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/michelle-tolo-wot-collection-01-thumbnail.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/moiraine damodred.png" border=1 /><br/>
+
+
+
+
+
+
+
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/moraine.bmp" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Myrddraal_1d277782e1bcecbf6edecd62a16c8de2.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/qWuuvH6j.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Selene_19fc2278745ecd141e5d05c35be127a8.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/SemirhagePortrait.JPG.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Siuan2.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/stanimir-rachev-stanimir-rachev-sketch-15476843517312.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Taei_Mirel.bmp" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/the-wheel-of-time-e1550782744776-700x355.jpg" border=1 /><br/>
+</TD><td vAlign=top><!-- 3 -->
+
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/tumblr_ouqw0apN4l1td3liyo1_1280.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/uukkxr655ygz.jpg" border=1 /><br/>
+
+
+
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/uwxr5l9sr8n01.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/wbm1g2a2use31.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/wheel-of-tim-characters.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/wheel-of-time-split.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/wheel_of_time_s_aviendha_by_gingybeer_d3958zd-pre.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/wheel_of_time__rand_and_wives_by_darlinginc_d3ec21w-fullview.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/wot1.bmp" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/wot2.bmp" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/wot3.bmp" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/wot4.bmp" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/wot5.bmp" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/wot6.bmp" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/wot7.bmp" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/wot8.bmp" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/wot_egwene.bmp" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/wot_myrddraal_web.jpg" border=1 /><br/>
+
+
+</TD><td vAlign=top><!-- 3 -->
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/gallery_20332_128_280680.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/e44c8b78749d0a97d3a5ae815b892edd.jpg" border=1 /><br/>
+
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/08e4550909ebe9c28ce982580592c8fe.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/21f68e9bfb009113927a718b76c6d086--tempo-guys.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/2c0cb4be81428f431396d0ed00899b07.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Aludra_images (1).jfif" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Avienda_9668af3192c57fb68e5855f3d364c404.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Avienda_gallery_20332_128_75326.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/dff9fa797f8e98ee3c2f3738b4807a25.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Avon_3e67477def93b11acb505ca4ac45298a.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/BayleDomon_Egeanin_gallery_20332_128_76462.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/BayleDomon_Egeanin_images (1).jfif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Belal_images (1).jfif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Birgitte_c93243e5e5b1f37d38ff13db068af012.jpg" border=1 /><br/>
+
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Elaine_04cdf0a1bd92bb59ae40630cdd945475.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Ishamel_d4aygwn-8fac7df4-ffa9-48d4-be16-a3c22ac14bac.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Lanfear_1253fc3c14bbed293fe7702b05711c81.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/MazrimTaim_d51fre4-af3590b3-f1e9-4e6e-9d53-f12da9a93d66.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Mesaana_Card_teaser2.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Moghedien_gallery_12453_313_129862.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/PadanFain_gallery_20332_128_39272.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Semirhage_by_Ariel_Burgess,_Official_Wheel_of_Time_Artist.jpg" border=1 /><br/>
+
+
+
+
+</TD><td vAlign=top><!-- 3 -->
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Shaidar-haran-by-ariel-burgess.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Shaidar_Haran2.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Siun_Gareth_images (1).jfif" border=1 /><br/>
+
+
+
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Uno_gallery_20332_128_91130.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot-_asmodean.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot-_elyas_and_hopper.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot-_faile_bashere.jpg" border=1 /><br/>
+
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot_berelain_sur_paendrag_paeron_by_reddera-d4vmiyz (1).jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot_berelain_sur_paendrag_paeron_by_reddera-d4vmiyz.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot_card_teasers_graendal_by_reddera-d4dj757.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot_card_teasers_lanfear_by_reddera-d49kg3o (1).jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot_card_teasers_lanfear_by_reddera-d49kg3o.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot_card_teasers_moiraine_by_reddera-d3r8il3.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot_card_teasers_moridin_by_reddera-d4dz4ri.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot_demandred_by_reddera-d4falp3.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot_elayne_trakand_by_reddera-d4sxaz5.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot_galad_damodred_by_reddera-d4szi2x.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot_jahar_narishima_by_reddera-d4vmk35.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot_osan_gar_by_reddera-d507pif.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot_rahvin_by_reddera-d507px7.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot2/Wot_sammael_by_reddera-d4vmo8j.jpg" border=1 /><br/>
+
+
+</TD><td vAlign=top><!-- 3 -->
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/frontispiece.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-aes-sedai.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-crescent-stars.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-dagger.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-dice.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-dragon.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-dragons-fang.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-dream-ring.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-gulls-star.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-horn.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-horned-skull.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-insect-helmet.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-leaves.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-lion.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-portal.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-raven.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-rising-sun.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-serpent-wheel.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-snake.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-spears-shield.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-sunburst.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-tree-gnarled.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-tree-leaves.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-waves.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/icon-white-flame.gif" border=1 /><br/>
+
+
+
+</TD><td vAlign=top><!-- 3 -->
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/map-10-nations-1.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/map-10-nations-2.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/map-land-1.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/map-land-2.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/map-seanchan.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/map-shara.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/map-world.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/map-caemlyn.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/map-cairhien.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/map-ebou-dar.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/map-tanchico.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/map-tar-valon.jpg" border=1 /><br/>
+
+
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-altara.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-amadicia.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-andor.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-arad-doman.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-arafel.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-cairhien.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-ghealdan.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-illian.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-kandor.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-mayene.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-murandy.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-saldaea.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-shienar.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-tar-valon.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-tarabon.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-tear.gif" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/flag-wc.gif" border=1 /><br/>
+
+
+
+
+
+
+
+</TD><td vAlign=top><!-- 3 -->
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/draghkar.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/myrddraal.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/trolloc.jpg" border=1 /><br/>
+
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/grolm.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/lopar.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/toraken.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/torm.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/raken.jpg" border=1 /><br/>
+
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/adam.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/aiel.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/sanschen.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/whitecloak.jpg" border=1 /><br/>
+
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/callandor.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/horn.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/seal.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/angreal.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/saangreal.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/ter'angreal.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/rand_hand.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/mats-dagger.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/sun-throne.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/white-tower.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/whitebridge.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/falme.jpg" border=1 /><br/>
+
+
+
+
+
+
+
+</TD><td vAlign=top><!-- 3 -->
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/galad.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/gawyn.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/aviendha.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/berelain.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/birgitte.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/corlm.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/demandred.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/egwene.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/elayne.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/faile.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/gareth.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/nynaeve.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/siuan.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/tylin.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/verin.jpg" border=1 /><br/>
+
+
+</TD><td vAlign=top><!-- 3 -->
+
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/ishamael.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/lanfear.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/loial.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/mat.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/moraine_lan.jpg" border=1 /><br/>
+
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/ordeith.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/perrin.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/rand.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/someshta.jpg" border=1 /><br/>
+<IMG onclick="javascript:viewPic(this)" width=30 src="image/wot3/thom.jpg" border=1 /><br/>
+
+
+</TD></TR></TABLE></div>
+
+
+</TD>
+</TR></TABLE></FORM></BODY>
+<SCRIPT language=JavaScript>
+		document.getElementById(close).style.visibility = "hidden";
+		document.getElementById(close).style.visibility = "hidden";
+		document.getElementById(close).style.visibility = "hidden";
+		var close = document.getElementById("ActiveDiv").value;
+		var old_knap = document.getElementById("DisabledButton").value;
+		document.getElementById(old_knap).disabled = true;
+		document.getElementById(close).style.visibility = "visible";
+</SCRIPT>
+</HTML>

@@ -1,11 +1,29 @@
 <HTML>
 <HEAD>
-   <TITLE>Primtal</TITLE>
-<SCRIPT>
-var primtal = new Array();
-var primtal_count=0;
-var max_tal=0;
 
+<!--[if IE]>
+<!--[if lt IE 6.0.29]>
+   <TITLE>Primtal (< IE 6.0.29)</TITLE>
+<SCRIPT>
+var counter = 0;
+function push(data,value) {
+data[counter++]=value;
+return counter;
+}
+function tjek_tal(primtal,n) {
+var sqr=Math.sqrt(n);
+var boolPrimtal=1;
+	for(var i=0;i<primtal.length;i++){
+		if(sqr<primtal[i]) break;
+		if(n%primtal[i]==0)boolPrimtal=0;
+	}
+	if(boolPrimtal) primtal_count=push(primtal,n); //	if(boolPrimtal){ primtal[primtal_count]=n;primtal_count++;}
+}
+</SCRIPT>
+<![endif]-->
+<!--[if gt IE 6.0.28]>
+   <TITLE>Primtal (> IE 6.0.28)</TITLE>
+<SCRIPT>
 function tjek_tal(primtal,n) {
 var sqr=Math.sqrt(n);
 var boolPrimtal=1;
@@ -15,6 +33,16 @@ var boolPrimtal=1;
 	}
 	if(boolPrimtal) primtal_count=primtal.push(n); //	if(boolPrimtal){ primtal[primtal_count]=n;primtal_count++;}
 }
+</SCRIPT>
+<![endif]-->
+<![endif]-->
+
+
+<SCRIPT>
+var primtal = new Array();
+var primtal_count=0;
+var max_tal=0;
+
 
 function rens_url(sUrl_orig) {
 var ch_nr;

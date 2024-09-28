@@ -18,7 +18,7 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Runtime.Remoting.Contexts;
 //using static System.Net.WebRequestMethods;
 
-namespace Dir2Struct
+namespace Tools.Dir
 {
     /*class ThumpNailImage : BaseHttpHandler2
     {

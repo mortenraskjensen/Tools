@@ -265,5 +265,6 @@ cs/Dir2Struct/Dir2Struct/run_priv.cs
 cs/Dir2Struct/Dir2Struct/App.config
 cs/Dir2List/Dir2List/WorkPriv.cs
 *gitignore
-*.jpg
-*.gif
+cs/Dir2Struct/Dir2Struct/*.jpg
+cs/Dir2Struct/Dir2Struct/*.gif
+html/gallery/image/

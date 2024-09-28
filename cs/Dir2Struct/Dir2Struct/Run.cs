@@ -7,7 +7,7 @@ using System.Xml;
 using System.Collections;
 using System.IO;
 
-namespace Dir2Struct
+namespace Tools.Dir
 {
     public interface IRun
     {
@@ -22,11 +22,16 @@ namespace Dir2Struct
             }
             else
             {
-                DefaultRun();
+                DefaultRun2();
             }
             //Console.WriteLine("dir ouputfile");
         }
         protected abstract void DefaultRun();
+
+        protected virtual void DefaultRun2()
+        {
+
+        }
 
         /// <summary>
         /// I need a file created with lines created from filenames in a directory

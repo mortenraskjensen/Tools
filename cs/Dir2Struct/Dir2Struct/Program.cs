@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dir2Struct
+namespace Tools.Dir
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Run r = new Run(args);
+            Run2 r = new Run2(args);
         }
     }
 }

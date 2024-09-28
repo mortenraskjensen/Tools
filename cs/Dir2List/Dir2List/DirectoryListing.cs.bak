@@ -197,7 +197,7 @@ namespace Tools.Dir
                     //if (!FileManager.isExtensionExcluded(ext_norm, extFilter) && !fi.Name.Contains("'"))
                     {
                         string src = FileManager.removeWorkingDirectory(fi.FullName.Replace("\\", "/"), sWorkingDir);
-                        sb.Append(sp + (isFirstInList ? "" : ",")
+                        sb.Append(sp + (isFirstInList ? "" : ",") + JsonJavaScriptRecord.Data((fileId++).ToString(), "", src, fi.Name, fi.Length)
                             + JavaScriptFileItem.GetJson(
                                 (fileId++).ToString(),
                                 "",

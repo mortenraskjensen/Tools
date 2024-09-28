@@ -275,7 +275,13 @@ namespace Tools.Dir
     public enum KnownExtensions
     { 
         jpg = 1,
-        gif = 2
+        gif = 2,
+        jpeg = 3,
+        png = 4,
+        bmp = 5,
+        webm = 6,
+        db = 7,
+        lnk = 8,
     }
     public class FileInfoType
     {
@@ -298,6 +304,17 @@ namespace Tools.Dir
             FullName = fi.FullName;
             Length = fi.Length;
             Extension = fi.Extension;
+            switch (fi.Extension)
+            {
+                case ".gif": ExtensionType = KnownExtensions.gif; break;
+                case ".jpg": ExtensionType = KnownExtensions.jpg; break;
+                case ".webm": ExtensionType = KnownExtensions.webm; break;
+                case ".jpeg": ExtensionType = KnownExtensions.jpeg; break;
+                case ".png": ExtensionType = KnownExtensions.png; break;
+                case ".bmp": ExtensionType = KnownExtensions.bmp; break;
+                case ".db": ExtensionType = KnownExtensions.db; break;
+                case ".lnk": ExtensionType = KnownExtensions.lnk; break;
+            }
         }
         //public FileInfoType(FileInfo fi, DirectoryInfoType directory)
         public string Show()

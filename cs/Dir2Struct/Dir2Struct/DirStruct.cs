@@ -7,7 +7,7 @@ using System.IO;
 using System.Xml;
 using System.Collections;
 
-namespace Dir2Struct
+namespace Tools.Dir
 {
     public class LineStruct
     {

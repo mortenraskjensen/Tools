@@ -1,19 +1,24 @@
 <HTML>
 <HEAD>
-   <TITLE>Primtal</TITLE>
+   <TITLE>Pascals trekant</TITLE>
 <SCRIPT>
+var counter = 0;
+function push(data,value) {
+data[counter++]=value;
+}
 var data = new Array();
 var max_tal=0;
-data.push(1);
-data.push(1);
-data.push(1);
+push(data,1);
+push(data,1);
+push(data,1);
+//data.push(1);
 
 
 function row(data,n) { //n>1
 var m = (n*n-n)/2;
-data.push(1);
-for(var i=m;i<m+n-1;i++) data.push(data[i]+data[i+1]);
-data.push(1);
+push(data,1);
+for(var i=m;i<m+n-1;i++) push(data,data[i]+data[i+1]);
+push(data,1);
 }
 
 function rens_url(sUrl_orig) {

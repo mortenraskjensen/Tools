@@ -10,7 +10,7 @@ using static System.Net.WebRequestMethods;
 using System.Xml.Linq;
 
 
-namespace Dir2Struct
+namespace Tools.Dir
 {
     public class ConfigValueType
     {
