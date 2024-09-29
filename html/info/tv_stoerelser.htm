@@ -1,0 +1,80 @@
+<html><head><title>Tv størelser</title>
+
+<SCRIPT>
+function Log( y ) {
+var n = 0;
+	if((y*y)>1){while(y*y>100.0){y *= .1;n++;}}
+	else{while(y*y<.01){y *= 10.0;n--;}}
+	return(n);
+}
+
+function RoundN(x, n) {
+    var y = x;
+    var f = 1;
+    if (x == 0)
+	return(0);
+    var m = Log(x);
+    if (m < 0)
+        m -= 1;
+    if (n > m) {
+        for (var i = 0; i < n - m - 1; i++) {
+            f *= 10
+        }
+        y *= f;
+        y = Math.floor(y + 0.5);
+        y /= f;
+        return (y);
+    }
+    else {
+        for (var i = 0; i < m - n + 1; i++) {
+            f *= 10
+        }
+        y /= f;
+        y = Math.floor(y + 0.5);
+        y *= f;
+        return (y);
+    }
+}
+</SCRIPT>
+</head><body>
+    <h3>Tv størelser</h3>
+    <p>
+1 inch is equal 2,54 cm<br/>
+The screen ratio is eithe 16:9 or 21:9<br/>
+That meens that Width (w) divided by Height (h) is eithe 16/9 or 21/9 (ratio)<br/>
+And w = ratio * h<br/>
+We also has for the square of the diagonal (d) is d<sup>2</sup> = w<sup>2</sup> + h<sup>2</sup> (Pythagoras)<br/>
+d<sup>2</sup> = w<sup>2</sup> + h<sup>2</sup> = ratio<sup>2</sup> * h<sup>2</sup> + h<sup>2</sup> = h<sup>2</sup> (ratio<sup>2</sup> + 1)<br/>
+or d<sup>2</sup> = w<sup>2</sup> + h<sup>2</sup> = w<sup>2</sup> + (w/ratio)<sup>2</sup> = w<sup>2</sup> (1 + (1/ratio)<sup>2</sup>)<br/>
+So  h<sup>2</sup> = d<sup>2</sup> / (ratio<sup>2</sup> + 1)<br/>
+And w<sup>2</sup> = d<sup>2</sup> * (1/((1/ratio)<sup>2</sup> + 1)) = ratio<sup>2</sup> * d<sup>2</sup> /(1 + ratio<sup>2</sup>)  = ratio<sup>2</sup> * h<sup>2</sup><br/>
+    </p>
+    <p>
+	 <table border="1">
+            <tr><td>Inch</td><td>diagonal (cm)</td><td>Height 16:9</td><td>Width 16:9</td><td>Height 21:9</td><td>Width 21:9</td></tr>
+            <SCRIPT>
+		var cmPrInch = 2.54;
+		var ratio16_9 = 16.0/9.0;
+		var ratio21_9 = 21.0/9.0;
+		var heightPerDiagonal16 = Math.sqrt(1/((ratio16_9 * ratio16_9) + 1));
+		var widthPerDiagonal16 = Math.sqrt((ratio16_9 * ratio16_9)/((ratio16_9 * ratio16_9) + 1));
+		var heightPerDiagonal21 = Math.sqrt(1/((ratio21_9 * ratio21_9) + 1));
+		var widthPerDiagonal21 = Math.sqrt((ratio21_9 * ratio21_9)/((ratio21_9 * ratio21_9) + 1));
+		var li =  [32, 40, 42, 49, 50, 55, 60, 65, 75];
+	        for (var i = 0; i < li.length; i++) {
+                    var fDiagon = li[i] * cmPrInch;
+		    var fHeight = Math.sqrt((fDiagon * fDiagon)/((ratio16_9 * ratio16_9) + 1));
+		    var fWidth = Math.sqrt((fDiagon * fDiagon * ratio16_9 * ratio16_9)/((ratio16_9 * ratio16_9) + 1));
+		    var fWidth2 = ratio16_9 * fHeight;
+		    var sInch = (RoundN(li[i], 5)).toString(10);
+		    var sDiagonal = (RoundN(li[i] * cmPrInch, 5)).toString(10);
+		    var sHeight16 = (RoundN(fHeight, 5)).toString(10);
+		    var sWidth16 = (RoundN(fWidth, 5)).toString(10);
+		    var sHeight21 = (RoundN(fDiagon * heightPerDiagonal21, 5)).toString(10);
+		    var sWidth21 = (RoundN(fDiagon * widthPerDiagonal21, 5)).toString(10);
+		    self.document.write("<tr><td>" + sInch + "</td><td>" + sDiagonal + "</td><td>" + sHeight16 + "</td><td>" + sWidth16 + "</td><td>" + sHeight21 + "</td><td>" + sWidth21 + "</td></tr>");
+		}
+            </SCRIPT>
+        </table>
+    </p>
+</body></html>

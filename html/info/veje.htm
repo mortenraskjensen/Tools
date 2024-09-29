@@ -1,0 +1,682 @@
+<html><head><title>Meteorer (regne eksempel)</title>
+  <link  rel="canonical"   href="https://physics.info/constants/">
+  <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/walnut.css"-->
+  <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/walpaper.css" media="print"-->
+  <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/physics.css"-->
+
+ <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/physics.css"-->
+<style>
+
+/* maths group */
+
+     .maths                 { text-align: center; white-space: nowrap; }
+table.maths caption,
+table.maths th              { text-decoration: underline; }
+table.maths tr,
+table.maths td              { background-color: transparent !important; border-radius: 0em !important; text-transform: none !important;
+                              border: none !important; padding: 0em !important; margin: 0em !important; vertical-align: middle; } /* always boring, even when nested */
+table.maths td.solidus      { border-bottom-style: solid !important; border-bottom-width: 0.083em !important; }
+table.maths td.absleft      { border-left-style: solid !important; border-left-width: 0.083em !important; border-radius: 0em !important; }
+table.maths td.absright     { border-right-style: solid !important; border-right-width: 0.083em !important; border-radius: 0em !important; }
+table.maths td.spacer       { width: 4em; }
+
+table.maths td.limupper,
+table.maths td.limlower     { font-size: 66.6%; line-height: 66.6%; overflow: visible; }
+table.maths td.limupper     { text-align: right; vertical-align: bottom !important; }
+table.maths td.limlower     { text-align:  left; vertical-align: top    !important; }
+table.maths td.split        { line-height: 1em !important; text-align: left !important; } /* two piece symbols */
+table.maths td.split .limit { font-size: 66.6%; } /* NEW METHOD */
+
+.maths     { font-family: "Palatino Linotype", Palatino, "Book Antiqua", serif; }
+table.maths th,
+table.maths caption,
+.withunits { font-family: "Helvetica Neue", Helvetica, Ariel, sans-serif; }
+
+/* new maths */
+
+.fraction,
+.isotope,
+.tensor       { display: inline-flex; flex-direction: column; vertical-align: 25%; padding: 0em 0.083em; }
+.isotope      { align-items: flex-end;   }
+.fraction     { align-items: center;     }
+.tensor       { align-items: flex-start; }
+.tensor sub,
+.tensor sup,
+.isotope sub,
+.isotope sup,
+.fraction sub,
+.fraction sup { vertical-align: 0em; line-height: 1.25em; }
+.fraction sub { border-top:     0.083em solid black; }
+sub sub,
+sub sup,
+sup sub,
+sup sup { border: none !important; display: inline !important; line-height: 0em; padding: 0em; }
+sub sub,
+sup sub { vertical-align:-0.25em !important; }
+sub sup,
+sup sup { vertical-align: 0.50em !important; }
+
+</style>
+
+<SCRIPT>
+
+function rens_url(sUrl_orig) {
+var ch_nr;
+var sUrl = sUrl_orig;
+if (sUrl.substr(0,7)=="file://") sUrl=sUrl.substr(7);
+if((ch_nr=sUrl.indexOf('?',ch_nr))>0){
+	if(sUrl.indexOf('=',ch_nr)>0) sUrl=sUrl.substr(0,ch_nr) + "#" + sUrl.substr(sUrl.indexOf('=',ch_nr)+1);
+	else sUrl=sUrl.substr(0,ch_nr) + "#" + sUrl.substr(ch_nr+1)
+}
+else if(! (ch_nr=sUrl.indexOf('#',ch_nr))>0) sUrl=sUrl + "#100";
+return(sUrl);
+}
+
+function Log( y ) {
+var n = 0;
+	if((y*y)>1){while(y*y>100.0){y *= .1;n++;}}
+	else{while(y*y<.01){y *= 10.0;n--;}}
+	return(n);
+}
+
+
+
+
+function RoundN(x, n) {
+    var y = x;
+    var f = 1;
+    if (x == 0)
+	return(0);
+    var m = Log(x);
+    if (m < 0)
+        m -= 1;
+    if (n > m) {
+        for (var i = 0; i < n - m - 1; i++) {
+            f *= 10
+        }
+        y *= f;
+        y = Math.floor(y + 0.5);
+        y /= f;
+        return (y);
+    }
+    else {
+        for (var i = 0; i < m - n + 1; i++) {
+            f *= 10
+        }
+        y /= f;
+        y = Math.floor(y + 0.5);
+        y *= f;
+        return (y);
+    }
+}
+
+
+
+
+var adr = rens_url(document.URL);
+
+
+var ch_nr = adr.indexOf('#',0);
+var argument = adr.substr(ch_nr+1);
+
+adr = adr.substr(0,ch_nr);
+
+max_tal=parseInt(argument,10);if(! max_tal>0) max_tal=100;
+</SCRIPT>
+</head><body>
+    <h3>Traffic Throughput</h3>
+    <h4>Eg when using Connected Autonomous Vehicles (CAV) or just human driven cars</h4>
+    <table>
+        <tr><td>v</td><td>Vehicle velocity in meter per second</td><td></td></tr>
+        <tr><td>l<sub>c</sub></td><td>Vehicle mean length in meter</td><td></td></tr>
+        <tr><td>T</td><td>Vehicles throughput in cars per hour per lane</td><td></td></tr>
+        <tr><td>&psi;</td><td>Vehicles flux in cars per second per lane</td><td></td></tr>
+        <tr><td>b</td><td>Distance between vehicles in meter</td><td></td></tr>
+        <tr><td>t<sub>r</sub></td><td>Reaction time in second</td><td>
+                <math>
+                    <mfrac>
+                        <mrow>
+                            <mi>b</mi>
+                        </mrow>
+                        <mrow>
+                            <mi>v</mi>
+                        </mrow>
+                    </mfrac>
+                </math>
+		</td></tr>
+        <tr><td>d</td><td>Vehicles density in cars per 1000 meter per lane</td><td></td></tr>
+    </table>
+
+
+    <p>
+        Throughput 
+		<math>
+		    <mi>&psi;</mi>
+		    <mi> = </mi>
+                    <mfrac>
+                        <mrow>
+			    <mi>v</mi>
+                        </mrow>
+                        <mrow>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			    <mi>+</mi>
+			    <mi>v</mi> 
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+                        </mrow>
+                    </mfrac>
+                </math>
+	cars/s</br></br>
+		<math>
+                    <mfrac>
+                        <mrow>
+                            <mi>&Delta;</mi> 
+			    <mi>&psi;</mi>
+                        </mrow>
+                        <mrow>
+			    <mi>&Delta;</mi>
+			    <mi>v</mi> 
+                        </mrow>
+                    </mfrac>
+                </math>
+          = 
+		<math>
+                    <mfrac>
+                        <mrow>
+                            <mi>1</mi> 
+                        </mrow>
+                        <mrow>
+			    <mi>&Delta;</mi>
+			    <mi>v</mi> 
+                        </mrow>
+                    </mfrac>
+                <mi>(</mi>
+                    <mfrac>
+                        <mrow>
+			    <mi>(&Delta;v+v)</mi>
+                        </mrow>
+                        <mrow>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			    <mi>+</mi>
+			    <mi>(&Delta;v+v)</mi>
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+                        </mrow>
+                    </mfrac>
+                <mi>-</mi>
+                    <mfrac>
+                        <mrow>
+			    <mi>v</mi>
+                        </mrow>
+                        <mrow>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			    <mi>+</mi>
+			    <mi>v</mi> 
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+                        </mrow>
+                    </mfrac>
+                <mi>) = </mi>
+                    <mfrac>
+                        <mrow>
+		            <mi>(</mi>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			    <mi>+</mi>
+			    <mi>v</mi> 
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+			    <mi>)(&Delta;v+v)</mi>
+			    <mi>-</mi>
+			    <mi>(</mi>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			    <mi>+</mi>
+			    <mi>(&Delta;v+v)</mi>
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+			    <mi>)v</mi>
+                        </mrow>
+                        <mrow>
+			    <mi>&Delta;</mi>
+			    <mi>v</mi> 
+		            <mi>(</mi>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			    <mi>+</mi>
+			    <mi>(&Delta;v+v)</mi>
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+		            <mi>)</mi>
+		            <mi>(</mi>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			    <mi>+</mi>
+			    <mi>v</mi> 
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+		            <mi>)</mi>
+                        </mrow>
+                    </mfrac>
+                </math> </br></br>
+		<math>
+                    <mfrac>
+                        <mrow>
+                            <mi>&Delta;</mi> 
+			    <mi>&psi;</mi>
+                        </mrow>
+                        <mrow>
+			    <mi>&Delta;</mi>
+			    <mi>v</mi> 
+                        </mrow>
+                    </mfrac>
+		    <mi>=</mi> 
+                    <mfrac>
+                        <mrow>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			    <mi>&Delta;v</mi>
+		            <mi>+</mi>
+			    <mi>v</mi>
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+			    <mi>&Delta;v</mi>
+		            <mi>+</mi>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			    <mi>v</mi>
+		            <mi>+</mi>
+                            <msup>
+		                <mi>v</mi>
+		                <mn>2</mn>
+		            </msup>
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+		            <mi>-</mi>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			    <mi>v</mi>
+		            <mi>-</mi>
+			    <mi>&Delta;v</mi>
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+			    <mi>v</mi>
+		            <mi>-</mi>
+                            <msup>
+		                <mi>v</mi>
+		                <mn>2</mn>
+		            </msup>
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+                        </mrow>
+                        <mrow>
+			    <mi>&Delta;</mi>
+			    <mi>v</mi> 
+		            <mi>(</mi>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			    <mi>+</mi>
+			    <mi>(&Delta;v+v)</mi>
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+		            <mi>)</mi>
+		            <mi>(</mi>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			    <mi>+</mi>
+			    <mi>v</mi> 
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+		            <mi>)</mi>
+                        </mrow>
+                    </mfrac>
+		    <mi>=</mi> 
+                    <mfrac>
+                        <mrow>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+                        </mrow>
+                        <mrow>
+		            <mi>(</mi>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			    <mi>+</mi>
+			    <mi>(&Delta;v+v)</mi>
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+		            <mi>)</mi>
+		            <mi>(</mi>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			    <mi>+</mi>
+			    <mi>v</mi> 
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+		            <mi>)</mi>
+                        </mrow>
+                    </mfrac>
+                </math>
+		</br></br>
+		<math>
+                    <mfrac>
+                        <mrow>
+                            <mi>&Delta;</mi> 
+			    <mi>&psi;</mi>
+                        </mrow>
+                        <mrow>
+			    <mi>&Delta;</mi>
+			    <mi>v</mi> 
+                        </mrow>
+                    </mfrac>
+		    <mi>=</mi> 
+                    <mfrac>
+                        <mrow>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+                        </mrow>
+                        <mrow>
+		            <mi>(</mi>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			    <mi>+</mi>
+			    <mi>v</mi> 
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+                            <msup>
+		                <mi>)</mi>
+		                <mn>2</mn>
+		            </msup>
+                        </mrow>
+                    </mfrac>
+	            <mrow>
+        	        <mfenced>
+                	    <mtable>
+	                        <mtr><mtd><mi>lim</mi></mtd></mtr>
+        	                <mtr><mtd>
+				   <mi>&Delta;</mi>
+				   <mi>v</mi>
+		                   <mi> &rarr; 0</mi>
+				</mtd></mtr>
+                	    </mtable>
+	                </mfenced>
+        	    </mrow>
+                </math>
+
+		</br></br>
+        Velocity</br>
+		<math>
+		    <mi>v</mi>
+		    <mi> = </mi>
+                    <mfrac>
+                        <mrow>
+			    <mi>&psi;</mi>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+                        </mrow>
+                        <mrow>
+			    <mi>(</mi>
+			    <mi>1</mi>
+			    <mi>-</mi>
+			    <mi>&psi;</mi>                            
+			    <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+			    <mi>)</mi>
+                        </mrow>
+                    </mfrac>
+                </math>
+	m/s 		</br></br>
+
+		<math>
+    		   <msub>
+		        <mi>v</mi>
+		        <mn>min</mn>
+		   </msub>
+		    <mi> = </mi>
+		    <mi>&psi;</mi>
+                    <msub>
+	                <mi>l</mi>
+	                <mn>c</mn>
+	            </msub>
+                </math>
+	m/s 		
+		<math>
+	            <mrow>
+        	        <mfenced>
+                	    <mtable>
+	                        <mtr><mtd><mi>lim</mi></mtd></mtr>
+        	                <mtr><mtd>
+				   <msub>
+				        <mi>t</mi>
+				        <mn>r</mn>
+				   </msub>
+		                   <mi> &rarr; 0</mi>
+				</mtd></mtr>
+                	    </mtable>
+	                </mfenced>
+        	    </mrow>
+		</math>
+		</br></br>
+
+        Reaction time</br>
+		<math>
+		    <msub>
+	                <mi>t</mi>
+	                <mn>r</mn>
+	            </msub>
+		    <mi> = </mi>
+                    <mfrac>
+                        <mrow>
+			    <mi>v</mi>
+			    <mi>-</mi>
+			    <mi>&psi;</mi>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+                        </mrow>
+                        <mrow>
+			    <mi>&psi;</mi>                            
+			    <mi>v</mi>
+                        </mrow>
+                    </mfrac>
+                </math>
+	s 		</br></br>
+
+		<math>
+    		   <msub>
+		        <mi>t</mi>
+		        <mn>r max</mn>
+		   </msub>
+		    <mi> = </mi>
+                    <mfrac>
+                        <mrow>
+			    <mi>1</mi>
+                        </mrow>
+                        <mrow>
+			    <mi>&psi;</mi>                            
+                        </mrow>
+                    </mfrac>
+                </math>
+	s 		
+		<math>
+	            <mrow>
+        	        <mfenced>
+                	    <mtable>
+	                        <mtr><mtd><mi>lim</mi></mtd></mtr>
+        	                <mtr><mtd>
+				   <mi>v</mi>
+		                   <mi> &rarr; &infin;</mi>
+				</mtd></mtr>
+                	    </mtable>
+	                </mfenced>
+        	    </mrow>
+		</math>
+		</br></br>
+
+    </p>
+    <p>
+        Lowest velocity and longest reaction time for different throughput (car/hour)
+			(<math>
+			    <mi>3600</mi>
+			    <mi>&psi;</mi>
+			</math>)</br>
+	 and 
+			<math>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			</math> = 5 m
+        <table border="1">
+            <tr><td>Throughput</td><td>v<sub>min</sub></td><td>t<sub>r max</sub></td><td>b<sub>v=30</sub></td><td>t<sub>r v=30</sub></td></tr>
+            <SCRIPT>
+		var lc = 5.0;
+		var v0 = 30.0;
+		var li = [1000,1600,2000,3000,4000,5000,6000,7000,8000,12000];
+	        for (var i = 0; i < li.length; i++) {
+		    var sThroughput = (RoundN(li[i], 5)).toString(10);
+		    var sVmin = (RoundN(lc*li[i]/3600.0, 5)).toString(10);
+		    var sTmax = (RoundN(3600.0/li[i], 5)).toString(10);
+		    var d30 = ((3600.0*v0) - (li[i]*lc))/li[i];
+		    var sT30 = (RoundN(d30/v0, 5)).toString(10);
+		    var sD30 = (RoundN(d30, 5)).toString(10);
+		    self.document.write("<tr><td>" + sThroughput + "</td><td>"
+						   + sVmin + "</td><td>"
+						   + sTmax + "</td><td>"
+						   + sD30 + "</td><td>"
+						   + sT30 + "</td></tr>");
+		}
+            </SCRIPT>
+        </table>
+	More than 2000 cars/hour will require automation and/or conectivity between cars.</br>
+	The 12000 cars/hour vas mentioned in the paper <a href="https://www.researchgate.net/publication/308027015_Freeway_Lane_Management_Approach_In_Mixed_Traffic_Environment_with_Connected_Autonomous_Vehicles" >Freeway Lane Management ..</a>.
+    </p>
+    <p>
+        Throughput (car/hour) for diferent velocities.</br>
+			<math>
+                            <msub>
+		                <mi>l</mi>
+		                <mn>c</mn>
+		            </msub>
+			</math> = 5 m
+	 and 
+			<math>
+                            <msub>
+		                <mi>t</mi>
+		                <mn>r</mn>
+		            </msub>
+			</math> = 2 s
+        <table border="1">
+            <tr><td>v (m/s)</td><td>v (km/h)</td><td>T (cars/h)</td><td>
+		<math>
+                    <mfrac>
+                        <mrow>
+                            <mi>&Delta;</mi> 
+			    <mi>T</mi>
+                        </mrow>
+                        <mrow>
+			    <mi>&Delta;</mi>
+			    <mi>v</mi> 
+                        </mrow>
+                    </mfrac><mi>(</mi>
+                    <mfrac>
+                        <mrow>
+                            <mi>cars/h</mi> 
+                        </mrow>
+                        <mrow>
+			    <mi>m/s</mi>
+                        </mrow>
+                    </mfrac><mi>)</mi>
+		</math>
+	    </td></tr>
+            <SCRIPT>
+		var lc = 5.0;
+		var tr = 2.0;
+		var li =  [1, 2, 5,10,15,20,30,40,41];
+	        for (var i = 0; i < li.length; i++) {
+		    var sV = (RoundN(li[i], 5)).toString(10);
+		    var sVkmt = (RoundN(li[i] * 3.6, 5)).toString(10);
+		    var sThroughput = (RoundN(3600.0*li[i]/(lc+(li[i]*tr)), 5)).toString(10);
+		    var sTemp = li[i]*tr + lc;
+		    var sDelta = (RoundN(3600.0*lc/(sTemp*sTemp), 5)).toString(10);
+		    self.document.write("<tr><td>" + sV + "</td><td>" + sVkmt + "</td><td>" + sThroughput + "</td><td>" + sDelta + "</td></tr>");
+		}
+		self.document.write("<tr><td>&infin;</td><td>&infin;</td><td>" + (RoundN(3600.0/tr, 5)).toString(10) + "</td><td>0</td></tr>");
+            </SCRIPT>
+        </table>
+	The last column gives an estimate for how many cars more we get through by incresing v.
+    </p>
+</body></html>

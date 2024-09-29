@@ -1,0 +1,866 @@
+<html><head><title>Jorden</title>
+  <link  rel="canonical"   href="https://physics.info/constants/">
+  <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/walnut.css"-->
+  <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/walpaper.css" media="print"-->
+  <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/physics.css"-->
+
+ <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/physics.css"-->
+
+<style type="text/css">
+figcaption { font-size: 8px; color: blue; }
+</style>
+<style>
+
+/* maths group */
+
+     .maths                 { text-align: center; white-space: nowrap; }
+table.maths caption,
+table.maths th              { text-decoration: underline; }
+table.maths tr,
+table.maths td              { background-color: transparent !important; border-radius: 0em !important; text-transform: none !important;
+                              border: none !important; padding: 0em !important; margin: 0em !important; vertical-align: middle; } /* always boring, even when nested */
+table.maths td.solidus      { border-bottom-style: solid !important; border-bottom-width: 0.083em !important; }
+table.maths td.absleft      { border-left-style: solid !important; border-left-width: 0.083em !important; border-radius: 0em !important; }
+table.maths td.absright     { border-right-style: solid !important; border-right-width: 0.083em !important; border-radius: 0em !important; }
+table.maths td.spacer       { width: 4em; }
+
+table.maths td.limupper,
+table.maths td.limlower     { font-size: 66.6%; line-height: 66.6%; overflow: visible; }
+table.maths td.limupper     { text-align: right; vertical-align: bottom !important; }
+table.maths td.limlower     { text-align:  left; vertical-align: top    !important; }
+table.maths td.split        { line-height: 1em !important; text-align: left !important; } /* two piece symbols */
+table.maths td.split .limit { font-size: 66.6%; } /* NEW METHOD */
+
+.maths     { font-family: "Palatino Linotype", Palatino, "Book Antiqua", serif; }
+table.maths th,
+table.maths caption,
+.withunits { font-family: "Helvetica Neue", Helvetica, Ariel, sans-serif; }
+
+/* new maths */
+
+.fraction,
+.isotope,
+.tensor       { display: inline-flex; flex-direction: column; vertical-align: 25%; padding: 0em 0.083em; }
+.isotope      { align-items: flex-end;   }
+.fraction     { align-items: center;     }
+.tensor       { align-items: flex-start; }
+.tensor sub,
+.tensor sup,
+.isotope sub,
+.isotope sup,
+.fraction sub,
+.fraction sup { vertical-align: 0em; line-height: 1.25em; }
+.fraction sub { border-top:     0.083em solid black; }
+sub sub,
+sub sup,
+sup sub,
+sup sup { border: none !important; display: inline !important; line-height: 0em; padding: 0em; }
+sub sub,
+sup sub { vertical-align:-0.25em !important; }
+sub sup,
+sup sup { vertical-align: 0.50em !important; }
+
+</style>
+
+<SCRIPT>
+
+function rens_url(sUrl_orig) {
+var ch_nr;
+var sUrl = sUrl_orig;
+if (sUrl.substr(0,7)=="file://") sUrl=sUrl.substr(7);
+if((ch_nr=sUrl.indexOf('?',ch_nr))>0){
+	if(sUrl.indexOf('=',ch_nr)>0) sUrl=sUrl.substr(0,ch_nr) + "#" + sUrl.substr(sUrl.indexOf('=',ch_nr)+1);
+	else sUrl=sUrl.substr(0,ch_nr) + "#" + sUrl.substr(ch_nr+1)
+}
+else if(! (ch_nr=sUrl.indexOf('#',ch_nr))>0) sUrl=sUrl + "#100";
+return(sUrl);
+}
+
+function Log( y ) {
+var n = 0;
+	if((y*y)>1){while(y*y>100.0){y *= .1;n++;}}
+	else{while(y*y<.01){y *= 10.0;n--;}}
+	return(n);
+}
+
+
+
+
+function RoundN(x, n) {
+    var y = x;
+    var f = 1;
+    if (x == 0)
+	return(0);
+    var m = Log(x);
+    if (m < 0)
+        m -= 1;
+    if (n > m) {
+        for (var i = 0; i < n - m - 1; i++) {
+            f *= 10
+        }
+        y *= f;
+        y = Math.floor(y + 0.5);
+        y /= f;
+        return (y);
+    }
+    else {
+        for (var i = 0; i < m - n + 1; i++) {
+            f *= 10
+        }
+        y /= f;
+        y = Math.floor(y + 0.5);
+        y *= f;
+        return (y);
+    }
+}
+
+
+
+
+var adr = rens_url(document.URL);
+
+
+var ch_nr = adr.indexOf('#',0);
+var argument = adr.substr(ch_nr+1);
+
+adr = adr.substr(0,ch_nr);
+
+max_tal=parseInt(argument,10);if(! max_tal>0) max_tal=100;
+
+var rm = 6371001;
+var cosalpha = 0.0
+
+function calc(latitude1, longitude1, latitude2, longitude2) {
+  let theta1 = Math.PI *(90.0 - latitude1)/180.0;
+  let theta2 = Math.PI *(90.0 - latitude2)/180.0;
+  let phi1 = Math.PI * longitude1 / 180.0;
+  let phi2 = Math.PI * longitude2 / 180.0;
+
+  let cosalpha = (Math.sin(theta1)*Math.cos(phi1)*Math.sin(theta2)*Math.cos(phi2)) + (Math.sin(theta1)*Math.sin(phi1)*Math.sin(theta2)*Math.sin(phi2)) + (Math.cos(theta1)*Math.cos(theta2));
+
+  return (rm*Math.acos(cosalpha))
+}
+
+function loadGoogle(id, lat, long) {
+    const myArr = id.value.split(",");
+    if (myArr.length == 2)
+    {
+	document.getElementById(lat).value = myArr[0];
+	document.getElementById(long).value = myArr[1]; 
+    }
+    id.value = "";
+    opdat(lat);
+}
+
+function opdat(id) {
+  let dist = calc(
+	document.getElementById('Latitude1').value,
+	document.getElementById('Longitude1').value, 
+	document.getElementById('Latitude2').value,
+	document.getElementById('Longitude2').value);
+  document.getElementById('Resultat').innerHTML=RoundN(dist/1000.0, 6);
+}
+
+function setAll() {
+  document.getElementById('Latitude1').value=55.67572;
+  document.getElementById('Longitude1').value=12.57044;
+  document.getElementById('Latitude2').value=57.71361;
+  document.getElementById('Longitude2').value=10.55062;
+}
+</SCRIPT>
+<!-- =========================================================================================== -->
+<!-- =========================================================================================== -->
+</head><body>
+    <h1>Jorden</h1>
+<figure><img src="earth-graticules.png" height="400"/><figcaption><a href="https://www.samples.ghbmaps.com/graticules-grids/">GhbMaps</a></figcaption></figure>
+
+
+<p>
+De vandrette streger på en globus hedder breddegrader.<br/>
+De går hele jorden rundt. Ved ækvator hedder breddegraden 0.<br/>
+Breddegraderne går herfra nordpå til bredde 90 (nordlig bredde) og sydpå til bredde 90 (sydlig bredde).<br/>
+En breddegrad kan deles op i minutter. 60 min. = 1 breddegrad.<br/>
+De lodrette streger på globussen er længdegrader.<br/>
+De tælles fra længde 0, som ligger ved Greenwich i England.<br/>
+Går man mod øst (højre)herfra, hedder det østlig længde, som går til 180 grader.<br/>
+Mod vest hedder det vestlig længde, som ligeledes går til 180 grader.<br/>
+Linien ved længde 180 kaldes datolinien.<br/>
+En længdegrad kan ligeledes opdeles i 60 minutter.<br/>
+<strong>København</strong>, Danmarks hovedstad,<br/>
+ 55,67 grader nordlig bredde og 12,58 grader østlig længde<br/>
+ 55.67 degrees Latitude and 12,58 degrees Longitude
+<strong>55.67°N</strong>&nbsp;(breddegrad) og&nbsp;<strong>12.58°E</strong>&nbsp;(længdegrad).
+(<a href="https://www.forsejl.dk/cd/sider/natur/bredde_lang.html">Forsejl.dk</a>
+<a href="https://renbaad.dk/blog/guide-bredde-og-laengdegrad/">Renbåd.dk</a>)
+</p>
+    <h3>Sfæriske kordinater</h3>
+    <h4></h4>
+<figure><img src="Spherical_coordinates.webp" height="300"/><figcaption>
+<a href="https://www.slideshare.net/slideshow/spherical-coordinates-system/95592576/">Slideshare</a></figcaption></figure>
+<p>
+Omregning imellem sfæriske og jord kordinater (her er Sydlig bredde og vestlig længde regnet negativ ligesom Google kordinater)<br/>
+Nulpunkter i det sfæriske kordinatsystem vælges så centrum er i jordens centrum, &#x03B8; = 0 er på nordpolen og i Greenwich er &#x03D5; = 0.
+</p>
+<p>
+
+<math>
+  <mrow>
+    <mi>&#x03B8;</mi> 
+  </mrow>
+  <mrow>
+    <mi> = &#x3C0; </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi>(90 - Bredegrad)</mi> 
+      </mrow>
+      <mrow>
+	<mi>180</mi> 
+      </mrow>
+    </mfrac>
+  </mrow>
+</math><br/>
+</p>
+<p>
+<math>
+  <mrow>
+    <mi>&#x03D5;</mi> 
+  </mrow>
+  <mrow>
+    <mi> = &#x3C0; </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> Længdegrad </mi> 
+      </mrow>
+      <mrow>
+	<mi>180</mi> 
+      </mrow>
+    </mfrac>
+  </mrow>
+</math>
+</p>
+<p>
+For at finde afstanden imellem 2 kordinater (fugle flugtslinje), 
+kan man udnytte at vinkler kan omregnes til bue længder.<br/>
+Og vinklen &#x03B1; imellem 2 vektorer 
+<math>
+	<msub>
+	  <mover>
+	    <mi>v</mi>
+ 	    <mo>&#x2192;<!--RIGHTWARDS ARROW--></mo>
+          </mover>
+	  <mn>1</mn>
+	</msub>
+<mrow>
+  <mo>&lt;</mo>
+  <mrow>
+	<msub>
+	  <mi>x</mi>
+ 	  <mn>1</mn>
+	</msub>
+    <mo>,</mo>
+	<msub>
+	  <mi>y</mi>
+ 	  <mn>1</mn>
+	</msub>
+    <mo>,</mo>
+	<msub>
+	  <mi>z</mi>
+ 	  <mn>1</mn>
+	</msub>
+  </mrow>
+  <mo>&gt;</mo>
+</mrow>
+</math>
+and
+<math>
+	<msub>
+	  <mover>
+	    <mi>v</mi>
+ 	    <mo>&#x2192;<!--RIGHTWARDS ARROW--></mo>
+          </mover>
+	  <mn>2</mn>
+	</msub>
+<mrow>
+  <mo>&lt;</mo>
+  <mrow>
+	<msub>
+	  <mi>x</mi>
+ 	  <mn>2</mn>
+	</msub>
+    <mo>,</mo>
+	<msub>
+	  <mi>y</mi>
+ 	  <mn>2</mn>
+	</msub>
+    <mo>,</mo>
+	<msub>
+	  <mi>z</mi>
+ 	  <mn>2</mn>
+	</msub>
+  </mrow>
+  <mo>&gt;</mo>
+</mrow>
+</math>
+:<br/>
+</p>
+<math>
+  <mrow>
+    <mi>cos(&#x03B1;)</mi> 
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+	<msub>
+	  <mover>
+	    <mi>v</mi>
+ 	    <mo>&#x2192;<!--RIGHTWARDS ARROW--></mo>
+          </mover>
+	  <mn>1</mn>
+	</msub>
+	<mi>&#x2219;</mi>
+	<msub>
+	  <mover>
+	    <mi>v</mi>
+ 	    <mo>&#x2192;<!--RIGHTWARDS ARROW--></mo>
+          </mover>
+	  <mn>2</mn>
+	</msub>
+      </mrow>
+      <mrow>
+	<mi>&#x2225;</mi>
+	<msub>
+	  <mover>
+	    <mi>v</mi>
+ 	    <mo>&#x2192;<!--RIGHTWARDS ARROW--></mo>
+          </mover>
+	  <mn>1</mn>
+	</msub>
+	   <mi>&#x2225;</mi><mi>&#x2225;</mi>
+	<msub>
+	  <mover>
+	    <mi>v</mi>
+ 	    <mo>&#x2192;<!--RIGHTWARDS ARROW--></mo>
+          </mover>
+	  <mn>2</mn>
+	</msub>
+	<mi>&#x2225;</mi> 
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+                    <mrow>
+			<msub>
+			  <mi>x</mi>
+			  <mn>1</mn>
+			</msub>
+			<msub>
+			  <mi>x</mi>
+			  <mn>2</mn>
+			</msub>
+                        <mi>+</mi>
+			<msub>
+			  <mi>y</mi>
+			  <mn>1</mn>
+			</msub>
+			<msub>
+			  <mi>y</mi>
+			  <mn>2</mn>
+			</msub>
+                        <mi>+</mi>
+                        <msub>
+                            <mi>z</mi>
+                            <mn>1</mn>
+                        </msub>
+                        <msub>
+                            <mi>z</mi>
+                            <mn>2</mn>
+                        </msub>
+                    </mrow>
+	  <mrow>
+            <msqrt>
+			<msubsup>
+			  <mi>x</mi>
+			  <mn>1</mn>
+			  <mn>2</mn>
+			</msubsup>
+                        <mi>+</mi>
+			<msubsup>
+			  <mi>y</mi>
+			  <mn>1</mn>
+			  <mn>2</mn>
+			</msubsup>
+                        <mi>+</mi>
+			<msubsup>
+			  <mi>z</mi>
+			  <mn>1</mn>
+			  <mn>2</mn>
+			</msubsup>
+            </msqrt>
+            <msqrt>
+			<msubsup>
+			  <mi>x</mi>
+			  <mn>2</mn>
+			  <mn>2</mn>
+			</msubsup>
+                        <mi>+</mi>
+			<msubsup>
+			  <mi>y</mi>
+			  <mn>2</mn>
+			  <mn>2</mn>
+			</msubsup>
+                        <mi>+</mi>
+			<msubsup>
+			  <mi>z</mi>
+			  <mn>2</mn>
+			  <mn>2</mn>
+			</msubsup>
+            </msqrt>
+
+	</mrow>
+    </mfrac>
+  </mrow>
+</math>
+<p>
+Sfæriske kordinater kan omskrives til kartesiske kordinater x,y,z (se figur)<br/>
+<math>
+  <mrow>
+    <mo>&lt;</mo>
+    <mrow>
+      <mi>x</mi>
+      <mo>,</mo>
+      <mi>y</mi>
+      <mo>,</mo>
+      <mi>z</mi>
+    </mrow>
+    <mo>&gt;</mo>
+  </mrow>
+</math>
+<math>
+  <mrow>
+      <mi>x</mi><mo>=</mo><mi>r sin(&#x03B8;) cos(&#x03D5;)</mi>
+  </mrow>
+  <mrow>
+      <mo>,</mo>
+  </mrow>
+  <mrow>
+      <mi>y</mi><mo>=</mo><mi>r sin(&#x03B8;) sin(&#x03D5;)</mi>
+  </mrow>
+  <mrow>
+      <mo>,</mo>
+  </mrow>
+  <mrow>
+      <mi>z</mi><mo>=</mo><mi>r cos(&#x03B8;)</mi>
+  </mrow>
+</math>
+</p>
+<p>
+Længden på sfæriske vektorer er r, men vi prøver lige alligevel:<br/>
+<math>
+  <mrow>
+        <mi>&#x2225;</mi>
+	<mover>
+	  <mi>v</mi>
+ 	  <mo>&#x2192;<!--RIGHTWARDS ARROW--></mo>
+        </mover>
+	<mi>&#x2225;</mi> 
+  </mrow>
+  <mrow>
+    <mo>=</mo>
+  </mrow>
+  <mrow>
+            <msqrt>
+			<msup>
+			  <mi>x</mi>
+			  <mn>2</mn>
+			</msup>
+                        <mi>+</mi>
+			<msup>
+			  <mi>y</mi>
+			  <mn>2</mn>
+			</msup>
+                        <mi>+</mi>
+			<msup>
+			  <mi>z</mi>
+			  <mn>2</mn>
+			</msubsup>
+            </msqrt>
+
+  </mrow>
+  <mrow>
+    <mo>=</mo>
+  </mrow>
+  <mrow>
+    <msqrt>
+	<msup><mi>r</mi><mn>2</mn></msup>
+	<msup><mi>sin</mi><mn>2</mn></msup><mi>(&#x03B8;)</mi>
+	<msup><mi>cos</mi><mn>2</mn></msup><mi>(&#x03D5;)</mi>
+      <mi>+</mi>
+	<msup><mi>r</mi><mn>2</mn></msup>
+	<msup><mi>sin</mi><mn>2</mn></msup><mi>(&#x03B8;)</mi>
+	<msup><mi>sin</mi><mn>2</mn></msup><mi>(&#x03D5;)</mi>
+      <mi>+</mi>
+	<msup><mi>r</mi><mn>2</mn></msup>
+	<msup><mi>cos</mi><mn>2</mn></msup><mi>(&#x03B8;)</mi>
+    </msqrt>
+  </mrow>
+  <mrow>
+    <mo>=</mo>
+  </mrow>
+  <mrow>
+    <mi>r</mi>
+    <msqrt>
+	<msup><mi>sin</mi><mn>2</mn></msup><mi>(&#x03B8;)</mi>
+	<mo>(</mo>
+	<msup><mi>cos</mi><mn>2</mn></msup><mi>(&#x03D5;)</mi>
+      <mi>+</mi>
+	<msup><mi>sin</mi><mn>2</mn></msup><mi>(&#x03D5;)</mi>
+	<mo>)</mo>
+      <mi>+</mi>
+	<msup><mi>cos</mi><mn>2</mn></msup><mi>(&#x03B8;)</mi>
+    </msqrt>
+  </mrow>
+</math>
+</p>
+<p>
+Og panser formlen (Pythagoras)
+<math>
+  <mrow>
+	<msup><mi>cos</mi><mn>2</mn></msup><mi>(&#x03B1;)</mi>
+	<mi>+</mi>
+	<msup><mi>sin</mi><mn>2</mn></msup><mi>(&#x03B1;)</mi>
+	<mi>=</mi>
+	<mn>1</mn>
+  </mrow>
+</math> brugt 2 gange
+</p>
+<p>
+<math>
+  <mrow>
+        <mi>&#x2225;</mi>
+	<mover>
+	  <mi>v</mi>
+ 	  <mo>&#x2192;<!--RIGHTWARDS ARROW--></mo>
+        </mover>
+	<mi>&#x2225;</mi> 
+  </mrow>
+  <mrow>
+    <mo>=</mo>
+  </mrow>
+  <mrow>
+    <mi>r</mi>
+    <msqrt>
+	<msup><mi>sin</mi><mn>2</mn></msup><mi>(&#x03B8;)</mi>
+	<mn>(1)</mn>
+      <mi>+</mi>
+	<msup><mi>cos</mi><mn>2</mn></msup><mi>(&#x03B8;)</mi>
+    </msqrt>
+  </mrow>
+  <mrow>
+    <mo>=</mo>
+  </mrow>
+  <mrow>
+    <mi>r</mi>
+    <msqrt>
+	<mn>(1)</mn>
+    </msqrt>
+  </mrow>
+  <mrow>
+    <mo>=</mo>
+  </mrow>
+  <mrow>
+    <mi>r</mi>
+  </mrow>
+</math>
+</p>
+
+<p></p>
+<math>
+  <mrow>
+    <mi>cos(&#x03B1;)</mi> 
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+	<msub>
+	  <mover>
+	    <mi>v</mi>
+ 	    <mo>&#x2192;<!--RIGHTWARDS ARROW--></mo>
+          </mover>
+	  <mn>1</mn>
+	</msub>
+	<mi>&#x2219;</mi>
+	<msub>
+	  <mover>
+	    <mi>v</mi>
+ 	    <mo>&#x2192;<!--RIGHTWARDS ARROW--></mo>
+          </mover>
+	  <mn>2</mn>
+	</msub>
+      </mrow>
+      <mrow>
+	<mi>&#x2225;</mi>
+	<msub>
+	  <mover>
+	    <mi>v</mi>
+ 	    <mo>&#x2192;<!--RIGHTWARDS ARROW--></mo>
+          </mover>
+	  <mn>1</mn>
+	</msub>
+	   <mi>&#x2225;</mi><mi>&#x2225;</mi>
+	<msub>
+	  <mover>
+	    <mi>v</mi>
+ 	    <mo>&#x2192;<!--RIGHTWARDS ARROW--></mo>
+          </mover>
+	  <mn>2</mn>
+	</msub>
+	<mi>&#x2225;</mi> 
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mn>1</mn>
+	<msup>
+	  <mi>r</mi>
+	  <mn>2</mn>
+	</msup>
+    </mfrac>
+    <mo>(</mo>
+                    <mrow>
+			<msub>
+			  <mi>x</mi>
+			  <mn>1</mn>
+			</msub>
+			<msub>
+			  <mi>x</mi>
+			  <mn>2</mn>
+			</msub>
+                        <mi>+</mi>
+			<msub>
+			  <mi>y</mi>
+			  <mn>1</mn>
+			</msub>
+			<msub>
+			  <mi>y</mi>
+			  <mn>2</mn>
+			</msub>
+                        <mi>+</mi>
+                        <msub>
+                            <mi>z</mi>
+                            <mn>1</mn>
+                        </msub>
+                        <msub>
+                            <mi>z</mi>
+                            <mn>2</mn>
+                        </msub>
+                    </mrow>
+    <mo>)</mo>
+  </mrow>
+</math>
+
+<p></p>
+<math>
+  <mrow>
+    <mi>cos(&#x03B1;)</mi> 
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mn>1</mn>
+	<msup>
+	  <mi>r</mi>
+	  <mn>2</mn>
+	</msup>
+    </mfrac>
+    <mo>(</mo>
+                    <mrow>
+			<mi>(r sin(</mi><msub><mi>&#x03B8;</mi><mn>1</mn></msub><mi>) cos(</mi><msub><mi>&#x03D5;</mi><mn>1</mn></msub><mi>))</mi>
+			<mi>(r sin(</mi><msub><mi>&#x03B8;</mi><mn>2</mn></msub><mi>) cos(</mi><msub><mi>&#x03D5;</mi><mn>2</mn></msub><mi>))</mi>
+                        <mi>+</mi>
+			<mi>(r sin(</mi><msub><mi>&#x03B8;</mi><mn>1</mn></msub><mi>) sin(</mi><msub><mi>&#x03D5;</mi><mn>1</mn></msub><mi>))</mi>
+			<mi>(r sin(</mi><msub><mi>&#x03B8;</mi><mn>2</mn></msub><mi>) sin(</mi><msub><mi>&#x03D5;</mi><mn>2</mn></msub><mi>))</mi>
+                        <mi>+</mi>
+			<mi>(r cos(</mi><msub><mi>&#x03B8;</mi><mn>1</mn></msub><mi>))</mi>
+			<mi>(r cos(</mi><msub><mi>&#x03B8;</mi><mn>2</mn></msub><mi>))</mi>
+                    </mrow>
+    <mo>)</mo>
+  </mrow>
+</math>
+
+<p></p>
+
+<math>
+  <mrow>
+    <mi>cos(&#x03B1;)</mi> 
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mrow>
+			<mi>sin(</mi><msub><mi>&#x03B8;</mi><mn>1</mn></msub><mi>) cos(</mi><msub><mi>&#x03D5;</mi><mn>1</mn></msub><mi>)</mi>
+			<mi>sin(</mi><msub><mi>&#x03B8;</mi><mn>2</mn></msub><mi>) cos(</mi><msub><mi>&#x03D5;</mi><mn>2</mn></msub><mi>)</mi>
+                        <mi>+</mi>
+			<mi>sin(</mi><msub><mi>&#x03B8;</mi><mn>1</mn></msub><mi>) sin(</mi><msub><mi>&#x03D5;</mi><mn>1</mn></msub><mi>)</mi>
+			<mi>sin(</mi><msub><mi>&#x03B8;</mi><mn>2</mn></msub><mi>) sin(</mi><msub><mi>&#x03D5;</mi><mn>2</mn></msub><mi>)</mi>
+                        <mi>+</mi>
+			<mi>cos(</mi><msub><mi>&#x03B8;</mi><mn>1</mn></msub><mi>)</mi>
+			<mi>cos(</mi><msub><mi>&#x03B8;</mi><mn>2</mn></msub><mi>)</mi>
+  </mrow>
+</math>
+<p>
+Og med jordens omkreds <math><msub><mi>O</mi><mtext>earth</mtext></msub></math>
+</p>
+<math>
+  <mrow>
+    <msub><mi>d</mi><mn>1&ic;2</mn></msub> 
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mrow>
+    <mi>&#x03B1;</mi>
+    <mfrac>
+      <msub><mi>O</mi><mtext>earth</mtext></msub>
+      <mi>2 &#x3C0; </mi>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mrow>
+    <mi>&#x03B1;</mi>
+    <mfrac>
+      <mrow><mi>2 &#x3C0; r</mi></mrow>
+      <mi>2 &#x3C0; </mi>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi> = &#x03B1; r</mi>
+  </mrow>
+</math>
+<p>
+<math><msub><mi>r</mi><mi>æ</mi></msub><mn> = 6378137 m</mn></math>&nbsp;Ækvator radius<br/>
+<math><msub><mi>r</mi><mi>p</mi></msub><mn> = 6356752 m</mn></math>&nbsp;Polar radius<br/>
+<math><msub><mi>r</mi><mi>m</mi></msub><mn> = 6371001 m</mn></math>&nbsp;Middel radius<br/>
+</p>
+<!-- =========================================================================================== -->
+
+<p>
+</p>
+<form onReset="setAll();" >Find afstanden imellem de 2 positioner <span id="Resultat"></span> km<br/>
+
+Position 1 <input name="Latitude1" id="Latitude1" onChange="opdat('Latitude1');" SIZE="4"/> (nordlig) bredde (lattitude)
+<input name="Longitude1" id="Longitude1" onChange="opdat('Longitude1');" SIZE="4"/> (østlig) længde (longitude)
+<input name="Google1" id="Google1" onChange="loadGoogle(this, 'Latitude1', 'Longitude1');" SIZE="4"/><br/>
+Position 2 <input name="Latitude2" id="Latitude2" onChange="opdat('Latitude2');" SIZE="4"/> (nordlig) bredde (lattitude)
+<input name="Longitude2" id="Longitude2" onChange="opdat('Longitude2');" SIZE="4"/> (østlig) længde (longitude) 
+<input name="Google2" id="Google2" onChange="loadGoogle(this, 'Latitude2', 'Longitude2');" SIZE="4"/><br/>
+<a href="https://www.mathforengineers.com/math-calculators/angle-between-two-vectors-in-spherical-coordinates.html#google_vignette">Same as</a>
+</form>
+<span id="val1"></span><span id="val2"></span>
+
+<br/>
+<figure><img src="spherical_volume.png" height="200" /><figcaption><a href="https://tikz.net/spherical_volume/">tikz.net</a></figcaption></figure>
+
+
+<p>Surface</p>
+<math><mi>dA = (r sin(&#x03B8;)d&#x03B8;) (r d&#x03D5;) = </mi><msup><mi>r</mi><mn>2</mn></msup><mi>sin(&#x03B8;) d&#x03B8; d&#x03D5;</mi></math>
+<p></p>
+<math><mrow>
+<mi>A = </mi>
+<msubsup><mo>&#x222B;<!--INTEGRAL--></mo><mn>0</mn><mi>2&#x3C0;<!-- pi --></mi></msubsup>
+<msubsup><mo>&#x222B;<!--INTEGRAL--></mo><mn>0</mn><mi>&#x3C0;<!-- pi --></mi></msubsup>
+<msup><mi>r</mi><mn>2</mn></msup><mi>sin(&#x03B8;) d&#x03B8; d&#x03D5;</mi>
+<mo> = </mo>
+<msubsup><mo>&#x222B;<!--INTEGRAL--></mo><mn>0</mn><mi>2&#x3C0;<!-- pi --></mi></msubsup>
+<msup><mi>r</mi><mn>2</mn></msup>
+<msubsup><mi>[</mi><mn></mn><mn></mn></msubsup><mi>-cos(&#x03B8;)</mi><msubsup><mi>]</mi><mn>0</mn><mi>&#x3C0;<!-- pi --></mi></msubsup><mi>d&#x03D5;</mi>
+<mo> = </mo>
+<msubsup><mo>&#x222B;<!--INTEGRAL--></mo><mn>0</mn><mi>2&#x3C0;<!-- pi --></mi></msubsup>
+<msup><mi>r</mi><mn>2</mn></msup><mi>(-cos(&#x3C0;<!-- pi -->) + cos(0)) d&#x03D5;</mi>
+<mo> = </mo>
+<msubsup><mo>&#x222B;<!--INTEGRAL--></mo><mn>0</mn><mi>2&#x3C0;<!-- pi --></mi></msubsup>
+<msup><mi>r</mi><mn>2</mn></msup><mi>(1 + 1) d&#x03D5;</mi>
+</mrow></math>
+<p></p>
+<math><mrow>
+<mi>A = 2</mi>
+<msubsup><mo>&#x222B;<!--INTEGRAL--></mo><mn>0</mn><mi>2&#x3C0;<!-- pi --></mi></msubsup>
+<msup><mi>r</mi><mn>2</mn></msup><mi>d&#x03D5;</mi>
+<mo> = 2</mo><msup><mi>r</mi><mn>2</mn></msup>
+<msubsup><mi>[</mi><mn></mn><mn></mn></msubsup><mi>&#x03D5;</mi><msubsup><mi>]</mi><mn>0</mn><mi>2&#x3C0;<!-- pi --></mi></msubsup>
+</mrow></math>
+<p></p>
+<math><mrow>
+<mi>A = 4&#x3C0;<!-- pi --></mi><msup><mi>r</mi><mn>2</mn></msup>
+</mrow></math>
+
+<p>Volumen ("dr" also)</p>
+<math><mi>dV = (r sin(&#x03B8;)d&#x03B8;) (r d&#x03D5;) (dr) = </mi><msup><mi>r</mi><mn>2</mn></msup><mi>sin(&#x03B8;)d&#x03B8; d&#x03D5; dr </mi></math>
+<p>Here R is a specific radius but it can be change back to r after the integration</p>
+<math><mrow>
+<mi>V = </mi>
+<msubsup><mo>&#x222B;<!--INTEGRAL--></mo><mn>0</mn><mi>R</mi></msubsup>
+<msubsup><mo>&#x222B;<!--INTEGRAL--></mo><mn>0</mn><mi>2&#x3C0;<!-- pi --></mi></msubsup>
+<msubsup><mo>&#x222B;<!--INTEGRAL--></mo><mn>0</mn><mi>&#x3C0;<!-- pi --></mi></msubsup>
+<msup><mi>r</mi><mn>2</mn></msup><mi>sin(&#x03B8;) d&#x03B8; d&#x03D5; dr</mi>
+<mo> = </mo>
+<msubsup><mo>&#x222B;<!--INTEGRAL--></mo><mn>0</mn><mi>R</mi></msubsup>
+<mo>(</mo>
+<msubsup><mo>&#x222B;<!--INTEGRAL--></mo><mn>0</mn><mi>2&#x3C0;<!-- pi --></mi></msubsup>
+<msubsup><mo>&#x222B;<!--INTEGRAL--></mo><mn>0</mn><mi>&#x3C0;<!-- pi --></mi></msubsup>
+<msup><mi>r</mi><mn>2</mn></msup><mi>sin(&#x03B8;) d&#x03B8; d&#x03D5;</mi>
+<mo>)</mo>
+<mi> dr = </mi>
+<msubsup><mo>&#x222B;<!--INTEGRAL--></mo><mn>0</mn><mi>R</mi></msubsup>
+<mi>4&#x3C0;<!-- pi --></mi><msup><mi>r</mi><mn>2</mn></msup>
+<mi> dr = 4&#x3C0;<!-- pi --></mi>
+<msubsup><mi>[</mi><mn></mn><mn></mn></msubsup><mfrac><mn>1</mn><mn>3</mn></mfrac><msup><mi>r</mi><mn>3</mn></msup><msubsup><mi>]</mi><mn>0</mn><mi>R</mi></msubsup>
+<mi> = 4&#x3C0;<!-- pi -->(</mi>
+<mfrac><mn>1</mn><mn>3</mn></mfrac><msup><mi>R</mi><mn>3</mn></msup>
+<mi>-</mi>
+<mfrac><mn>1</mn><mn>3</mn></mfrac><msup><mn>0</mn><mn>3</mn></msup>
+<mi>)</mi>
+</mrow></math>
+<p>And with r instead of R</p>
+<math><mrow>
+<mi>V = </mi><mfrac><mn>4&#x3C0;<!-- pi --></mn><mn>3</mn></mfrac><msup><mi>r</mi><mn>3</mn></msup>
+</mrow></math>
+
+
+<p>
+Links:<br/>
+<a href="https://www.mathforengineers.com/index.html">Math for engineers</a><br/>
+<a href="https://math24.net/spherical-coordinates.html">Math24</a><br/>
+<a href="https://mathinsight.org/spherical_coordinates/">Math insight</a><br/>
+<a href="https://www.samples.ghbmaps.com/graticules-grids/">Billed 1 - Graticules and Grids</a><br/>
+<a href="https://www.slideshare.net/slideshow/spherical-coordinates-system/95592576/">Billed 2 - Slideshare Spherical-coordinates-system</a><br/>
+<a href="https://tikz.net/spherical_volume/">Billed 3 - Spherical volume</a><br/>
+<a href="https://www.w3.org/TR/MathML3/chapter3.html#presm.intro">MathML3</a>
+</p>
+</body>
+<SCRIPT>
+setAll();
+opdat('Latitude1');
+</SCRIPT>
+</html>
