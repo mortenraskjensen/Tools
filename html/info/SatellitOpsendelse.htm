@@ -243,15 +243,15 @@ static GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
 		}
 		else
 		{
-			this.t = t+h;
+			this.t += h;
 			//this.r = this.r;//When crashed it says where it are
 			this.v = 0.0;
-			//this.rho = this.rho;//When crashed it says where it are
+			this.rho += h*SatelliteOrbitData.vc0/this.r;//When crashed it follows the rotation of the earth
 			this.ac = 0.0;
 			this.ar = 0.0;
 			this.acc = -GM/(r0*r0);
 			this.vc = SatelliteOrbitData.vc0;
-			this.omega = SatelliteOrbitData.vc0/r;
+			this.omega = SatelliteOrbitData.vc0/this.r;
 			this.vinkel = 0.0;
 			this.Etot = -SatelliteOrbitData.GM/this.r;
 			this.Effect = 0.0;
@@ -297,6 +297,7 @@ const GetSatelliteOrbitData = (orbit1) => {
 
 const DoWrite4 = (Sat1) => {
 		let tableRow = "<tr>";
+		var earthPoint = ((Sat1.rho - SatelliteOrbitData.omega0*Sat1.t) % (2.0*Math.PI))*r0
 	    var st = stage(Sat1.t);
 		var VOrbit = Math.sqrt(GM/Sat1.r);
 		let Eorbit = (Sat1.v*Sat1.v + Sat1.vc*Sat1.vc -GM/Sat1.r)/2.0;
@@ -319,6 +320,7 @@ const DoWrite4 = (Sat1) => {
 			tableRow += "</td><td bgcolor=green>" + (RoundN((Sat1.r)/1000.0, 5)).toString(10) + " km";
 		else //moon distance
 			tableRow += "</td><td bgcolor=green>" + (RoundN((Sat1.r)/1000.0, 5)).toString(10) + " km";
+		/*
         tableRow += "</td><td>" + (RoundN(Sat1.v, 5)).toString(10) + "";
         tableRow += "</td><td>" + (RoundN(Sat1.rho/(2.0*Math.PI), 5)).toString(10) + " turns";
         tableRow += "</td><td>" + (RoundN(Sat1.omega, 5)).toString(10) + "";
@@ -328,6 +330,8 @@ const DoWrite4 = (Sat1) => {
 			tableRow += "</td><td>" + (RoundN(Sat1.vc-vc0, 5)).toString(10) + "";
         //tableRow += ShowValues([Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, drag_c + drag_r]);
         tableRow += ShowValues([Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, VOrbit]);
+		*/
+        tableRow += ShowValues([Sat1.v, Sat1.rho/(2.0*Math.PI), Sat1.omega, Sat1.vc, Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, VOrbit, earthPoint/1000.0]);
         tableRow += "</td></tr>";
 		return tableRow;
 }
@@ -365,7 +369,7 @@ const DoWrite3 = (Sat1) => {
 		else
 			self.document.write("</td><td>" + (RoundN(Sat1.vc-vc0, 5)).toString(10) + "");
         //self.document.write(ShowValues([Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, drag_c + drag_r]));
-        self.document.write(ShowValues([Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, VOrbit]));
+        self.document.write(ShowValues([Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, VOrbit, 0.0]));
 
         self.document.write("</td></tr>");
 	}
@@ -2043,8 +2047,8 @@ function DoWriteTableHeader()
 function GetTableHeader()
 {
 	let header = "<tr><td>Stage</td><td>t</td><td>a0</td><td>alpha</td>";
-	//header += "<td>r</td><td>v</td><td>&phi;</td><td>&omega;</td><td>vc</td><td>ac</td><td>E/m</td><td>Ekin + Epot/2</td><td>Vorbit</td></tr>";
-	header += "<td>r</td><td>v</td><td>&phi;</td><td>&omega;</td><td>vc</td><td>ac</td><td>E/m</td><td>Effect</td><td>Vorbit</td></tr>";
+	//header += "<td>r</td><td>v</td><td>&phi;</td><td>&omega;</td><td>vc</td><td>ac</td><td>E/m</td><td>Ekin + Epot/2</td><td>Vorbit</td><td>Earth dist km</td></tr>";
+	header += "<td>r</td><td>v</td><td>&phi;</td><td>&omega;</td><td>vc</td><td>ac</td><td>E/m</td><td>Effect</td><td>Vorbit</td><td>Earth dist</td></tr>";
 	return header;
 }
 
