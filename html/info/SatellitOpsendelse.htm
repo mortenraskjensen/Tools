@@ -1,0 +1,2383 @@
+<html><head><title>Jorden</title>
+  <link  rel="canonical"   href="https://physics.info/constants/">
+  <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/walnut.css"-->
+  <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/walpaper.css" media="print"-->
+  <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/physics.css"-->
+
+ <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/physics.css"-->
+
+<style type="text/css">
+figcaption { font-size: 8px; color: blue; }
+</style>
+<style>
+
+/* maths group */
+
+     .maths                 { text-align: center; white-space: nowrap; }
+table.maths caption,
+table.maths th              { text-decoration: underline; }
+table.maths tr,
+table.maths td              { background-color: transparent !important; border-radius: 0em !important; text-transform: none !important;
+                              border: none !important; padding: 0em !important; margin: 0em !important; vertical-align: middle; } /* always boring, even when nested */
+table.maths td.solidus      { border-bottom-style: solid !important; border-bottom-width: 0.083em !important; }
+table.maths td.absleft      { border-left-style: solid !important; border-left-width: 0.083em !important; border-radius: 0em !important; }
+table.maths td.absright     { border-right-style: solid !important; border-right-width: 0.083em !important; border-radius: 0em !important; }
+table.maths td.spacer       { width: 4em; }
+
+table.maths td.limupper,
+table.maths td.limlower     { font-size: 66.6%; line-height: 66.6%; overflow: visible; }
+table.maths td.limupper     { text-align: right; vertical-align: bottom !important; }
+table.maths td.limlower     { text-align:  left; vertical-align: top    !important; }
+table.maths td.split        { line-height: 1em !important; text-align: left !important; } /* two piece symbols */
+table.maths td.split .limit { font-size: 66.6%; } /* NEW METHOD */
+
+.maths     { font-family: "Palatino Linotype", Palatino, "Book Antiqua", serif; }
+table.maths th,
+table.maths caption,
+.withunits { font-family: "Helvetica Neue", Helvetica, Ariel, sans-serif; }
+
+/* new maths */
+
+.fraction,
+.isotope,
+.tensor       { display: inline-flex; flex-direction: column; vertical-align: 25%; padding: 0em 0.083em; }
+.isotope      { align-items: flex-end;   }
+.fraction     { align-items: center;     }
+.tensor       { align-items: flex-start; }
+.tensor sub,
+.tensor sup,
+.isotope sub,
+.isotope sup,
+.fraction sub,
+.fraction sup { vertical-align: 0em; line-height: 1.25em; }
+.fraction sub { border-top:     0.083em solid black; }
+sub sub,
+sub sup,
+sup sub,
+sup sup { border: none !important; display: inline !important; line-height: 0em; padding: 0em; }
+sub sub,
+sup sub { vertical-align:-0.25em !important; }
+sub sup,
+sup sup { vertical-align: 0.50em !important; }
+</style>
+<style>
+input.F
+ {
+ height: 20px;
+ width:  60px;
+#background: orange;
+#padding: 10px;
+#margin: 0 10px;
+#width: 60%;
+ border: 1px solid #ccc;
+ border-radius: 5px;
+ }
+input.B
+ {
+ height: 20px;
+ width:  60px;
+ background: orange;
+#padding: 10px;
+#margin: 0 10px;
+#width: 60%;
+border: 1px solid #ccc;
+ border-radius: 5px;
+ }
+input.C
+ {
+#background: orange;
+#padding: 10px;
+#margin: 0 10px;
+#width: 60%;
+ border: 1px solid #ccc;
+ border-radius: 5px;
+ }
+td.F
+ {
+# width:  60px;
+ padding: 0px;
+ } 
+</style>
+
+<SCRIPT>
+/*
+ #height: 15px;
+ #background: blue;
+ #margin: 1px;
+ #text-align: center
+ #border-left-width: 0px;
+ #border-right-width: 0px;
+ #border-width: 0px;
+ #margin-width: 0px;
+ #outline-width: 0px;
+ #outline-style: none;
+
+ #size: 1;
+ #width: 100px;
+ height: 15px;
+ #background: blue;
+ #margin: 1px;
+ #border-left-width: 0px;
+ #border-right-width: 0px;
+ #border-width: 0px;
+ #margin-width: 0px;
+ #outline-width: 0px;
+ border-style: none;
+ margin-style: none;
+ outline-style: none;
+ padding: 0px;
+*/
+//------------------------------------------
+const pi = Math.PI;
+//------------------------------------------
+class OrbitData{
+	constructor(t00,r00,v00,rho00,omega00,vinkel){
+	//Boundery values
+		this.t = t00;
+		this.r = r00;
+		this.v = v00;
+		this.rho = rho00;
+		this.vc = omega00*r00;
+		this.omega = omega00;
+		this.vinkel = vinkel;
+		//this.var1 = 0.0;
+		this.Etot = 0.0;
+		this.Effect = 0.0;
+		this.Effect2 = 0.0;
+		this.acc = 0.0;
+		this.ac = 0.0;
+		this.ar = 0.0;
+	}
+}
+
+class SatelliteOrbitData{
+static r0Moon = 1738000.0;
+static r0 = 6371000.0;
+static PI = 3.141592653589793;
+static vc0 = 6371000.0*2.0*3.141592653589793/(24.0*3600.0);
+static omega0 = 2.0*3.141592653589793/(24.0*3600.0);
+//const r0Moon = 1738000.0;
+static distanceMoon = 384399000.0;
+static rGeo = 42241000.0;
+static GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
+	constructor(){
+	//Boundery values
+		this.t = 0.0;
+		this.r = SatelliteOrbitData.r0;
+		this.v = 0.0;
+		this.vc = SatelliteOrbitData.vc0;//vc = Math.sqrt(GM/r);
+		this.rho = 0.0;
+		this.omega = this.vc/this.r;
+		this.vinkel = 0.0;
+//		this.var1 = 0.0;
+		this.Etot = -SatelliteOrbitData.GM/this.r;
+		this.Effect = 0.0;
+		this.Effect2 = 0.0;
+		this.acc = -GM/(SatelliteOrbitData.r0*SatelliteOrbitData.r0);
+		this.ac = 0.0;
+		this.ar = 0.0;
+	}
+
+	setOrbitData(data)
+	{
+		this.t = data.t;
+		this.r = data.r;
+		this.v = data.v;
+		this.rho = data.rho;
+    	this.omega = data.omega;
+		this.vinkel = data.vinkel;
+		this.vc = data.vc;
+		this.Etot = data.Etot;
+		this.Effect = data.Effect;
+		this.Effect2 = data.Effect2;
+		this.acc = data.acc;
+		this.ac = data.ac;
+		this.ar = data.ar;
+	}
+
+	getOrbitData()
+	{
+		const data = new OrbitData(this.t, this.r, this.v, this.rho, this.omega, this.vinkel);
+		data.Etot = this.Etot;
+		data.Effect = this.Effect;
+		data.Effect2 = this.Effect2;
+		data.acc = this.acc;
+		data.ac = this.ac;
+		data.ar = this.ar;
+		return data;
+	}
+	
+	Iterate()
+	{
+		let rdiff = this.r-SatelliteOrbitData.r0;
+		if (rdiff > -1.0)
+		{//Not crashed yet
+			const alpha = this.vinkel*Math.PI/180.0;
+			const TrustRocketVertical = Trust(this.t)*Math.cos(alpha); //force in newton and Trust(t) is a not diferential stepfunction
+			const TrustRocketHorisontal = Trust(this.t)*Math.sin(alpha);
+			const airPresure = getAirPresure(rho0luft, (this.r-r0));
+
+			const tNew = this.t + h;
+			const omegaNew = this.omega + dOmega(this.t,this.r,this.v,this.rho,this.omega,TrustRocketHorisontal, airPresure);
+			const vcNew = omegaNew * this.r;
+			const rhoNew = this.rho + dy(this.omega);
+			const vNew = this.v + dV(this.t,this.r,this.v,this.rho,this.omega,TrustRocketVertical, airPresure);
+			const rNew = this.r + dy(this.v);
+
+			//var1 = v*v*getDragConstant(t, airPresure,v)/Mass(t);//drag_r;
+			this.Effect = (TrustRocketHorisontal*this.vc + TrustRocketVertical*this.v)/Mass(this.t);
+			this.Effect2 = (vNew*vNew -this.v*this.v)/(2.0*h) + (vcNew*vcNew - this.vc*this.vc)/(2.0*h)  + (GM/this.r - GM/rNew)/h;
+			this.Effect2 = (vcNew*vcNew - this.vc*this.vc)/(2.0*h);//Only the kinetic energy change and only of the horisontal part
+			this.vinkel = GetAngle(tNew, this.acc);
+			this.Etot = (vNew*vNew + vcNew*vcNew)/2.0 -GM/this.r;
+			this.acc = omegaNew*omegaNew*rNew - GM/(rNew*rNew) - vNew*vNew*getDragConstant(this.t, airPresure,vNew)/Mass(this.t);
+			this.ac = (vcNew - this.vc)/h;
+			this.ar = (vNew - this.v)/h;
+			
+			this.t = tNew;
+			this.r = rNew;
+			this.v = vNew;
+			this.rho = rhoNew;
+			this.omega = omegaNew;
+			this.vc = vcNew;
+		}
+		else
+		{
+			this.t = t+h;
+			//this.r = this.r;//When crashed it says where it are
+			this.v = 0.0;
+			//this.rho = this.rho;//When crashed it says where it are
+			this.ac = 0.0;
+			this.ar = 0.0;
+			this.acc = -GM/(r0*r0);
+			this.vc = SatelliteOrbitData.vc0;
+			this.omega = SatelliteOrbitData.vc0/r;
+			this.vinkel = 0.0;
+			this.Etot = -SatelliteOrbitData.GM/this.r;
+			this.Effect = 0.0;
+			this.Effect2 = 0.0;
+		}
+	}
+}
+
+class SimulationSetup{
+	constructor(angleTimeList, angleValueList, burnTimes, orbitData){
+	//Boundery values
+		this.AngleTimeList = angleTimeList;
+		this.AngleValueList = angleValueList;
+		this.BurnTimes = burnTimes;
+		this.StartValue = orbitData;
+	}
+}
+
+class ClassName {
+  constructor(a) {
+	this.name = a
+	}
+  //method_1() { ... }
+  //method_2() { ... }
+  //method_3() { ... }
+}
+
+class SubClassName extends ClassName {
+  constructor(c,...baseClassStuff) {
+	ClassName(...baseClassStuff);
+	this.under = c;
+  }
+  //method_1() { ... }
+  //method_2() { ... }
+  //method_3() { ... }
+}
+
+const GetSatelliteOrbitData = (orbit1) => {
+	let sat1 = new SatelliteOrbitData();
+	sat1.setOrbitData(orbit1);
+	return sat1;
+}
+
+const DoWrite4 = (Sat1) => {
+		let tableRow = "<tr>";
+	    var st = stage(Sat1.t);
+		var VOrbit = Math.sqrt(GM/Sat1.r);
+		let Eorbit = (Sat1.v*Sat1.v + Sat1.vc*Sat1.vc -GM/Sat1.r)/2.0;
+        //tableRow += "<td>" + st.toString(10) + " "  + (Math.floor(t/36.0 + 0.5)/100.0).toString(10) + " t</td><td>"  + (RoundDecimal(t)).toString(10) + "";
+        tableRow += "<td>" + st.toString(10) + " "  + (RoundDecimal(stageT(Sat1.t))).toString(10) + "</td><td>"  + (Math.floor(100.0*Sat1.t + 0.5)/100.0).toString(10) + "";
+        tableRow += "</td><td>" + (RoundN(Sat1.acc, 5)).toString(10) + "";
+		if (st < 4 || st == 5 || st == 7 || st == 9)
+			tableRow += "</td><td>" + (RoundN(Sat1.vinkel, 5)).toString(10) + "";
+		else
+			tableRow += "</td><td>";
+		if (Sat1.r < 1000 + r0 )
+			tableRow += "</td><td bgcolor=red>" + (RoundN((Sat1.r-r0), 5)).toString(10) + " m";
+		else if (Sat1.r < 20000.0 + r0 )
+			tableRow += "</td><td bgcolor=red>" + (RoundN((Sat1.r-r0)/1000.0, 5)).toString(10) + " km";
+		else if (Sat1.r < 100000.0 + r0 ) 
+			tableRow += "</td><td bgcolor=yellow>" + (RoundN((Sat1.r-r0)/1000.0, 5)).toString(10) + " km";
+		else if (Sat1.r < rGeo ) 
+			tableRow += "</td><td>" + (RoundN((Sat1.r-r0)/1000.0, 5)).toString(10) + " km";
+		else if (Sat1.r < 380170000.0 ) //geo distance
+			tableRow += "</td><td bgcolor=green>" + (RoundN((Sat1.r)/1000.0, 5)).toString(10) + " km";
+		else //moon distance
+			tableRow += "</td><td bgcolor=green>" + (RoundN((Sat1.r)/1000.0, 5)).toString(10) + " km";
+        tableRow += "</td><td>" + (RoundN(Sat1.v, 5)).toString(10) + "";
+        tableRow += "</td><td>" + (RoundN(Sat1.rho/(2.0*Math.PI), 5)).toString(10) + " turns";
+        tableRow += "</td><td>" + (RoundN(Sat1.omega, 5)).toString(10) + "";
+		if (Sat1.vc > 1000 + vc0 )
+			tableRow += "</td><td>" + (RoundN(Sat1.vc, 5)).toString(10) + "";
+		else
+			tableRow += "</td><td>" + (RoundN(Sat1.vc-vc0, 5)).toString(10) + "";
+        //tableRow += ShowValues([Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, drag_c + drag_r]);
+        tableRow += ShowValues([Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, VOrbit]);
+        tableRow += "</td></tr>";
+		return tableRow;
+}
+
+const DoWrite3 = (Sat1) => {
+	{
+	    var st = stage(Sat1.t);
+		var VOrbit = Math.sqrt(GM/Sat1.r);
+		let Eorbit = (Sat1.v*Sat1.v + Sat1.vc*Sat1.vc -GM/Sat1.r)/2.0 
+        self.document.write("<tr>");
+        //self.document.write("<td>" + st.toString(10) + " "  + (Math.floor(t/36.0 + 0.5)/100.0).toString(10) + " t</td><td>"  + (RoundDecimal(t)).toString(10) + "");
+        self.document.write("<td>" + st.toString(10) + " "  + (RoundDecimal(stageT(Sat1.t))).toString(10) + "</td><td>"  + (Math.floor(100.0*Sat1.t + 0.5)/100.0).toString(10) + "");
+        self.document.write("</td><td>" + (RoundN(Sat1.acc, 5)).toString(10) + "");
+		if (st < 4 || st == 5 || st == 7 || st == 9)
+			self.document.write("</td><td>" + (RoundN(Sat1.vinkel, 5)).toString(10) + "");
+		else
+			self.document.write("</td><td>");
+		if (Sat1.r < 1000 + r0 )
+			self.document.write("</td><td bgcolor=red>" + (RoundN((Sat1.r-r0), 5)).toString(10) + " m");
+		else if (Sat1.r < 20000.0 + r0 )
+			self.document.write("</td><td bgcolor=red>" + (RoundN((Sat1.r-r0)/1000.0, 5)).toString(10) + " km");
+		else if (Sat1.r < 100000.0 + r0 ) 
+			self.document.write("</td><td bgcolor=yellow>" + (RoundN((Sat1.r-r0)/1000.0, 5)).toString(10) + " km");
+		else if (Sat1.r < rGeo ) 
+			self.document.write("</td><td>" + (RoundN((Sat1.r-r0)/1000.0, 5)).toString(10) + " km");
+		else if (Sat1.r < 380170000.0 ) //geo distance
+			self.document.write("</td><td bgcolor=green>" + (RoundN((Sat1.r)/1000.0, 5)).toString(10) + " km");
+		else //moon distance
+			self.document.write("</td><td bgcolor=green>" + (RoundN((Sat1.r)/1000.0, 5)).toString(10) + " km");
+        self.document.write("</td><td>" + (RoundN(Sat1.v, 5)).toString(10) + "");
+        self.document.write("</td><td>" + (RoundN(Sat1.rho/(2.0*Math.PI), 5)).toString(10) + " turns");
+        self.document.write("</td><td>" + (RoundN(Sat1.omega, 5)).toString(10) + "");
+		if (Sat1.vc > 1000 + vc0 )
+			self.document.write("</td><td>" + (RoundN(Sat1.vc, 5)).toString(10) + "");
+		else
+			self.document.write("</td><td>" + (RoundN(Sat1.vc-vc0, 5)).toString(10) + "");
+        //self.document.write(ShowValues([Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, drag_c + drag_r]));
+        self.document.write(ShowValues([Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, VOrbit]));
+
+        self.document.write("</td></tr>");
+	}
+}
+
+const DoWrite2 = (Sat1) => {
+    var st = stage(Sat1.t);
+    if (
+	//st == 1 || st == 2 || st == 3 || st == 3 || 
+		Sat1.t % 1000 < 0.0001
+    //if (st == 1 || st == 2 || st == 3)
+    //if (st == 5 || st == 7 || st == 9)
+	)
+	{
+		self.document.write(DoWrite4(Sat1));
+		//DoWrite3(Sat1);
+	}
+}
+
+const DoWrite = (Sat1) => {
+    var st = stage(Sat1.t);
+    if (
+	//st == 1 || st == 2 || st == 3 || st == 3 || 
+		Sat1.t % 100 < 0.0001
+		//|| (Sat1.r < (6371000.0 + 100000) && Sat1.t > 200.0 )
+	)
+		return DoWrite4(Sat1);
+	else
+		return "";
+}
+
+const SimulationRun = (numberOfPeriods, numberOfSeconds, orbit0) => {
+	let dataArray = [];
+	let sat0 = GetSatelliteOrbitData(orbit0);
+	for (var ii=0;ii<numberOfPeriods;ii++)
+	{
+		for(var jj=0;jj<numberOfSeconds;jj++)
+		{
+			for(var kk=0;kk<100;kk++)
+			{
+				sat0.Iterate();
+			}
+			dataArray.push(sat0.getOrbitData());
+		}
+	}
+	return dataArray;
+}
+
+/*
+const arr = [1,2,3,4,5];
+for (let i = 0; i < arr.length; i++)
+{
+	var s = arr[i];
+}
+
+for (let key in arr)
+{
+	var s = arr[key];
+}
+
+const obj = {
+name: "rob",
+occ: "teacher",
+language: "JS"
+}
+
+for (let key in obj)
+{
+	var s = key + arr[key];
+}
+
+arr.forEach((value, i)=>{ console.log(i) });
+
+//Iterates over key
+for (let key in arr){
+console.log(key);
+
+}
+
+//Iterates over value
+for (let value of arr){
+console.log(value);
+}
+let a = "gjfhlsjhglkshjglfs";
+let b = "kjhdlhglshgls";
+let c = "lkgjslkjghjhg";
+let lines = Array.from([a,b,c],(line)=>{return '<li>${line}</li>';});
+
+let numbers = Array.from([2,3,4], (num) => {return num + num});
+const arr1 = Array.of(7);
+const arr2 = Array(7);
+const arr3 = Array.of(7, "dgd", [3,4]);
+
+const arr5 = [1,2,3,"d","f",6]
+arr5.fill("b",3,5);//filler, startindex,endindex
+arr5 == [1,2,"b","b","f",6]
+const arr6 = arr5.slice(1,2); //[2,"b"]
+const x = Array.from("Text");
+let m = ["jan","feb","April","Nov"];
+const WhereToStart = 3;
+const HowManyToDelete = 0;
+const WhatToInsert = "August";
+m.splice(WhereToStart, HowManyToDelete, WhatToInsert);
+m == ["jan","feb","April","August","Nov"];
+const cityNames = SomeJson.list.map((city,i)=>{return city.name;});
+const firstFoundCity = SomeJson.list.find((city,i)=>{return city.main.temp > 70;});
+m.Find()
+//Primitives(Stored by value): string, number,boolean,null,undefined,symbol
+let str = 'Popeye';
+let numb = 3;
+let boo = true;
+let n = null;
+let unde = undefined;
+let sym = Symbol('mySymbol');
+let name = str;//If we later change str, name will still be 'Popeye'
+//Objects is stored by reference
+let obj = {
+name: 'Popey'
+}
+let cartoon = obj;//If we later change one of them both is changed
+cartoon.girlfriend = "Olivia";
+let arr = [1,2,3];
+let arr2 = arr;
+let name = 'abc';
+let x = 5;
+function sum(x,y){
+	x = x + y;
+}
+sum(x,3);//After this x is still 5
+
+//Map is just a key-value pair it is Far more protected than a regular object
+//It also comes with extra methods, and is iterable
+
+const myContacts = {
+	"Rob" : "555",
+	"Jim" : "556"
+}
+let keyFunction = ()=>{
+	console.log("Hello, World");
+}
+
+let myContacts = new Map();
+myContacts.set("Rob","555");
+myContacts.set("Jim","556");
+const rob = myContacts.get("Rob");
+myContacts.set(keyFunction,"Tjahh");
+const huh = myContacts.get(keyFunction);
+const numOfEntries = myContacts.size;
+for (value of myContacts)
+{
+}
+myContacts.keys();
+myContacts.values();
+myContacts.entries();
+myContacts.forEach((value)=>{
+console.log(value);
+});
+myContacts.clear();
+
+let aStrongMap = new Map();
+let friend = {name: 'Jim'};
+aStrongMap.set(friend, 'Bestr friend');
+friend = null;
+//The aStrongMap still got it, but you have lost the reference
+
+let aWeekMap = new WeekMap();
+let friend = {name: 'Jim'};
+aWeekMap.set(friend, 'Bestr friend');
+friend = null;
+//The aWeekMap releases the memory
+let employeeId = new Set(['a12','e7','c2', 'a12']);//Has unique check, but for objects they need to have the same reference
+const b = employeeId.size;
+let employeeSet = new Set();
+employeeSet.add('a13');//
+employeeSet.delete('a12');
+employeeSet.clear();
+employeeSet.entries
+employeeSet.has('a12')
+employeeSet.keys
+employeeSet.values
+
+//let list = new WeekSet();
+ typeof(true); // boolean
+ typeof(null); // object
+typeof(undefined); // undefined
+typeof(2); // number
+typeof('a'); //string
+typeof({}); // object
+const num = Number(5); //Same as : const num = 5;
+const str = String('Hello, world'); //Same as : const str = 'Hello, world';
+const aSymbol = Symbol();
+console.log(String('a') == String('a'));//true
+console.log(Number(2) == Number(2));//true
+console.log({} == {});//false to object with 2 different references
+console.log(undefined == undefined);//true
+console.log(Symbol() == Symbol());//false
+*/
+/*
+setTimeout(()=>console.log("Line 1, 0 timeout (wait 0ms)"),0);//With call back 
+console.log("line 2");
+setTimeout(()=>console.log("Line 1, 100 timeout (wait 100ms)"),100);//With call back
+for(let i = 0; i< 100001; i++){if (1===100000){console.log("Done with loop");}}
+//with output:
+"line 2"
+"Done with loop"
+"Line 1, 0 timeout"
+"Line 1, 100 timeout"
+[Finished in 0.2s]
+*/
+/*
+
+All promise is, is a JavaScript constructor that gives you a few cool methods:
+eg: then, catch, All, race, resolve and reject and they are both callbacs provided by JavaScript
+
+
+// promise constructor takes 1 arg, and that is a call back
+//The call back itself need 2 arguments resolve and reject
+let myFirsPromise = new Promise((resolve,reject)=>{
+console.log("Hey Im running imidiatly");
+//some async programing
+resolve("PromiseData"); //I am done
+reject("Errordata");
+});
+//the then will go on the promise OUTSIDE and fire its own callback when resolve is fired in the promise
+myFirsPromise.then((promishedData)=>{
+console.log("Promise finished");
+})//
+myFirsPromise.catch((promishedError)=>{
+console.log(promishedError);
+})//
+
+function two(){
+	return new Promise((resolve,reject)=>{
+	setTimeout(()=>{
+	resolve("2 seconds has passed")
+	},2000)
+	})
+}
+function one(){
+	return new Promise((resolve,reject)=>{
+	setTimeout(()=>{
+	resolve("1 seconds has passed")
+	},1000)
+	})
+}
+
+const promiseTwo = two();
+const promiseOne = one();
+promiseOne.then((msgFromPromise)=>{
+console.log("===1===");
+console.log(msgFromPromise);
+console.log(promiseOne);
+});
+promiseOne.then((msgFromPromise)=>{
+console.log("===2===");
+console.log(msgFromPromise);
+console.log(promiseTwo);
+});
+cosole.log(promiseTwo);
+cosole.log(promiseOne);
+
+const promiseArray = [promiseOne, promiseTwo];
+Promise.all(promiseArray).then((data)=>{
+console.log("All the promises are done")
+console.log(data);//data is an array
+});
+
+Promise.raze(promiseArray).then((data)=>{
+console.log("The first promise is done")
+console.log(data);//data is an array
+});
+
+
+//functions is 1. class objects so we can pass them around
+function print(text){
+	console.log(text.toUpperCase());
+}
+//Same as
+const print2 = function(text){
+	console.log(text.toUpperCase());
+}
+
+function run(callback, input){
+	callback(input);
+}
+run(print, 'Hello, world');
+//Same as:
+run(function(text){console.log(text.toUpperCase());}, 'Hello, world');
+
+function a(x){
+	console.log(x)
+	return function(y) {
+		console.log(x+y);
+	}
+}
+
+a(2)(3); // returns 2 and 5
+
+function b(num){
+const objectToReturn = {run: 'Haha, this'}
+return objectToReturn
+}
+console.log(b(2).run);
+
+*/
+
+
+class internalData{
+	constructor(a, b){
+		this.a = a;
+		this.b = b;
+	}
+	/*
+	powerUp(){
+		this.a += 5;
+	}
+	publicGetA{
+		return this.a;
+	}*/
+	get name(){
+		return _a;
+	}
+	set name(a2){
+		this._a = a2;
+	}
+}
+
+function Log( y ) {
+var n = 0;
+	if((y*y)>1){while(y*y>100.0){y *= .1;n++;}}
+	else{while(y*y<.01){y *= 10.0;n--;}}
+	return(n);
+}
+
+function RoundN(x, n) {
+    var y = x;
+    var f = 1;
+    if (x == 0)
+	return(0);
+    var m = Log(x);
+    if (m < 0)
+        m -= 1;
+    if (n > m) {
+        for (var i = 0; i < n - m - 1; i++) {
+            f *= 10
+        }
+        y *= f;
+        y = Math.floor(y + 0.5);
+        y /= f;
+        return (y);
+    }
+    else {
+        for (var i = 0; i < m - n + 1; i++) {
+            f *= 10
+        }
+        y /= f;
+        y = Math.floor(y + 0.5);
+        y *= f;
+        return (y);
+    }
+}
+
+function Out2(spre, f, spost) {
+    return (spre + (RoundN(f, 5)).toString(10) + spost);
+}
+
+function rens_url(sUrl_orig) {
+var ch_nr;
+var sUrl = sUrl_orig;
+if (sUrl.substr(0,7)=="file://") sUrl=sUrl.substr(7);
+if((ch_nr=sUrl.indexOf('?',ch_nr))>0){
+	if(sUrl.indexOf('=',ch_nr)>0) sUrl=sUrl.substr(0,ch_nr) + "#" + sUrl.substr(sUrl.indexOf('=',ch_nr)+1);
+	else sUrl=sUrl.substr(0,ch_nr) + "#" + sUrl.substr(ch_nr+1)
+}
+else if(! (ch_nr=sUrl.indexOf('#',ch_nr))>0) sUrl=sUrl + "#100";
+return(sUrl);
+}
+
+function url_handling(){
+var adr = rens_url(document.URL);
+
+var ch_nr = adr.indexOf('#',0);
+var argument = adr.substr(ch_nr+1);
+
+adr = adr.substr(0,ch_nr);
+}
+
+function Log( y ) {
+var n = 0;
+	if((y*y)>1){while(y*y>100.0){y *= .1;n++;}}
+	else{while(y*y<.01){y *= 10.0;n--;}}
+	return(n);
+}
+
+function RoundDecimal(x) {
+    return Math.floor(100.0*x + 0.5)/100.0;
+}
+
+function RoundN(x, n) {
+    var y = x;
+    var f = 1;
+    if (x == 0)
+	return(0);
+    var m = Log(x);
+    if (m < 0)
+        m -= 1;
+    if (n > m) {
+        for (var i = 0; i < n - m - 1; i++) {
+            f *= 10
+        }
+        y *= f;
+        y = Math.floor(y + 0.5);
+        y /= f;
+        return (y);
+    }
+    else {
+        for (var i = 0; i < m - n + 1; i++) {
+            f *= 10
+        }
+        y /= f;
+        y = Math.floor(y + 0.5);
+        y *= f;
+        return (y);
+    }
+}
+
+</SCRIPT>
+
+
+    <meta charset="UTF-8">
+    <script src=
+        "https://cdn.plot.ly/plotly-latest.min.js">
+    </script>
+    <script src=
+"https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.5.0/math.js">
+    </script>
+
+    <style>
+        .all {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            text-align: center;
+            width: 80%;
+            max-width: 800px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+
+        header {
+            background-color: #3498db;
+            color: white;
+            padding: 20px 0;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        input.Plotter {
+            padding: 10px;
+            margin: 0 10px;
+            width: 60%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button.Plotter {
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #c0392b;
+
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+
+            padding-top: 50px;
+
+        }
+
+        .graph {
+            width: 100%;
+            height: 850px;
+            margin: 20px 0;
+            /* Adjust margin if needed */
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+    </style>
+
+
+<!-- =========================================================================================== -->
+<!-- =========================================================================================== -->
+</head><body>
+    <h1>Satellit opsendelse</h1>
+<!-- =========================================================================================== -->
+<br/>
+<p>Equatioons without rocket engine</p>
+<p>
+<math>
+<mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <msup>
+            <mi> d </mi>
+            <mn> 2 </mn>
+          </msup>
+        </mrow>
+        <mi> &phi; </mi> 
+      </mrow>
+      <mrow>
+          <msup>
+            <mi> dx </mi>
+            <mn> 2 </mn>
+          </msup>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mrow>
+	<mi> - 2 </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> d </mi> 
+        <mi> &phi; </mi> 
+      </mrow>
+      <mrow>
+        <mi> dx </mi>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> v </mi> 
+      </mrow>
+      <mrow>
+        <mi> r </mi>
+      </mrow>
+    </mfrac>
+  </mrow>
+</mrow>
+</math>
+</p>
+<p>
+<math>
+<mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <msup>
+            <mi> d </mi>
+            <mn> 2 </mn>
+          </msup>
+        </mrow>
+        <mi> r </mi> 
+      </mrow>
+      <mrow>
+          <msup>
+            <mi> dx </mi>
+            <mn> 2 </mn>
+          </msup>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> 1 </mi> 
+      </mrow>
+      <mrow>
+        <mi> r </mi> 
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <msup>
+      <mrow>
+        <mfrac>
+          <mrow>
+            <mi> d </mi> 
+            <mi> &phi; </mi> 
+          </mrow>
+          <mrow>
+            <mi> dx </mi>
+          </mrow>
+        </mfrac>
+      </mrow>
+      <mn> 2 </mn>
+    </msup>
+  </mrow>
+  <mrow>
+	<mi> - </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> GM </mi> 
+      </mrow>
+      <mrow>
+        <mrow>
+          <msup>
+            <mi> r </mi>
+            <mn> 2 </mn>
+          </msup>
+		</mrow>
+      </mrow>
+    </mfrac>
+  </mrow>
+</mrow>
+</math>
+</p>
+<br/>
+<p>Equatioons where rocket engine is added  
+The rocket engine trust force <math><mrow><msub><mi> F </mi><mn> Rocket </mn></msub></mrow></math>,
+the rocket mass <math><mrow><msub><mi> m </mi><mn> Rocket </mn></msub></mrow></math> and
+the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
+</p>
+<!--                                             -->
+<p>
+<math>
+<mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <msup>
+            <mi> d </mi>
+            <mn> 2 </mn>
+          </msup>
+        </mrow>
+        <mi> &phi; </mi> 
+      </mrow>
+      <mrow>
+          <msup>
+            <mi> dx </mi>
+            <mn> 2 </mn>
+          </msup>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <msub>
+            <mi> F </mi>
+            <mn> Rocket </mn>
+          </msub>
+        </mrow>
+      </mrow>
+      <mrow>
+        <mrow>
+          <msub>
+            <mi> m </mi>
+            <mn> Rocket </mn>
+          </msub>
+        </mrow>
+        <mrow>
+          <mi> r </mi>
+        </mrow>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi>sin(&#x03B1;)</mi>
+  </mrow>
+  <mrow>
+	<mi> - 2 </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> d </mi> 
+        <mi> &phi; </mi> 
+      </mrow>
+      <mrow>
+        <mi> dx </mi>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> v </mi> 
+      </mrow>
+      <mrow>
+        <mi> r </mi>
+      </mrow>
+    </mfrac>
+  </mrow>
+</mrow>
+</math>
+</p>
+<p>
+<math>
+<mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <msup>
+            <mi> d </mi>
+            <mn> 2 </mn>
+          </msup>
+        </mrow>
+        <mi> r </mi> 
+      </mrow>
+      <mrow>
+          <msup>
+            <mi> dx </mi>
+            <mn> 2 </mn>
+          </msup>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> 1 </mi> 
+      </mrow>
+      <mrow>
+        <mi> r </mi> 
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <msup>
+      <mrow>
+        <mfrac>
+          <mrow>
+            <mi> d </mi> 
+            <mi> &phi; </mi> 
+          </mrow>
+          <mrow>
+            <mi> dx </mi>
+          </mrow>
+        </mfrac>
+      </mrow>
+      <mn> 2 </mn>
+    </msup>
+  </mrow>
+  <mrow>
+    <mi> + </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <msub>
+            <mi> F </mi>
+            <mn> Rocket </mn>
+          </msub>
+        </mrow>
+      </mrow>
+      <mrow>
+        <mrow>
+          <msub>
+            <mi> m </mi>
+            <mn> Rocket </mn>
+          </msub>
+        </mrow>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi>cos(&#x03B1;)</mi>
+  </mrow>
+  <mrow>
+	<mi> - </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> GM </mi> 
+      </mrow>
+      <mrow>
+        <mrow>
+          <msup>
+            <mi> r </mi>
+            <mn> 2 </mn>
+          </msup>
+		</mrow>
+      </mrow>
+    </mfrac>
+  </mrow>
+</mrow>
+</math>
+</p>
+<br/>
+<p>
+    Last we can add the air drag: F=-&#189;&rho;AC<sub>d</sub>v<sup>2</sup></br>
+</p>
+<!--                                             -->
+<p>
+<math>
+<mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <msup>
+            <mi> d </mi>
+            <mn> 2 </mn>
+          </msup>
+        </mrow>
+        <mi> &phi; </mi> 
+      </mrow>
+      <mrow>
+          <msup>
+            <mi> dx </mi>
+            <mn> 2 </mn>
+          </msup>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <msub>
+            <mi> F </mi>
+            <mn> Rocket </mn>
+          </msub>
+        </mrow>
+      </mrow>
+      <mrow>
+        <mrow>
+          <msub>
+            <mi> m </mi>
+            <mn> Rocket </mn>
+          </msub>
+        </mrow>
+        <mrow>
+          <mi> r </mi>
+        </mrow>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi>sin(&#x03B1;)</mi>
+  </mrow>
+  <mrow>
+	<mi> - 2 </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> d </mi> 
+        <mi> &phi; </mi> 
+      </mrow>
+      <mrow>
+        <mi> dx </mi>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> v </mi> 
+      </mrow>
+      <mrow>
+        <mi> r </mi>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi> - </mi> 
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <mi> &rho;A </mi> 
+        </mrow>
+        <mrow>
+          <msub>
+            <mi> C </mi>
+            <mn> d </mn>
+          </msub>
+        </mrow>
+        <mrow>
+          <mi> r </mi>
+        </mrow>
+      </mrow>
+      <mrow>
+        <mi> 2 </mi>
+        <mrow>
+          <msub>
+            <mi> m </mi>
+            <mn> Rocket </mn>
+          </msub>
+        </mrow>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <msup>
+      <mrow>
+        <mfrac>
+          <mrow>
+            <mi> d </mi> 
+            <mi> &phi; </mi> 
+          </mrow>
+          <mrow>
+            <mi> dx </mi>
+          </mrow>
+        </mfrac>
+      </mrow>
+      <mn> 2 </mn>
+    </msup>
+  </mrow>
+</mrow>
+</math>
+</p>
+<p>
+<math>
+<mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <msup>
+            <mi> d </mi>
+            <mn> 2 </mn>
+          </msup>
+        </mrow>
+        <mi> r </mi> 
+      </mrow>
+      <mrow>
+          <msup>
+            <mi> dx </mi>
+            <mn> 2 </mn>
+          </msup>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> 1 </mi> 
+      </mrow>
+      <mrow>
+        <mi> r </mi> 
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <msup>
+      <mrow>
+        <mfrac>
+          <mrow>
+            <mi> d </mi> 
+            <mi> &phi; </mi> 
+          </mrow>
+          <mrow>
+            <mi> dx </mi>
+          </mrow>
+        </mfrac>
+      </mrow>
+      <mn> 2 </mn>
+    </msup>
+  </mrow>
+  <mrow>
+    <mi> + </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <msub>
+            <mi> F </mi>
+            <mn> Rocket </mn>
+          </msub>
+        </mrow>
+      </mrow>
+      <mrow>
+        <mrow>
+          <msub>
+            <mi> m </mi>
+            <mn> Rocket </mn>
+          </msub>
+        </mrow>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi>cos(&#x03B1;)</mi>
+  </mrow>
+  <mrow>
+	<mi> - </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> GM </mi> 
+      </mrow>
+      <mrow>
+        <mrow>
+          <msup>
+            <mi> r </mi>
+            <mn> 2 </mn>
+          </msup>
+		</mrow>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+	<mi> - </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <mi> &rho;A </mi> 
+        </mrow>
+        <mrow>
+          <msub>
+            <mi> C </mi>
+            <mn> d </mn>
+          </msub>
+        </mrow>
+        <mrow>
+          <msup>
+            <mi> v </mi>
+            <mn> 2 </mn>
+          </msub>
+        </mrow>
+      </mrow>
+      <mrow>
+        <mi> 2 </mi>
+        <mrow>
+          <msub>
+            <mi> m </mi>
+            <mn> Rocket </mn>
+          </msub>
+        </mrow>
+      </mrow>
+    </mfrac>
+  </mrow>
+</mrow>
+</math>
+</p>
+<table><tr><td>
+    <button onclick="Run()" class="F">
+	Simulate
+	</button><br/>
+    <!--button onclick="Test()" class="F">Test</button><br/-->
+    <button onclick="TestOldData()" class="F">Old data</button><br/>
+    <button onclick="TestEscapeData()" class="F">Escape</button><br/>&nbsp;<br/>
+    <button onclick="toggleObject('allPlot')" class="F">Plot on/off</button><br/>
+    <button onclick="toggleObject('data')" class="F">Data on/off</button>
+</td><td>
+<FORM>
+<input id="b1" type="checkbox" class="C"/>Air drag&nbsp;<input id="b2" type="checkbox" class="C"/>Draw Moon&nbsp;<input id="b3" type="checkbox" class="C"/>Draw Earth&nbsp;<input id="b4" type="checkbox" class="C"/>
+<br/><table><tr><td></td>
+     <td>r - r0</td><td>v</td><td>&rho;</td><td>&omega; - &omega;0</td><td>&#x03B1;</td><td></td><td></td><td></td><td></td><td></td><td></td><td>x1000 seconds</td>
+</tr><tr><td>Start</td>
+     <td class="F"><input id="bt1" type="text" value="500"    class="F"/></td><td class="F"><input id="bt2" type="text" value="" class="F"/></td><td class="F"><input id="bt3" type="text" value="" class="F"/></td><td class="F"><input id="bt4" type="text" value="" class="F"/></td>
+     <td class="F"><input id="bt5" type="text" value=""       class="F"/></td><td class="F"><input id="bt6" type="text" value="" class="F"/></td><td class="F"><input id="bt7" type="text" value="" class="F"/></td><td class="F"><input id="bt8" type="text" value="" class="F"/></td>
+     <td class="F"><input id="bt9" type="text" value=""       class="F"/></td><td class="F"><input id="bt10" type="text" value="" class="F"/></td><td class="F"><input id="bt11" type="text" value="" class="F"/></td><td class="F"><input id="bt12" type="text" value="11" class="F"/></td>
+</tr><tr><td>On      </td>
+     <td class="F"></td><td class="F"></td><td class="F"></td><td class="F"></td>
+     <td class="F"><input id="b5" type="checkbox" class="F"/></td><td class="F"><input id="b6" type="checkbox" class="F"/></td><td class="F"><input id="b7" type="checkbox" class="F"/></td><td class="F"><input id="b8" type="checkbox" class="F"/></td>
+     <td class="F"><input id="b9" type="checkbox" class="F"/></td><td class="F"><input id="b10" type="checkbox" class="F"/></td><td class="F"><input id="b11" type="checkbox" class="F"/></td><td class="F"><input id="b12" type="checkbox" class="F"/></td>
+</tr><tr><td>Sekunder</td>
+     <td class="F"><input id="at1" type="text" value=""       class="F"/></td><td class="F"><input id="at2" type="text" value="" class="F"/></td><td class="F"><input id="at3" type="text" value="" class="F"/></td><td class="F"><input id="at4" type="text" value="" class="F"/></td>
+     <td class="F"><input id="at5" type="text" value=""       class="F"/></td><td class="F"><input id="at6" type="text" value="" class="F"/></td><td class="F"><input id="at7" type="text" value="" class="F"/></td><td class="F"><input id="at8" type="text" value="" class="F"/></td>
+     <td class="F"><input id="at9" type="text" value=""       class="F"/></td><td class="F"><input id="at10" type="text" value="" class="F"/></td><td class="F"><input id="at11" type="text" value="" class="F"/></td><td class="F"><input id="at12" type="text" value="" class="F"/></td>
+</tr><tr><td>Vinkel  </td>
+     <td class="F"><input id="aa1" type="text" value=""       class="F"/></td><td class="F"><input id="aa2" type="text" value="" class="F"/></td><td class="F"><input id="aa3" type="text" value="" class="F"/></td><td class="F"><input id="aa4" type="text" value="" class="F"/></td>
+     <td class="F"><input id="aa5" type="text" value=""       class="F"/></td><td class="F"><input id="aa6" type="text" value="" class="F"/></td><td class="F"><input id="aa7" type="text" value="" class="F"/></td><td class="F"><input id="aa8" type="text" value="" class="F"/></td>
+     <td class="F"><input id="aa9" type="text" value=""       class="F"/></td><td class="F"><input id="aa10" type="text" value="" class="F"/></td><td class="F"><input id="aa11" type="text" value="" class="F"/></td><td class="F"><input id="aa12" type="text" value="" class="F"/></td>
+</tr><tr><td></td>
+     <td>Stage I</td><td>Stage II</td><td>Stage III</td><td>Pause 1</td><td>Stage III</td><td>Pause 2</td><td>Stage III</td><td>Pause3</td><td>Stage III</td><td>Pause 4</td><td>Stage III</td><td>Pause 5</td>
+</tr><tr><td>Pause</td>
+     <td class="F"><input id="bp1" type="text" value="100000" class="B"/></td><td class="F"><input id="bp2" type="text" value="" class="B"/></td><td class="F"><input id="bp3" type="text" value="" class="B"/></td><td class="F"><input id="bp4" type="text" value="" class="F"/></td>
+     <td class="F"><input id="bp5" type="text" value=""       class="B"/></td><td class="F"><input id="bp6" type="text" value="" class="F"/></td><td class="F"><input id="bp7" type="text" value="" class="B"/></td><td class="F"><input id="bp8" type="text" value="" class="F"/></td>
+     <td class="F"><input id="bp9" type="text" value=""       class="B"/></td><td class="F"><input id="bp10" type="text" value="" class="F"/></td><td class="F"><input id="bp11" type="text" value="" class="B"/></td><td class="F"><input id="bp12" type="text" value="" class="F"/></td>
+</tr><tr><td></td>
+     <td>Last E/m</td><td><span id="LastEnergy"></span></td><td><span id="outDat3"></span></td><td><span id="outDat4"></span></td>
+	 <td><span id="outDat5"></span></td><td><span id="outDat6"></span></td><td><span id="outDat7"></span></td><td><span id="outDat8"></span></td>
+	 <td><span id="outDat9"></span></td><td><span id="outDat10"></span></td><td><span id="outDat11"></span></td><td><span id="outDat12"></span></td>
+</tr></table>
+</FORM>
+</td></tr></table>
+<div>
+    <p>
+		<!--table border="1">
+            <tr><td>Stage</td><td>t</td><td>a0</td><td>alpha</td><td>r</td><td>v</td><td>&rho;</td><td>&omega;</td><td>vc</td><td>E/m</td><td>Ekin + Epot/2</td><td>Vorbit</td></tr-->
+            <SCRIPT>
+
+
+const GetLines = () => {
+return [
+[document.getElementById('b1'),document.getElementById('b2'),document.getElementById('b3'),document.getElementById('b4'),document.getElementById('b5'),document.getElementById('b6'),document.getElementById('b7'),document.getElementById('b8'),document.getElementById('b9'),document.getElementById('b10'),document.getElementById('b11'),document.getElementById('b12')],
+[document.getElementById('at1'),document.getElementById('at2'),document.getElementById('at3'),document.getElementById('at4'),document.getElementById('at5'),document.getElementById('at6'),document.getElementById('at7'),document.getElementById('at8'),document.getElementById('at9'),document.getElementById('at10'),document.getElementById('at11'),document.getElementById('at12')],
+[document.getElementById('aa1'),document.getElementById('aa2'),document.getElementById('aa3'),document.getElementById('aa4'),document.getElementById('aa5'),document.getElementById('aa6'),document.getElementById('aa7'),document.getElementById('aa8'),document.getElementById('aa9'),document.getElementById('aa10'),document.getElementById('aa11'),document.getElementById('aa12')],
+[document.getElementById('bt1'),document.getElementById('bt2'),document.getElementById('bt3'),document.getElementById('bt4'),document.getElementById('bt5'),document.getElementById('bt6'),document.getElementById('bt7'),document.getElementById('bt8'),document.getElementById('bt9'),document.getElementById('bt10'),document.getElementById('bt11'),document.getElementById('bt12')],
+[document.getElementById('bp1'),document.getElementById('bp2'),document.getElementById('bp3'),document.getElementById('bp4'),document.getElementById('bp5'),document.getElementById('bp6'),document.getElementById('bp7'),document.getElementById('bp8'),document.getElementById('bp9'),document.getElementById('bp10'),document.getElementById('bp11'),document.getElementById('bp12')]
+];
+}
+const Line1 = [document.getElementById('b1'),document.getElementById('b2'),document.getElementById('b3'),document.getElementById('b4'),document.getElementById('b5'),document.getElementById('b6'),document.getElementById('b7'),document.getElementById('b8'),document.getElementById('b9'),document.getElementById('b10'),document.getElementById('b11'),document.getElementById('b12')];
+const Line2 = [document.getElementById('at1'),document.getElementById('at2'),document.getElementById('at3'),document.getElementById('at4'),document.getElementById('at5'),document.getElementById('at6'),document.getElementById('at7'),document.getElementById('at8'),document.getElementById('at9'),document.getElementById('at10'),document.getElementById('at11'),document.getElementById('at12')];
+const Line3 = [document.getElementById('aa1'),document.getElementById('aa2'),document.getElementById('aa3'),document.getElementById('aa4'),document.getElementById('aa5'),document.getElementById('aa6'),document.getElementById('aa7'),document.getElementById('aa8'),document.getElementById('aa9'),document.getElementById('aa10'),document.getElementById('aa11'),document.getElementById('aa12')];
+const Line4 = [document.getElementById('bt1'),document.getElementById('bt2'),document.getElementById('bt3'),document.getElementById('bt4'),document.getElementById('bt5'),document.getElementById('bt6'),document.getElementById('bt7'),document.getElementById('bt8'),document.getElementById('bt9'),document.getElementById('bt10'),document.getElementById('bt11'),document.getElementById('bt12')];
+const Line5 = [document.getElementById('bp1'),document.getElementById('bp2'),document.getElementById('bp3'),document.getElementById('bp4'),document.getElementById('bp5'),document.getElementById('bp6'),document.getElementById('bp7'),document.getElementById('bp8'),document.getElementById('bp9'),document.getElementById('bp10'),document.getElementById('bp11'),document.getElementById('bp12')];
+
+/*
+let allLines = GetLines();
+const Line1 = allLines[0];
+const Line2 = allLines[1];
+const Line3 = allLines[2];
+const Line4 = allLines[3];
+const Line5 = allLines[4];
+*/
+
+const SetFormValues = (burnTimes, angle0Times, angle0Values, orbit0) => {
+	for (var ii=0;ii<burnTimes.length;ii++)
+	{
+		Line5[ii].value = burnTimes[ii].toString(10);
+	}
+	for (var ii=0;ii<angle0Times.length;ii++)
+	{
+		Line2[ii].value = angle0Times[ii].toString(10);
+	}
+	for (var ii=0;ii<angle0Values.length;ii++)
+	{
+		Line3[ii].value = angle0Values[ii].toString(10);
+	}
+	Line4[0].value = (orbit0.r - SatelliteOrbitData.r0).toString(10);
+	Line4[1].value = (orbit0.v).toString(10);
+	Line4[2].value = (orbit0.rho).toString(10);
+	Line4[3].value = (orbit0.omega - SatelliteOrbitData.omega0).toString(10);
+	Line4[4].value = (orbit0.vinkel).toString(10);
+}
+
+const SetCheck = (luftModstand, showMoon, showEath, showOutput) => {
+	if (luftModstand == 1) Line1[0].checked = true; else Line1[0].checked = false;
+	if (showMoon == 1) Line1[1].checked = true; else Line1[1].checked = false;
+	if (showEath == 1) Line1[2].checked = true; else Line1[2].checked = false;
+	if (showOutput == 1) Line1[3].checked = true; else Line1[3].checked = false;
+}
+
+const GetCheck = () => {
+	let luftModstand = 0;
+	let showMoon = 0;
+	let showEath = 0;
+	let showOutput = 0;
+	if (Line1[0].checked) luftModstand = 1; else luftModstand = 0;
+	if (Line1[1].checked) showMoon = 1; else showMoon = 0;
+	if (Line1[2].checked) showEath = 1; else showEath = 0;
+	if (Line1[3].checked) showOutput = 1; else showOutput = 0;
+	return [luftModstand, showMoon, showEath, showOutput];
+}
+
+const GetFormValues = () => {
+	let burn0Times = [];
+	let angle0Values = [];
+	let angle0Times = [];
+	for (var ii=0;ii<12;ii++)
+	{
+		burn0Times[ii] = GetFloat(Line5[ii].value);
+	}
+	for (var ii=0;ii<12;ii++)
+	{
+		angle0Times[ii] = GetFloat(Line2[ii].value);
+	}
+	for (var ii=0;ii<12;ii++)
+	{
+		angle0Values[ii] = GetFloat(Line3[ii].value);
+	}
+	return new SimulationSetup(
+					angle0Times,
+					angle0Values,
+					burn0Times,
+					new OrbitData(
+						0,
+						GetFloat(Line4[0].value) + r0,
+						GetFloat(Line4[1].value),
+						GetFloat(Line4[2].value),
+						GetFloat(Line4[3].value) + 2.0*Math.PI/(24.0*3600.0),
+						GetFloat(Line4[4].value)));
+}
+
+const GetDefaultOrbitStart = () => {
+	return new OrbitData(0,SatelliteOrbitData.r0,0,0,SatelliteOrbitData.omega0,0); //new OrbitData(r0,0,0,0,omega0,0)
+}
+
+const GetEscapeData = () => {
+	return new SimulationSetup(
+		[0, 140.0, 171.0, 172.0, 375.0, 481.0, 596.0, 597.0, 1000.0, 1200.0, 1000000.0],
+		//[0,   4.0,  17.0,  20.0,  60.4,  86.9,  90.0,  78.0,   90.0,   90.0,     90.0],
+		//[0,   5.0,  17.0,  35.0,  65.4,  86.9,  90.0,  78.0,   90.0,   90.0,     90.0],
+		[0,   6.0,  25.0,  35.0,  75.4,  86.9,  90.0,  78.0,   90.0,   90.0,     90.0],
+		[170.3, 426.64, 505.0, 1000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 1.0],
+		GetDefaultOrbitStart(),
+	);
+}
+
+const GetOldData = () => {
+	return new SimulationSetup(
+		[0, 140.0, 171.0, 172.0, 375.0, 481.0, 596.0, 597.0, 1000.0, 1200.0, 100000.0],
+		[0,   4.0,  17.0,  20.0,  60.4,  86.9,  90.0,  78.0,   90.0,   90.0,     90.0],
+		[170.3, 426.64, 505.0, 1000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0],
+		GetDefaultOrbitStart(),
+	);
+}
+
+const SetupForm = (defaultData) => {
+	//(document.getElementById('bt1')).innerHTML = "509";
+	//(document.getElementById('bp1')).innerHTML = "100009";
+	//(document.getElementById('bt1')).value = "509";
+	//(document.getElementById('bp1')).value = "100009";
+	SetFormValues(defaultData.BurnTimes, defaultData.AngleTimeList, defaultData.AngleValueList, defaultData.StartValue);
+	SetCheck(1,0,1,1);
+}
+
+//const Moon = new SimulationSetup(
+//[0, 140.0, 171.0, 172.0, 375.0, 481.0, 596.0, 597.0, 1000.0, 1200.0, 100000.0],
+//[0,   4.0,  17.0,  20.0,  60.4,  86.9,  90.0,  78.0,   90.0,   90.0,     90.0],
+//[170.3, 426.64, 505.0, 1000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0],
+//new OrbitData(0,0,0,0,0,0)
+//);
+//const Moon = GetOldData();
+//stageTimeO = Moon.BurnTimes;
+//angleTimeO = Moon.AngleTimeList;
+//angleValueO =Moon.AngleValueList;
+
+const hero1 = new internalData(7,17);
+hero1.name = 11;
+//self.document.write(" -------------------------------------------------------------------------------------------------------------------------------</br>");
+//self.document.write("--------------------- " + hero1._a  + "---" + SatelliteOrbitData.PI + "------------------------------------------------------------</br>");
+//self.document.write(" -------------------------------------------------------------------------------------------------------------------------------</br>");
+//console.log(hero1);
+
+
+//let sat = new SatelliteOrbitData();
+//self.document.write("--------------------- " + sat.vc + "------------------------------------------------------------</br>");
+
+
+			
+//self.document.write("Hej</br>");
+function getAirPresure(airPresureAtSurface, heightAboveSurface)
+{
+    if (heightAboveSurface > 200000.0)//No air drag or airpresure of any meaning if more than 200 km above surface
+		return 0.0;
+    if (heightAboveSurface > 0.0)
+		return(airPresureAtSurface * Math.pow(2.7182818284590452353602, -0.000127*heightAboveSurface));
+
+	return airPresureAtSurface;
+}
+function XYTableTop()
+{
+	self.document.write("<table border=1><tr><td>X</td><td>Y</td></tr>");
+}
+function XYTableRow(xx, yy)
+{
+    self.document.write("<tr><td>" + (RoundN(xx, 5)).toString(10) + "</td><td>" + (RoundN(yy, 5)).toString(10) + "</td></tr>");
+}
+function XYTableEnd()
+{
+    self.document.write("</table>");
+}
+
+function GetMin(x,y)
+{
+	if (x < y)
+		return x;
+	else 
+		return y;
+}
+
+function ShowTrace(trace)
+{
+	let minNumberOfRows = GetMin(trace.x.length, trace.y.length);
+	XYTableTop();
+	for(var ii=0;ii<minNumberOfRows;ii++)
+	{
+			XYTableRow(trace.x[ii], trace.y[ii]);
+	}
+	XYTableEnd();
+}
+
+function ShowOrbit(orbitData)
+{//OrbitData
+	XYTableTop();
+	for(var ii=0;ii<orbitData.length;ii++)
+	{
+		XYTableRow(orbitData[ii].r*Math.cos(orbitData[ii].rho)/1000000.0, orbitData[ii].r*Math.sin(orbitData[ii].rho)/1000000.0);
+	}
+	XYTableEnd();
+}
+
+//Drag
+const Cd = 0.295;
+var rho0luft = 1.3;
+var drag_r = 0.0;
+var drag_c = 0.0;
+
+var kgPerLbs = 0.45359237;
+var used = 0;
+//528,4+329,6 = 858 x 1080 - 858 = 222
+//129000.0 - stage1time - stage2time - stage3time;
+
+const DiameterStage1 = 396;//inch ->0.0254 meterPerInch 10m
+const DiameterStage2 = 260;//inch
+const DiameterStage3 = 154;//inch
+const A_tvarsnit_rocket = (DiameterStage1*0.0254/2.0)*(DiameterStage1*0.0254/2.0)*Math.PI;//inch ->0.0254 meterPerInch 10m
+const burnStage1 = 170.4;
+const burnStage2 = 426.64;
+const burnStage3 = 513.0;
+const burnMoon1 = 437.06;
+const burnGeo1Old = 202.06;//Get in first semi cercular orbit
+const burnGeo2Old = 20.0;//Leave orbit
+const burnGeo3Old = 186.091;//Get in geo cercular orbit
+const geoStationaerOld = [170.3, 426.64, 202.06, 2342.0, 20.0, 12803.0, 186.091, 330796.0, 77.42, 1000000.0, 0.0];//Less weight
+const burnGeo1A = 410.0;//Op
+const burnGeo2A = 90.0;//Get in first semi cercular orbit
+const burnGeo3A = 12.54;//Leave orbit
+const burnGeo4A = 10.8;//Get in geo cercular orbit
+const geoStationaerA = [170.3, 426.64, 410.0, 13055.06, 90.0, 147522.0, 12.54, 35590.0, 10.8, 1000000.0, 0.0];//Used 523 sec fuel out of 513!
+const burnGeo1B = 425.59;//
+const burnGeo2B = 513.0;//Get in first semi cercular orbit
+const geoStationaerB = [170.3, 426.64, 425.59, 18880.06, 87.41, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0];//Used all fuel
+const toTheMoon = [170.3, 426.64, 469.52, 1000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0];
+const escape = [170.3, 426.64, 474.624, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0];
+const geoStationaerC = [170.3, 426.64, 375.0, (12504.00 - 50.0), 100.0, (144710.0 - 5.0), 15.29, 34696.00, (burnStage3 - 375.0 - 100.0 - 15.29 - 9.1), 1000000.0, 0.0];//Other angels
+const toTheMoonB = [170.3, 426.64, 441.4, 1000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0];//Other angels
+const escapeB = [170.3, 426.64, 447.045, 1000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0];//Other angels
+const escapeC = [170.3, 426.64, 505.0, 1000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0];//Other angels
+
+
+
+const Off = 0;
+const On = 1;
+let LuftModstand = On;
+let ShowMoon = Off;
+let ShowEath = On;
+let ShowOutput = On;
+let NoOfSeconds = 1000;
+let NoOf1000Seconds = 3;//+100 svarer til 1 døgn, 3 timer, 46 minutter og 40 sekunder
+
+
+//
+
+//Cost 410 + 90 + 12.54 + 10.8
+//const burnMoon1 = 437.06;
+
+const burn1 = 375.0;//330 10  => -18935
+const pause1 = 12504.00 - 50.0;
+const burn2 = 100.0;
+const pause2 = 144710.0 - 5.0;
+const burn3 = 15.29;
+const pause3 = 34696.00;
+const burn4 = burnStage3 - burn1 - burn2 - burn3 - 9.1;
+const burn5 = 503.0 - burn1 - burn2 - burn3 - burn4;
+const burn1b = 513.0;
+const burn3b = 1.00;
+const burn2b = 515.0 - burn1b - burn3b;
+
+const MMoonLandingModul = 33493.0;
+//const MTotal = 6501731.0 - 50000.0;
+const MTotal = 6501731.0 - MMoonLandingModul;
+const MBetween1And2 = 11454.0;
+const MStage1 = 5029418.0 + MBetween1And2;
+const MUsage1 = 27420.0;
+const MBetween2And3 = 8081.0;
+const MStage2 = 1075733.0 + MBetween2And3;
+const MUsage2 = 2317.192;
+const MStage3 = 262317.0;
+const MUsage3 = 456.0;
+
+let stageTimeO = [];
+let angleTimeO = [];
+let angleValueO = [];
+
+
+stageTimeO = [burnStage1, burnStage2, burn1, pause1, burn2, pause2, burn3, pause3, burn4, 1000000.0, 0.0];
+angleTimeO = [0, 140.0, 171.0, 172.0, 375.0, 481.0, 596.0, 597.0, 1000.0, 1200.0, 100000.0];
+angleValueO =[0,   4.0,  17.0,  20.0,  60.4,  86.9,  90.0,  78.0,   90.0,   90.0,     90.0];
+
+
+stageTimeO = escapeC;
+//self.document.write("" + (RoundN(202.06 + 20.0 + 186.091, 5)).toString(10) + "</br>");
+//self.document.write("" + (RoundN(410 + 90 + 12.54 + 10.8, 5)).toString(10) + "</br>");
+//self.document.write("" + (RoundN(burnStage3 - burn1, 5)).toString(10) + "</br>");
+
+var h = 0.01;
+var hhalf = h/2.0;
+var hsixth = h/6.0;
+
+//const moonPosition = 217.0;
+const moonPosition = 220.0;
+const r0 = 6371000.0;
+const vc0 = r0*2.0*Math.PI/(24.0*3600.0);
+var r0Moon = 1738000.0;
+var distanceMoon = 384399000.0;
+var rGeo = 42241000.0;
+var GM = 3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
+
+
+
+
+function stage(tt) {
+	var ttt = stageTimeO[0];
+	for (var ii=1;ii<=stageTimeO.length;ii++)
+	{
+		if (tt < ttt)
+		  return ii;
+		ttt += stageTimeO[ii];
+	}
+
+	return 11;
+}
+
+function stageT(tt) {
+	var ttt = 0.0;
+	for (var ii=0;ii<stageTimeO.length;ii++)
+	{
+		if (tt < ttt + stageTimeO[ii])
+		  return tt - ttt;
+		ttt += stageTimeO[ii];
+	}
+
+	return tt - ttt;
+}
+
+function Mass(tt) {
+	switch (stage(tt))
+	{
+		case 1:  return (MTotal - (tt * MUsage1))* kgPerLbs; break;
+		case 2:  return (MTotal - MStage1                           - (MUsage2 * (tt -stageTimeO[0]) ))* kgPerLbs; break;
+		case 3:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (tt -stageTimeO[0] -stageTimeO[1])))* kgPerLbs; break;
+		case 4:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (stageTimeO[2])))* kgPerLbs; break;
+		case 5:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (tt -stageTimeO[0] -stageTimeO[1] -stageTimeO[3])))* kgPerLbs; break;
+		case 6:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (stageTimeO[2] + stageTimeO[4])))* kgPerLbs; break;
+		case 7:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (tt -stageTimeO[0] -stageTimeO[1] -stageTimeO[3] -stageTimeO[5])))* kgPerLbs; break;
+		case 8:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (stageTimeO[2] + stageTimeO[4] + stageTimeO[6])))* kgPerLbs; break;
+		case 9:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (tt -stageTimeO[0] -stageTimeO[1] -stageTimeO[3] -stageTimeO[5] -stageTimeO[7])))* kgPerLbs; break;
+	    default: return (MTotal - MStage1 - MStage2 - MStage3)* kgPerLbs; break;
+	}
+}
+
+function ACrossSectionRocket(tt)
+{
+//A_tvarsnit_rocket_stage1 = (DiameterStage1*0.0254/2.0)*(DiameterStage1*0.0254/2.0)*Math.PI;//inch ->0.0254 meterPerInch 10m 
+
+const DiameterStage1 = 396;//inch ->0.0254 meterPerInch 10m
+const DiameterStage2 = 260;//inch
+const DiameterStage3 = 154;//inch
+const ConverDiameterInch2RadiusMeter = 0.00016129;//(0.0254/2)^2
+//d*
+//A_tvarsnit_rocket = (DiameterStage1*0.0254/2.0)*(DiameterStage1*0.0254/2.0)*Math.PI;//inch ->0.0254 meterPerInch 10m
+	switch (stage(tt))
+	{
+		case 1: return DiameterStage1*DiameterStage1*ConverDiameterInch2RadiusMeter*pi; break;
+		case 2: return DiameterStage2*DiameterStage2*ConverDiameterInch2RadiusMeter*pi; break;
+	    default: return DiameterStage3*DiameterStage3*ConverDiameterInch2RadiusMeter*pi; break;
+	}
+	return 0;
+}
+
+function Trust(tt) {
+	switch (stage(tt))
+	{
+		case 1: return 33400000.0; break;
+		case 2: return  4400000.0; break;
+		case 3: return  1001000.0; break;
+		case 5: return  1001000.0; break;
+		case 7: return  1001000.0; break;
+		case 9: return  1001000.0; break;
+	    default: return 0.0; break;
+	}
+}
+
+const GetLineAprox = (x, xmin, xmax, ymin, ymax) => {
+	if (x < xmin)
+		return ymin;
+
+	if (xmax < x)
+		return ymax;
+		
+	return ymin + (x-xmin)*(ymax-ymin)/(xmax-xmin);
+};	
+
+const GetSqrtAprox = (x, xmin, xmax, ymin, ymax) => {
+	if (x < xmin)
+		return ymin;
+
+	if (xmax < x)
+		return ymax;
+		
+	return ymin + Math.Sqrt((x-xmin)/(xmax-xmin))*(ymax-ymin);
+};	
+
+const GetValues = (x, xList, yList) => {
+	for (var ii=1;ii<(xList.length);ii++)
+	{
+		if (x >= xList[ii - 1] && x <= xList[ii] && ii < yList.length)
+		  return GetLineAprox(x, xList[ii - 1], xList[ii], yList[ii - 1], yList[ii]);
+	}
+    return yList[yList.length - 1];
+};	
+
+
+
+function GetAngle(tt, accc)
+{
+	return GetValues(tt, angleTimeO, angleValueO);
+
+	const angle3 = GetValues(tt,
+		[0, 140.0, 171.0, 172.0, 375.0, 481.0, 596.0, 597.0, 1000.0, 1200.0, 100000.0],
+		[0,   4.0,  17.0,  20.0,  60.4,  86.9,  90.0,  78.0,   90.0,   90.0,     90.0]);
+
+	const angle2 = GetValues(tt,
+		[0, 140.0, 171.0, 172.0, 375.0, 481.0, 596.0, 597.0, 1000.0, 1200.0, 100000.0],
+		[0,   4.0,  17.0,  20.0,  60.4,  86.9,  90.0,  78.0,   90.0,   90.0,     90.0]);
+
+	const angle1 = GetValues(tt,
+		[0, 170.0, 171.0, 400.0, 500.0, 501, 750.0, 910.0, 911.0, 100000.0],
+		[0,  68.0,  40.0,  40.0,  65.0,  85,  85.0,  85.0,  90.0,     90.0]);
+
+	return angle3;	
+	
+	//const myMap = new Map([ [0, 0], [140.0, 4.0],[171.0, 17.0],[172.0, 20.0],[375.0, 60.4]]);
+
+	// Using for...of loop
+	//for (const [key, value] of myMap) {
+	//  console.log(`${key}: ${value}`);	
+		
+	var aMinimum = 0.2; //-0.01;//6	2580	0.042022		4027.8km	3839.3	2.4999	0.00059876	6226.4	-11577	-19166
+	var temp = Mass(tt)*(aMinimum - accc)/Trust(tt);
+
+		
+	if (0.0 <= temp && temp < 1.0)
+		return (180.0/Math.PI)*Math.acos(temp);//tPerM1*cosAlpha - GM/(r*r);
+
+	return (90);
+}
+
+function dOmega(t,r,v,rho,omega,rocketTrust, airPresure) {
+	let M1 = Mass(t);
+	let M2 = Mass(t+hhalf);
+	let M3 = Mass(t+h);
+	//Luften raketten stiger op igennem foelger med jordens rotation (omega0) 
+	//saa det er kun en højere eller lavere hastighed end jorden der giver luft modstand
+	let omegaAir = omega-SatelliteOrbitData.omega0;
+	let dragConst = getDragConstant(t, airPresure,omegaAir);
+
+	//drag_c = (vc-vc0)*(vc-vc0)*dragConst/(Mass(t));
+	//var k1 = tPerM1*sinAlpha-vc*v/r - LuftModstand*drag_c;
+	//var k2 = tPerM2*sinAlpha-(vc+(hhalf*k1))*v/r - LuftModstand*drag_c;
+	//var k3 = tPerM2*sinAlpha-(vc+(hhalf*k2))*v/r - LuftModstand*drag_c;
+	//var k4 = tPerM3*sinAlpha-(vc+(h*k3))*v/r - LuftModstand*drag_c;
+	//vcNew = vc + hsixth*(k1 + 2.0*k2 + 2.0*k3 + k4);
+	//omegaNew = vcNew/r;
+
+	var k1 = rocketTrust/(M1*r) -2*omega*v/r -(omegaAir)*(omegaAir)*r*dragConst/M1;
+	var k2 = rocketTrust/(M2*r) -2*(omega+(hhalf*k1))*v/r -(omegaAir+(hhalf*k1))*(omegaAir+(hhalf*k1))*r*dragConst/M2;
+	var k3 = rocketTrust/(M2*r) -2*(omega+(hhalf*k2))*v/r -(omegaAir+(hhalf*k1))*(omegaAir+(hhalf*k2))*r*dragConst/M2;
+	var k4 = rocketTrust/(M3*r) -2*(omega+(h*k3))*v/r -((omegaAir+(h*k3)))*((omegaAir+(h*k3)))*r*dragConst/M3;
+
+	return hsixth*(k1 + 2.0*k2 + 2.0*k3 + k4);
+}
+
+function dV(t,r,v,rho,omega,rocketTrust, airPresure)
+{
+	let M1 = Mass(t);
+	let M2 = Mass(t+hhalf);
+	let M3 = Mass(t+h);
+	let dragConst = getDragConstant(t, airPresure,v);
+
+	let k1 = omega*omega*r + rocketTrust/M1 - GM/(r*r) - v*v*dragConst/M1;
+	let k2 = omega*omega*r + rocketTrust/M2 - GM/(r*r) - (v + hhalf*k1)*(v + hhalf*k1)*dragConst/M2;
+	let k3 = omega*omega*r + rocketTrust/M2 - GM/(r*r) - (v + hhalf*k2)*(v + hhalf*k2)*dragConst/M2;
+	let k4 = omega*omega*r + rocketTrust/M3 - GM/(r*r) - (v + h*k3)*(v + h*k3)*dragConst/M3;
+
+	return hsixth*(k1 + 2.0*k2 + 2.0*k3 + k4);
+}
+
+function dy(y){
+	//k1 = y;
+	//k2 = y;
+	//k3 = y;
+	//k4 = y;
+	//return hsixth*(k1 + 2.0*k2 + 2.0*k3 + k4);
+	return h*y;
+}
+
+function dR(dRdt){
+	return dy(dRdt);
+}
+
+function dRho(dRhodt){
+	return dy(dRhodt);
+}
+
+function getDragConstant(t, airPresure, velocity)
+{//The airdrag is always opposite direction of the velocity
+	if (velocity >= 0)
+		return 0.5*airPresure*ACrossSectionRocket(t)*Cd*LuftModstand;
+	else
+		return -0.5*airPresure*ACrossSectionRocket(t)*Cd*LuftModstand;
+}
+
+function DoWriteTableTop()
+{
+	self.document.write("<table border=1>");
+	//self.document.write("<table border=1><tr><td>Stage</td><td>t</td><td>a0</td><td>alpha</td>");
+	//self.document.write("<td>r</td><td>v</td><td>&phi;</td><td>&omega;</td><td>vc</td><td>E/m</td><td>Ekin + Epot/2</td><td>Vorbit</td></tr>");
+	//self.document.write("<td>r</td><td>v</td><td>&phi;</td><td>&omega;</td><td>vc</td><td>ac</td><td>E/m</td><td>Ekin + Epot/2</td><td>Vorbit</td></tr>");
+	//self.document.write("<td>r</td><td>v</td><td>&phi;</td><td>&omega;</td><td>vc</td><td>ac</td><td>E/m</td><td>Effect</td><td>Vorbit</td></tr>");
+}
+
+function DoWriteTableHeader()
+{
+	self.document.write(GetTableHeader());
+}
+
+function GetTableHeader()
+{
+	let header = "<tr><td>Stage</td><td>t</td><td>a0</td><td>alpha</td>";
+	//header += "<td>r</td><td>v</td><td>&phi;</td><td>&omega;</td><td>vc</td><td>ac</td><td>E/m</td><td>Ekin + Epot/2</td><td>Vorbit</td></tr>";
+	header += "<td>r</td><td>v</td><td>&phi;</td><td>&omega;</td><td>vc</td><td>ac</td><td>E/m</td><td>Effect</td><td>Vorbit</td></tr>";
+	return header;
+}
+
+function DoWriteTableEnd()
+{
+	self.document.write("</table>");
+}
+
+const ShowValues = (valueList) => {
+  let str = "";
+  for (val of valueList)
+  {
+	str = str + "</td><td>" + (RoundN(val, 5)).toString(10) + "";
+  }
+  return str;
+};	
+
+function GetSimpleTrace()
+{
+    const functionInput = "x^2";
+    const expr = math.parse(functionInput).compile();
+
+    let xValues = math.range(-10, 10, 0.1)._data;
+    let yValues = xValues.map(x => expr.evaluate({ x }));
+
+	var rhoValues = math.range(0.0, 2.0*Math.PI, 0.01)._data;
+			
+    return {
+        x: xValues,
+        y: yValues,
+        type: 'scatter',
+        mode: 'lines',
+    };
+}
+
+function getCircleTrace(rr, rOrigo, rRho, txt) {
+	var rhoValues = math.range(0.0, 2.0*Math.PI, 0.01)._data;
+	xValues = [];
+	yValues = [];
+	const xPos = rOrigo*Math.cos(rRho);
+	const yPos = rOrigo*Math.sin(rRho);
+	for (var ii=0;ii<rhoValues.length;ii++)
+	{
+		xValues.push(rr*Math.cos(rhoValues[ii]) + xPos);
+		yValues.push(rr*Math.sin(rhoValues[ii]) + yPos);
+	}
+			
+    return {
+        x: xValues,
+        y: yValues,
+        type: 'scatter',
+        mode: 'lines',
+		name: txt,
+    };
+}
+
+function getCircleTrace2(rr, rOrigo, rRho, fraction, txt) {
+	var rhoValues = math.range(-1.0*Math.PI*fraction, 1.0*Math.PI*fraction, 0.01)._data;
+	xValues = [];
+	yValues = [];
+	const xPos = rOrigo*Math.cos(rRho);
+	const yPos = rOrigo*Math.sin(rRho);
+	for (var ii=0;ii<rhoValues.length;ii++)
+	{
+		xValues.push(rr*Math.cos(rhoValues[ii]) + xPos);
+		yValues.push(rr*Math.sin(rhoValues[ii]) + yPos);
+	}
+			
+    return {
+        x: xValues,
+        y: yValues,
+        type: 'scatter',
+        mode: 'lines',
+		//line: {color: 'teal'},
+		name: txt,
+    };
+}
+
+function TraceMarkers(xmin,xmax,ymin,ymax)
+{
+    return {
+        x: [xmin, xmin, xmax, xmax],
+        y: [ymin, ymax, ymin, ymax],
+		mode: 'markers',
+		color: 'white',
+        //marker: dict(color = 'white'),
+    };
+}
+
+		
+function getRouteTrace(xValues, yValues) {
+    return {
+        x: xValues,
+        y: yValues,
+        type: 'scatter',
+        mode: 'lines',
+    };
+}
+	/*	
+	let xVal = [];
+	let yVal = [];
+	DoWriteTableTop();
+	DoWriteTableHeader();
+	const startData = new OrbitData(0,SatelliteOrbitData.r0,0,0,SatelliteOrbitData.omega0,0);
+	dataArray2 = SimulationRun(NoOf1000Seconds,NoOfSeconds, startData);
+	for(var ii=0;ii<dataArray2.length;ii++)
+	{
+		xVal.push(dataArray2[ii].r*Math.cos(dataArray2[ii].rho)/1000000.0);
+		yVal.push(dataArray2[ii].r*Math.sin(dataArray2[ii].rho)/1000000.0);
+		//xVal.push(-dataArray2[ii].r*Math.sin(dataArray2[ii].rho)/1000000.0);
+		//yVal.push(dataArray2[ii].r*Math.cos(dataArray2[ii].rho)/1000000.0);
+		DoWrite2(dataArray2[ii]);
+	}
+	DoWriteTableHeader();
+	DoWriteTableEnd();
+	*/
+	//ShowOrbit(dataArray2);
+	//self.document.write("<p>------------------------------------------</p>");
+	//self.document.write("<p>----" + dataArray2.length.toString(10) + "----</p>");
+	//self.document.write("<p>------------------------------------------</p>");
+	
+	//plotNewRoute([getRouteTrace(xVal,yVal), getCircleTrace(r0, -10, -10)] );
+            </SCRIPT>
+        <!--/table-->
+    </p>
+</div>
+	<p>
+	<SCRIPT>
+	const Line7 = [document.getElementById('aa1'),document.getElementById('aa2'),document.getElementById('aa3'),document.getElementById('aa4'),document.getElementById('aa5'),document.getElementById('aa6'),document.getElementById('aa7'),document.getElementById('aa8'),document.getElementById('aa9'),document.getElementById('aa10'),document.getElementById('aa11'),document.getElementById('aa12')];
+
+let traceList0 = [];
+//traceList0.push(GetSimpleTrace());
+traceList0.push(getRouteTrace(xVal, yVal));
+if (ShowEath)
+	traceList0.push(getCircleTrace(r0/1000000.0, 0.0, 0.0, 'Jorden'));
+	//traceList0.push(getCircleTrace2(r0/1000000.0, 0.0, 0.0, 0.1, 'Jorden'));
+if (ShowMoon)
+	traceList0.push(getCircleTrace(r0Moon/1000000.0, distanceMoon/1000000.0, moonPosition*Math.PI/180.0, 'Månen'));
+//traceList0.push(TraceMarkers(-20.0,20.0,-20.0,20.0));
+//ShowTrace(traceList0[0]);
+    </SCRIPT>
+    </p>
+	<p>
+<div id="allPlot" class="all">
+
+    <div class="container">
+        <header>
+            <h1>Graph Plotter</h1>
+            <div class="input-container">
+                <input type="text" id="functionInput" 
+                    placeholder="Enter a function, e.g. y = x^2" class="Plotter">
+                <button onclick="plotGraph()" class="Plotter">
+                    Plot
+                </button>
+            </div>
+        </header>
+        <div class="main-content">
+            <div class="graph" id="graph"></div>
+        </div>
+    </div>
+</div>
+
+	
+	</br></br></br></br></br></br></br></br>
+	<span class="data" id="data">
+	</span>
+</body>
+<SCRIPT>
+SetupForm(GetEscapeData());
+</SCRIPT>
+    <script>
+function toggleObject(id) {
+if (document.getElementById(id).style.visibility == "hidden")
+	document.getElementById(id).style.visibility = "visible";// (dom||ie)? "visible"	: "show";
+else
+	document.getElementById(id).style.visibility = "hidden";
+}
+
+const GetFloat = (st) => {
+	if (st == "")
+		return 0.0;
+
+	return parseFloat(st);
+}
+
+		const Run = () => {
+            const data = document.getElementById('data');
+			let tabelData = "";
+			let traceList0 = [];
+			let xVal1 = [];
+			let yVal1 = [];
+
+			var simulationValues = GetFormValues();
+			
+			stageTimeO = simulationValues.BurnTimes;
+			angleTimeO = simulationValues.AngleTimeList;
+			angleValueO =simulationValues.AngleValueList;
+			let orbit0 = simulationValues.StartValue;
+			let noOf1000Seconds = parseInt(Line4[11].value);
+			let checks = GetCheck();
+			LuftModstand = checks[0];
+			ShowMoon = checks[1];
+			ShowEath = checks[2];
+			ShowOutput = checks[3];
+			
+			//const orbit1 = new OrbitData(0,SatelliteOrbitData.r0,0,0,SatelliteOrbitData.omega0,0);
+			dataArray2 = SimulationRun(noOf1000Seconds, NoOfSeconds, orbit0);
+			const orbitLast = dataArray2[dataArray2.length - 1];
+			
+			for(var ii=0;ii<dataArray2.length;ii++)
+			{
+				xVal1.push(dataArray2[ii].r*Math.cos(dataArray2[ii].rho)/1000000.0);
+				yVal1.push(dataArray2[ii].r*Math.sin(dataArray2[ii].rho)/1000000.0);
+				//xVal1.push(-dataArray2[ii].r*Math.sin(dataArray2[ii].rho)/1000000.0);
+				//yVal1.push(dataArray2[ii].r*Math.cos(dataArray2[ii].rho)/1000000.0);
+				tabelData += DoWrite(dataArray2[ii]);
+			}
+			data.innerHTML = "<table border = 1>" + GetTableHeader()  + tabelData + GetTableHeader() + "</table>";
+			(document.getElementById('LastEnergy')).innerHTML = RoundN(orbitLast.Etot, 5).toString(10) + "";
+			(document.getElementById('outDat8')).innerHTML = RoundN(orbitLast.t, 5).toString(10) + " s";
+			(document.getElementById('outDat9')).innerHTML = RoundN(orbitLast.r, 5).toString(10) + " m";
+			(document.getElementById('outDat10')).innerHTML = RoundN(orbitLast.v, 5).toString(10) + " m/s";
+			(document.getElementById('outDat11')).innerHTML = RoundN(orbitLast.rho, 5).toString(10);
+			(document.getElementById('outDat12')).innerHTML = RoundN(orbitLast.omega, 5).toString(10);
+			
+			traceList0.push(getRouteTrace(xVal1, yVal1));
+			if (ShowEath)
+				traceList0.push(getCircleTrace(r0/1000000.0, 0.0, 0.0, 'Jorden'));
+			if (ShowMoon)
+				traceList0.push(getCircleTrace(r0Moon/1000000.0, distanceMoon/1000000.0, moonPosition*Math.PI/180.0, 'Månen'));
+			plotNewRoute(traceList0);
+		}
+
+		const Test = () => {
+            const data = document.getElementById('data');
+			const Bt1 = document.getElementById('bt1');
+			const Bp1 = document.getElementById('bp1');
+			const Bt2 = document.getElementById('bt2');
+			const Bp2 = document.getElementById('bp2');
+			if (Line1[0].checked) Line2[0].value = 1; else Line2[0].value = 0;
+			if (Line1[1].checked) Line2[1].value = 1; else Line2[1].value = 0;
+			if (Line1[2].checked) Line2[2].value = 1; else Line2[2].value = 0;
+			if (Line1[3].checked) Line2[3].value = 1; else Line2[3].value = 0;
+			if (Line2[0].value == 1) Line1[0].checked = true; else Line1[0].checked = false;
+			if (Line2[1].value == 1) Line1[1].checked = true; else Line1[1].checked = false;
+			if (Line2[2].value == 1) Line1[2].checked = true; else Line1[2].checked = false;
+			if (Line2[3].value == 1) Line1[3].checked = true; else Line1[3].checked = false;
+			Bt1.value = (parseInt(Bt1.value) + 1).toString(10);
+			Bp1.value = (parseInt(Bp1.value) + 1).toString(10);
+			//Bp1.value = (parseInt(Bp1.value) + 1).toString(10);
+			//Bt2.value = (MoonData.BurnTimes[2]).toString(10);
+			//Bp2.value = (MoonData.BurnTimes[1]).toString(10);
+			//Line4[3].value = MoonData.BurnTimes[0].toString(10)
+			//Bt1.value = (parseInt(Bt1.value) + 1).toString(10);
+		}
+		
+		const TestOldData = () => {
+			SetupForm(GetOldData());
+		}
+		
+		const TestEscapeData = () => {
+			SetupForm(GetEscapeData());
+		}
+		
+		function plotGraph() {
+            const graph = document.getElementById('graph');
+            graph.innerHTML = '';
+
+            const functionInput =
+                document.getElementById('functionInput').value;
+            const expr = math.parse(functionInput).compile();
+
+            let xValues = math.range(-10, 10, 0.1)._data;
+            let yValues = xValues.map(x => expr.evaluate({ x }));
+
+			var rhoValues = math.range(0.0, 2.0*Math.PI, 0.01)._data;
+			
+            const trace = 
+			{
+                x: xValues,
+                y: yValues,
+                type: 'scatter',
+                mode: 'lines',
+            };
+
+            const layout = {
+                xaxis: { title: 'X-axis' },
+                yaxis: { title: 'Y-axis' },
+            };
+
+            Plotly.newPlot(graph, [trace], layout);
+        }
+
+        function plotRoute(xValues, yValues) {
+            const graph = document.getElementById('graph');
+            graph.innerHTML = '';
+
+            const trace = {
+                x: xValues,
+                y: yValues,
+                type: 'scatter',
+                mode: 'lines',
+            };
+			
+            const layout = {
+                xaxis: { title: 'X-axis' },
+                yaxis: { title: 'Y-axis' },
+            };
+
+            Plotly.newPlot(graph, [trace], layout);
+        }
+		
+        function plotNewRoute(tracList) {
+            const graph = document.getElementById('graph');
+            graph.innerHTML = '';
+
+            const layout = {
+                xaxis: { title: '1000 km', scaleanchor: 'x', scaleratio: 1 },
+                yaxis: { title: '1000 km', scaleanchor: 'x', scaleratio: 1 },
+                //xaxis: { title: 'X-axis', scaleanchor: 'x', scaleratio: 1, range: [6,6.5] },
+                //yaxis: { title: 'Y-axis', scaleanchor: 'x', scaleratio: 1, range: [0,0.5] },
+                //xaxis: { title: 'X-axis' },
+                //yaxis: { title: 'Y-axis' },
+            };
+
+            Plotly.newPlot(graph, tracList, layout);
+        }
+		
+	//plotRoute(xVal,yVal);
+	//plotNewRoute([getRouteTrace(xVal,yVal)]);
+	//plotCircle(r0/1000000.0, -10.0, -10.0);
+	//plotNewRoute([getRouteTrace(xVal,yVal), getCircleTrace(r0, -100,0, -100,0)]);
+	//var trace = getCircleTrace(r0, -100.0, -100.0);
+	plotNewRoute(traceList0);
+    </script>	
+</html>

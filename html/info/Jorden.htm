@@ -64,6 +64,45 @@ sup sup { vertical-align: 0.50em !important; }
 
 <SCRIPT>
 
+function Log( y ) {
+var n = 0;
+	if((y*y)>1){while(y*y>100.0){y *= .1;n++;}}
+	else{while(y*y<.01){y *= 10.0;n--;}}
+	return(n);
+}
+
+function RoundN(x, n) {
+    var y = x;
+    var f = 1;
+    if (x == 0)
+	return(0);
+    var m = Log(x);
+    if (m < 0)
+        m -= 1;
+    if (n > m) {
+        for (var i = 0; i < n - m - 1; i++) {
+            f *= 10
+        }
+        y *= f;
+        y = Math.floor(y + 0.5);
+        y /= f;
+        return (y);
+    }
+    else {
+        for (var i = 0; i < m - n + 1; i++) {
+            f *= 10
+        }
+        y /= f;
+        y = Math.floor(y + 0.5);
+        y *= f;
+        return (y);
+    }
+}
+
+function Out2(spre, f, spost) {
+    return (spre + (RoundN(f, 5)).toString(10) + spost);
+}
+
 function rens_url(sUrl_orig) {
 var ch_nr;
 var sUrl = sUrl_orig;
@@ -83,8 +122,9 @@ var n = 0;
 	return(n);
 }
 
-
-
+function RoundDecimal(x) {
+    return Math.floor(100.0*x + 0.5)/100.0;
+}
 
 function RoundN(x, n) {
     var y = x;
@@ -168,11 +208,107 @@ function setAll() {
   document.getElementById('Longitude2').value=10.55062;
 }
 </SCRIPT>
+
+
+    <meta charset="UTF-8">
+    <script src=
+        "https://cdn.plot.ly/plotly-latest.min.js">
+    </script>
+    <script src=
+"https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.5.0/math.js">
+    </script>
+
+    <style>
+        .all {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            text-align: center;
+            width: 80%;
+            max-width: 800px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+
+        header {
+            background-color: #3498db;
+            color: white;
+            padding: 20px 0;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        input {
+            padding: 10px;
+            margin: 0 10px;
+            width: 60%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #c0392b;
+
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+
+            padding-top: 50px;
+
+        }
+
+        .graph {
+            width: 100%;
+            height: 850px;
+            margin: 20px 0;
+            /* Adjust margin if needed */
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+    </style>
+
+
 <!-- =========================================================================================== -->
 <!-- =========================================================================================== -->
 </head><body>
     <h1>Jorden</h1>
-<figure><img src="earth-graticules.png" height="400"/><figcaption><a href="https://www.samples.ghbmaps.com/graticules-grids/">GhbMaps</a></figcaption></figure>
+<figure><img src="images/earth-graticules.png" height="400"/><figcaption><a href="https://www.samples.ghbmaps.com/graticules-grids/">GhbMaps</a></figcaption></figure>
 
 
 <p>
@@ -195,7 +331,7 @@ En længdegrad kan ligeledes opdeles i 60 minutter.<br/>
 </p>
     <h3>Sfæriske kordinater</h3>
     <h4></h4>
-<figure><img src="Spherical_coordinates.webp" height="300"/><figcaption>
+<figure><img src="images/Spherical_coordinates.webp" height="300"/><figcaption>
 <a href="https://www.slideshare.net/slideshow/spherical-coordinates-system/95592576/">Slideshare</a></figcaption></figure>
 <p>
 Omregning imellem sfæriske og jord kordinater (her er Sydlig bredde og vestlig længde regnet negativ ligesom Google kordinater)<br/>
@@ -780,7 +916,7 @@ Position 2 <input name="Latitude2" id="Latitude2" onChange="opdat('Latitude2');"
 <span id="val1"></span><span id="val2"></span>
 
 <br/>
-<figure><img src="spherical_volume.png" height="200" /><figcaption><a href="https://tikz.net/spherical_volume/">tikz.net</a></figcaption></figure>
+<figure><img src="images/spherical_volume.png" height="200" /><figcaption><a href="https://tikz.net/spherical_volume/">tikz.net</a></figcaption></figure>
 
 
 <p>Surface</p>
@@ -846,8 +982,458 @@ Position 2 <input name="Latitude2" id="Latitude2" onChange="opdat('Latitude2');"
 <math><mrow>
 <mi>V = </mi><mfrac><mn>4&#x3C0;<!-- pi --></mn><mn>3</mn></mfrac><msup><mi>r</mi><mn>3</mn></msup>
 </mrow></math>
+<br/>
+<br/>
+
+<math xmlns='http://www.w3.org/1998/Math/MathML' display='block'>
+<mtext>Happy&nbsp;</mtext>
+<msup>
+    <mrow>
+  <mo>(</mo>
+  <munderover>
+    <mo>&sum;</mo>
+    <mrow>
+      <mi>i</mi>
+      <mo>=</mo>
+      <mn>1</mn>
+    </mrow>
+    <mi>9</mi>
+  </munderover> <mi>i</mi>
+    <mo>)</mo>
+    </mrow>
+	<mn>2</mn>
+</msup>
+</math>
+<br/>
+
+<p>
+</p>
+<div>
+    <p>
+		<!--table border="1">
+            <tr><td>Stage</td><td>t</td><td>a0</td><td>alpha</td><td>r</td><td>v</td><td>&rho;</td><td>&omega;</td><td>vc</td><td>E/m</td><td>Ekin + Epot/2</td><td>Vorbit</td></tr-->
+            <SCRIPT>
+self.document.write("Hej</br>");
+
+function XYTableTop()
+{
+	self.document.write("<table border=1><tr><td>X</td><td>Y</td></tr>");
+}
+function XYTableRow(xx, yy)
+{
+    self.document.write("<tr><td>" + (RoundN(xx, 5)).toString(10) + "</td><td>" + (RoundN(yy, 5)).toString(10) + "</td></tr>");
+}
+function XYTableEnd()
+{
+    self.document.write("</table>");
+}
+
+function GetMin(x,y)
+{
+	if (x < y)
+		return x;
+	else 
+		return y;
+}
+
+function ShowTrace(trace)
+{
+	let minNumberOfRows = GetMin(trace.x.length, trace.y.length);
+	XYTableTop();
+	for(var ii=0;ii<minNumberOfRows;ii++)
+	{
+			XYTableRow(trace.x[ii], trace.y[ii]);
+	}
+	XYTableEnd();
+}
+			
+var kgPerLbs = 0.45359237;
+var used = 0;
+//528,4+329,6 = 858 x 1080 - 858 = 222
+//129000.0 - stage1time - stage2time - stage3time;
+const burnStage1 = 170.4;
+const burnStage2 = 426.64;
+
+const burnStage3 = 513.0;
+const burnMoon1 = 437.06;
+const burnGeo1Old = 202.06;//Get in first semi cercular orbit
+const burnGeo2Old = 20.0;//Leave orbit
+const burnGeo3Old = 186.091;//Get in geo cercular orbit
+const geoStationaerOld = [170.3, 426.64, 202.06, 2342.0, 20.0, 12803.0, 186.091, 330796.0, 77.42, 1000000.0, 0.0];//Less weight
+const burnGeo1A = 410.0;//Op
+const burnGeo2A = 90.0;//Get in first semi cercular orbit
+const burnGeo3A = 12.54;//Leave orbit
+const burnGeo4A = 10.8;//Get in geo cercular orbit
+const geoStationaerA = [170.3, 426.64, 410.0, 13055.06, 90.0, 147522.0, 12.54, 35590.0, 10.8, 1000000.0, 0.0];//Used 523 sec fuel out of 513!
+const burnGeo1B = 425.59;//
+const burnGeo2B = 513.0;//Get in first semi cercular orbit
+const geoStationaerB = [170.3, 426.64, 425.59, 18880.06, 87.41, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0];//Used all fuel
+const toTheMoon = [170.3, 426.64, 469.52, 1000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0];
+const escape = [170.3, 426.64, 474.624, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0];
+
+const Off = 0;
+const On = 1;
+let ShowMoon = Off;
+let ShowEath = On;
+let ShowOutput = On;
+let NoOf1000Seconds = 301;
+
+//
+
+//Cost 410 + 90 + 12.54 + 10.8
+//const burnMoon1 = 437.06;
+
+const burn1 = 375.0;//330 10  => -18935
+const pause1 = 12504.00 - 50.0;
+const burn2 = 100.0;
+const pause2 = 144710.0 - 5.0;
+const burn3 = 15.29;
+const pause3 = 34696.00;
+const burn4 = burnStage3 - burn1 - burn2 - burn3 - 9.1;
+const burn5 = 503.0 - burn1 - burn2 - burn3 - burn4;
+const burn1b = 513.0;
+const burn3b = 1.00;
+const burn2b = 515.0 - burn1b - burn3b;
 
 
+const MMoonLandingModul = 33493.0;
+//const MTotal = 6501731.0 - 50000.0;
+const MTotal = 6501731.0 - MMoonLandingModul;
+const MBetween1And2 = 11454.0;
+const MStage1 = 5029418.0 + MBetween1And2;
+const MUsage1 = 27420.0;
+const MBetween2And3 = 8081.0;
+const MStage2 = 1075733.0 + MBetween2And3;
+const MUsage2 = 2317.192;
+const MStage3 = 262317.0;
+const MUsage3 = 456.0;
+
+
+var stageTime = [burnStage1, burnStage2, burn1, pause1, burn2, pause2, burn3, pause3, burn4, 1000000.0, 0.0];
+
+//stageTime = geoStationaerA;
+//self.document.write("" + (RoundN(202.06 + 20.0 + 186.091, 5)).toString(10) + "</br>");
+//self.document.write("" + (RoundN(410 + 90 + 12.54 + 10.8, 5)).toString(10) + "</br>");
+//self.document.write("" + (RoundN(burnStage3 - burn1, 5)).toString(10) + "</br>");
+
+var h = 0.01;
+var hhalf = h/2.0;
+var hsixth = h/6.0;
+
+
+const moonPosition = 217.0;
+const r0 = 6371000.0;
+const vc0 = r0*2.0*Math.PI/(24.0*3600.0);
+var r0Moon = 1738000.0;
+var distanceMoon = 384399000.0;
+var rGeo = 42241000.0;
+var GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
+//BounderyValues
+var t = 0.0;
+var r = r0;
+var v = 0.0;
+var vc = vc0;
+//vc = Math.sqrt(GM/r);
+var acc = 0.0;
+var vinkel = 0.0;
+var aMin = -0.01;//6	2580	0.042022		4027.8km	3839.3	2.4999	0.00059876	6226.4	-11577	-19166
+var rho = 0.0;
+var omega = vc/r;
+var var1 = 0.0;
+var Etot = -GM/r;
+var Effect = 0.0;
+var ac = 0.0;
+
+function stage(tt) {
+	var ttt = stageTime[0];
+	for (var ii=1;ii<=stageTime.length;ii++)
+	{
+		if (tt < ttt)
+		  return ii;
+		ttt += stageTime[ii];
+	}
+
+	return 11;
+}
+
+function stageT(tt) {
+	var ttt = 0.0;
+	for (var ii=0;ii<stageTime.length;ii++)
+	{
+		if (tt < ttt + stageTime[ii])
+		  return tt - ttt;
+		ttt += stageTime[ii];
+	}
+
+	return tt - ttt;
+}
+
+function Mass(tt) {
+	switch (stage(tt))
+	{
+		case 1:  return (MTotal - (tt * MUsage1))* kgPerLbs; break;
+		case 2:  return (MTotal - MStage1                           - (MUsage2 * (tt -stageTime[0]) ))* kgPerLbs; break;
+		case 3:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (tt -stageTime[0] -stageTime[1])))* kgPerLbs; break;
+		case 4:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (stageTime[2])))* kgPerLbs; break;
+		case 5:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (tt -stageTime[0] -stageTime[1] -stageTime[3])))* kgPerLbs; break;
+		case 6:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (stageTime[2] + stageTime[4])))* kgPerLbs; break;
+		case 7:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (tt -stageTime[0] -stageTime[1] -stageTime[3] -stageTime[5])))* kgPerLbs; break;
+		case 8:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (stageTime[2] + stageTime[4] + stageTime[6])))* kgPerLbs; break;
+		case 9:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (tt -stageTime[0] -stageTime[1] -stageTime[3] -stageTime[5] -stageTime[7])))* kgPerLbs; break;
+	    default: return (MTotal - MStage1 - MStage2 - MStage3)* kgPerLbs; break;
+	}
+}
+
+function Trust(tt) {
+	switch (stage(tt))
+	{
+		case 1: return 33400000.0; break;
+		case 2: return  4400000.0; break;
+		case 3: return  1001000.0; break;
+		case 5: return  1001000.0; break;
+		case 7: return  1001000.0; break;
+		case 9: return  1001000.0; break;
+	    default: return 0.0; break;
+	}
+}
+
+function GetAngle(tt)
+{
+	if (acc > 0)
+		return (90.0);
+
+	var temp = Mass(t)*(aMin - acc)/Trust(t);//0 < (aMin - ac) < t/m
+	
+	if (tt < 100.0)
+		return (0 + tt*(60.0-0.0)/(100.0-0.0));//[60*805 - 90*596]
+
+		
+//v = [v1*t2 - v2*t1]/(t2-t1) + tt*(v2-v1)/(t2-t1) = (60*170 - 78*100)/(170-100) + tt*(78-60)/(170-100) = 	
+	if (tt < 170.0)
+		return (37.0 + tt*18.0/70.0);//v0 = 60-100*18/70 = 34,28, v = [60*170 - 100*78]/(170-100) + tt*(78-60)/(170-100)
+
+	//if (tt < 270.0)
+		//return (30.0);
+		
+	//if (tt < 596.0)
+		//return (-67.0 + tt*(81.0-0.0)/(596.0-270.0));//v = [v1*t2 - v2*t1]/(t2-t1) + tt*(v2-v1)/(t2-t1)
+
+	//if (tt < 805.0)
+		//return (-25.55 + tt*(90.0-60.0)/(805.0 - 596.0));//v = [60*805 - 90*596]/(805-596.0) + tt*(90-60)/(805-596)
+
+//-6117
+//
+	if (temp > 1.0 && tt < 1000.0)
+		return (30.0);
+
+	if (temp < 0.0 || tt >= 1000.0)
+		return (90.0);
+		
+	if (0.0 <= temp && temp < 1.0)
+		return (180.0/Math.PI)*Math.acos(temp);//tPerM1*cosAlpha - GM/(r*r);
+
+	return (90);
+}
+
+function Ny() {
+	var alpha = vinkel*Math.PI/180.0;
+    var sinAlpha = Math.sin(alpha);
+    var cosAlpha = Math.cos(alpha);
+	var tPerM1 = Trust(t)/Mass(t);
+	var tPerM2 = Trust(t+hhalf)/Mass(t+hhalf);
+	var tPerM3 = Trust(t+h)/Mass(t+h);
+	Effect = tPerM1*(sinAlpha*vc + cosAlpha*v);
+	var k1 = tPerM1*sinAlpha/r-2*omega*v/r;
+	var k2 = tPerM2*sinAlpha/r-2*(omega+(hhalf*k1))*v/r;
+	var k3 = tPerM2*sinAlpha/r-2*(omega+(hhalf*k2))*v/r;
+	var k4 = tPerM3*sinAlpha/r-2*(omega+(h*k3))*v/r;
+	var1 = k4;
+	//var vcNew = vc + hsixth*(k1 + 2.0*k2 + 2.0*k3 + k4);
+	var omegaNew = omega + hsixth*(k1 + 2.0*k2 + 2.0*k3 + k4);
+	//omegaNew = vcNew/r;
+	vcNew = omegaNew * r;
+	k1 = omega;
+	k2 = omega;
+	k3 = omega;
+	k4 = omega;
+	var rhoNew = rho + hsixth*(k1 + 2.0*k2 + 2.0*k3 + k4);
+	k1 = omega*omega*r + tPerM1*cosAlpha - GM/(r*r);
+	k2 = omega*omega*r + tPerM2*cosAlpha - GM/(r*r);
+	k3 = k2;
+	k4 = omega*omega*r + tPerM3*cosAlpha - GM/(r*r);
+	var vNew = v + hsixth*(k1 + 2.0*k2 + 2.0*k3 + k4);
+	k1 = v;
+	k2 = v;
+	k3 = v;
+	k4 = v;
+	var rNew = r + hsixth*(k1 + 2.0*k2 + 2.0*k3 + k4);
+
+	acc = omega*omega*r - GM/(r*r);
+	//acc = vc*vc/r - GM/(r*r);
+	//acc += tPerM3*cosAlpha;
+	//acc = tPerM3*sinAlpha;
+	t=t+h;
+	r = rNew;
+	v = vNew;
+	rho = rhoNew;
+	omega = omegaNew;
+	ac = (vcNew - vc)/h;
+	vc = vcNew;
+	vinkel = GetAngle(t, acc);
+}
+
+function DoWriteTableTop()
+{
+	self.document.write("<table border=1><tr><td>Stage</td><td>t</td><td>a0</td><td>alpha</td>");
+	//self.document.write("<td>r</td><td>v</td><td>&rho;</td><td>&omega;</td><td>vc</td><td>E/m</td><td>Ekin + Epot/2</td><td>Vorbit</td></tr>");
+	self.document.write("<td>r</td><td>v</td><td>&rho;</td><td>&omega;</td><td>vc</td><td>ac</td><td>E/m</td><td>Ekin + Epot/2</td><td>Vorbit</td></tr>");
+	//self.document.write("<td>r</td><td>v</td><td>&rho;</td><td>&omega;</td><td>vc</td><td>ac</td><td>E/m</td><td>Effect</td><td>Vorbit</td></tr>");
+}
+function DoWriteTableEnd()
+{
+	self.document.write("</table>");
+}
+
+
+function DoWrite()
+{
+	if (ShowOutput)
+	{
+	    var st = stage(t);
+		//let t0 = stageT(t);//-burnStage1 -burnStage2 -burn1 -pause1 -burn2;
+		Etot = (v*v + vc*vc)/2.0 -GM/r;
+		var VOrbit = Math.sqrt(GM/r);
+		let Eorbit = (v*v + vc*vc -GM/r)/2.0 
+        self.document.write("<tr>");
+        //self.document.write("<td>" + st.toString(10) + " "  + (Math.floor(t/36.0 + 0.5)/100.0).toString(10) + " t</td><td>"  + (RoundDecimal(t)).toString(10) + "");
+        self.document.write("<td>" + st.toString(10) + " "  + (RoundDecimal(stageT(t))).toString(10) + "</td><td>"  + (Math.floor(100.0*t + 0.5)/100.0).toString(10) + "");
+        self.document.write("</td><td>" + (RoundN(acc, 5)).toString(10) + "");
+		if (st < 4 || st == 5 || st == 7 || st == 9)
+			self.document.write("</td><td>" + (RoundN(vinkel, 5)).toString(10) + "");
+		else
+			self.document.write("</td><td>");
+		if (r > 1000 + r0 )
+			self.document.write("</td><td>" + (RoundN((r)/1000.0, 5)).toString(10) + " km");
+		//else if (r > 380170000.0 ) //moon distance
+		else if (r > rGeo ) //geo distance
+			self.document.write("</td><td bgcolor=green>" + (RoundN((r)/1000.0, 5)).toString(10) + " km");
+		else
+			self.document.write("</td><td bgcolor=red>" + (RoundN((r-r0), 5)).toString(10) + " m");
+        self.document.write("</td><td>" + (RoundN(v, 5)).toString(10) + "");
+        self.document.write("</td><td>" + (RoundN(rho/(2.0*Math.PI), 5)).toString(10) + " turns");
+        self.document.write("</td><td>" + (RoundN(omega, 5)).toString(10) + "");
+		if (vc > 1000 + vc0 )
+			self.document.write("</td><td>" + (RoundN(vc, 5)).toString(10) + "");
+		else
+			self.document.write("</td><td>" + (RoundN(vc-vc0, 5)).toString(10) + "");
+        self.document.write("</td><td>" + (RoundN(ac, 5)).toString(10) + "");
+        self.document.write("</td><td>" + (RoundN(Etot/1000.0, 5)).toString(10) + "");
+        //self.document.write("</td><td>" + (RoundN(Effect/1000.0, 5)).toString(10) + "");
+        self.document.write("</td><td>" + (RoundN(Eorbit/1000.0, 5)).toString(10) + "");
+        self.document.write("</td><td>" + (RoundN(VOrbit,5)).toString(10) + "");
+        self.document.write("</td></tr>");
+	}
+}
+
+function GetSimpleTrace()
+{
+    const functionInput = "x^2";
+    const expr = math.parse(functionInput).compile();
+
+    let xValues = math.range(-10, 10, 0.1)._data;
+    let yValues = xValues.map(x => expr.evaluate({ x }));
+
+	var rhoValues = math.range(0.0, 2.0*Math.PI, 0.01)._data;
+			
+    return {
+        x: xValues,
+        y: yValues,
+        type: 'scatter',
+        mode: 'lines',
+    };
+}
+
+function getCircleTrace(rr, rOrigo, rRho) {
+	var rhoValues = math.range(0.0, 2.0*Math.PI, 0.01)._data;
+	xValues = [];
+	yValues = [];
+	const xPos = rOrigo*Math.cos(rRho);
+	const yPos = rOrigo*Math.sin(rRho);
+	for (var ii=0;ii<rhoValues.length;ii++)
+	{
+		xValues.push(rr*Math.cos(rhoValues[ii]) + xPos);
+		yValues.push(rr*Math.sin(rhoValues[ii]) + yPos);
+	}
+			
+    return {
+        x: xValues,
+        y: yValues,
+        type: 'scatter',
+        mode: 'lines',
+    };
+}
+		
+        function getRouteTrace(xValues, yValues) {
+            return {
+                x: xValues,
+                y: yValues,
+                type: 'scatter',
+                mode: 'lines',
+            };
+        }
+
+		let xVal = [];
+		let yVal = [];
+	DoWriteTableTop();
+	const pihalf = Math.PI/2.0;
+	for (var ii=0;ii<NoOf1000Seconds;ii++)
+	{
+		DoWrite();
+		let oneTime = 0;
+		for(var jj=0;jj<1000;jj++)
+		{
+			//if (stage(t) == 1 || stage(t) == 2 || stage(t) == 3)
+			if (stage(t) == 5 || stage(t) == 7 || stage(t) == 9)
+			{//When last stages is burning
+				DoWrite();
+			}
+			let sinRhoSquare = (rho % pihalf)*(rho % pihalf);// close to Math.sin(rho);
+			for(var kk=0;kk<100;kk++)
+			{
+				
+				let vsquare = v*v;
+				let asquare = ac*ac;
+				if (v*v < 0.00005 && oneTime < 1)
+				{//When v is close to 0 (where you change for a circular orbit)
+					DoWrite();
+					oneTime++;
+				}
+
+				Ny();
+				let sinRhoSquareOld = sinRhoSquare;
+				sinRhoSquare = (rho % pihalf)*(rho % pihalf);
+				
+				if (ac*ac < 0.000005 && ac*ac > asquare && oneTime < 1)
+				{//When ac is close to 0 (max omega where your rocket has most effect)
+					DoWrite();
+					oneTime++;
+				}
+				if (sinRhoSquare < 0.0001 && sinRhoSquareOld > sinRhoSquare && oneTime == 0)
+				{//When sin(rho) is 0, 1 or -1 
+					//DoWrite();
+					oneTime++;
+				}
+			}
+			xVal.push(r*Math.cos(rho)/1000000.0);
+			yVal.push(r*Math.sin(rho)/1000000.0);
+		}
+	}
+	DoWriteTableEnd();
+	//plotNewRoute([getRouteTrace(xVal,yVal), getCircleTrace(r0, -10, -10)] );
+            </SCRIPT>
+        <!--/table-->
+    </p>
+</div>
 <p>
 Links:<br/>
 <a href="https://www.mathforengineers.com/index.html">Math for engineers</a><br/>
@@ -858,9 +1444,115 @@ Links:<br/>
 <a href="https://tikz.net/spherical_volume/">Billed 3 - Spherical volume</a><br/>
 <a href="https://www.w3.org/TR/MathML3/chapter3.html#presm.intro">MathML3</a>
 </p>
+	<p>
+	<SCRIPT>
+let traceList0 = [];
+//traceList0.push(GetSimpleTrace());
+traceList0.push(getRouteTrace(xVal, yVal));
+if (ShowEath)
+	traceList0.push(getCircleTrace(r0/1000000.0, 0.0, 0.0));
+if (ShowMoon)
+	traceList0.push(getCircleTrace(r0Moon/1000000.0, distanceMoon/1000000.0, moonPosition*Math.PI/180.0));
+//ShowTrace(traceList0[0]);
+	
+
+    </SCRIPT>
+	</p>
+    </p>
+	</br></br></br></br></br></br></br></br>
+	<p>
+<div class="all">
+
+<div class="container">
+        <header>
+            <h1>Graph Plotter</h1>
+            <div class="input-container">
+                <input type="text" id="functionInput" 
+                    placeholder="Enter a function, e.g. y = x^2">
+                <button onclick="plotGraph()">
+                    Plot
+                </button>
+            </div>
+        </header>
+        <div class="main-content">
+            <div class="graph" id="graph"></div>
+        </div>
+    </div>
+    </div>
+
+	
 </body>
 <SCRIPT>
 setAll();
 opdat('Latitude1');
 </SCRIPT>
+    <script>
+        function plotGraph() {
+            const graph = document.getElementById('graph');
+            graph.innerHTML = '';
+
+            const functionInput =
+                document.getElementById('functionInput').value;
+            const expr = math.parse(functionInput).compile();
+
+            let xValues = math.range(-10, 10, 0.1)._data;
+            let yValues = xValues.map(x => expr.evaluate({ x }));
+
+			var rhoValues = math.range(0.0, 2.0*Math.PI, 0.01)._data;
+			
+            const trace = 
+			{
+                x: xValues,
+                y: yValues,
+                type: 'scatter',
+                mode: 'lines',
+            };
+
+            const layout = {
+                xaxis: { title: 'X-axis' },
+                yaxis: { title: 'Y-axis' },
+            };
+
+            Plotly.newPlot(graph, [trace], layout);
+        }
+
+        function plotRoute(xValues, yValues) {
+            const graph = document.getElementById('graph');
+            graph.innerHTML = '';
+
+            const trace = {
+                x: xValues,
+                y: yValues,
+                type: 'scatter',
+                mode: 'lines',
+            };
+			
+            const layout = {
+                xaxis: { title: 'X-axis' },
+                yaxis: { title: 'Y-axis' },
+            };
+
+            Plotly.newPlot(graph, [trace], layout);
+        }
+		
+        function plotNewRoute(tracList) {
+            const graph = document.getElementById('graph');
+            graph.innerHTML = '';
+
+            const layout = {
+                xaxis: { title: 'X-axis' },
+                yaxis: { title: 'Y-axis' },
+            };
+
+            Plotly.newPlot(graph, tracList, layout);
+        }
+		
+	//plotRoute(xVal,yVal);
+	//plotNewRoute([getRouteTrace(xVal,yVal)]);
+	//plotCircle(r0/1000000.0, -10.0, -10.0);
+	//plotNewRoute([getRouteTrace(xVal,yVal), getCircleTrace(r0, -100,0, -100,0)]);
+	//var trace = getCircleTrace(r0, -100.0, -100.0);
+	plotNewRoute(traceList0);
+    </script>	
+
 </html>

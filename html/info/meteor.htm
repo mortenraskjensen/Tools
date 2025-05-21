@@ -1,4 +1,84 @@
 <html><head><title>Meteorer (regne eksempel)</title>
+  <link  rel="canonical"   href="https://physics.info/constants/">
+  <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/walnut.css"-->
+  <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/walpaper.css" media="print"-->
+  <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/physics.css"-->
+
+ <!--link  rel="stylesheet"  href="https://omniscientwalnut.com/physics.css"-->
+<style>
+
+/* maths group */
+
+     .maths                 { text-align: center; white-space: nowrap; }
+table.maths caption,
+table.maths th              { text-decoration: underline; }
+table.maths tr,
+table.maths td              { background-color: transparent !important; border-radius: 0em !important; text-transform: none !important;
+                              border: none !important; padding: 0em !important; margin: 0em !important; vertical-align: middle; } /* always boring, even when nested */
+table.maths td.solidus      { border-bottom-style: solid !important; border-bottom-width: 0.083em !important; }
+table.maths td.absleft      { border-left-style: solid !important; border-left-width: 0.083em !important; border-radius: 0em !important; }
+table.maths td.absright     { border-right-style: solid !important; border-right-width: 0.083em !important; border-radius: 0em !important; }
+table.maths td.spacer       { width: 4em; }
+
+table.maths td.limupper,
+table.maths td.limlower     { font-size: 66.6%; line-height: 66.6%; overflow: visible; }
+table.maths td.limupper     { text-align: right; vertical-align: bottom !important; }
+table.maths td.limlower     { text-align:  left; vertical-align: top    !important; }
+table.maths td.split        { line-height: 1em !important; text-align: left !important; } /* two piece symbols */
+table.maths td.split .limit { font-size: 66.6%; } /* NEW METHOD */
+
+.maths     { font-family: "Palatino Linotype", Palatino, "Book Antiqua", serif; }
+table.maths th,
+table.maths caption,
+.withunits { font-family: "Helvetica Neue", Helvetica, Ariel, sans-serif; }
+
+/* new maths */
+
+.fraction,
+.isotope,
+.tensor       { display: inline-flex; flex-direction: column; vertical-align: 25%; padding: 0em 0.083em; }
+.isotope      { align-items: flex-end;   }
+.fraction     { align-items: center;     }
+.tensor       { align-items: flex-start; }
+.tensor sub,
+.tensor sup,
+.isotope sub,
+.isotope sup,
+.fraction sub,
+.fraction sup { vertical-align: 0em; line-height: 1.25em; }
+.fraction sub { border-top:     0.083em solid black; }
+sub sub,
+sub sup,
+sup sub,
+sup sup { border: none !important; display: inline !important; line-height: 0em; padding: 0em; }
+sub sub,
+sup sub { vertical-align:-0.25em !important; }
+sub sup,
+sup sup { vertical-align: 0.50em !important; }
+
+</style>
+<style>
+.orb {
+position: relative;
+height: 60px;
+width: 60px;
+border: 1px solid black;
+border-radius: 50%;
+display: inline-block;
+
+.jord {
+position: absolute;
+height: 15%;
+width: 15%;
+background-color: blue;
+border: 1px solid black;
+border-radius: 50%;
+top:42%;
+left:42%;
+display: inline-block;
+}
+}
+</style>
 <SCRIPT>
 var primtal = new Array();
 var primtal_count=0;
@@ -9,11 +89,15 @@ var Rm=300000000;
 var G=6.6720e-11;
 var GM=3.986005e+14;
 var rho=2600;
+var rho0luft = 1.3;
 var d = 10000;
 var PI = Math.PI;//3.1415;
 var MtTNT = 4.184e+15;
 var ktTNT = 4.184e+12;
 var tTNT = 4.184e+9;
+var Cd = 0.47;
+var e = 2.7182818284590452353602;
+
 
 function rens_url(sUrl_orig) {
 var ch_nr;
@@ -32,17 +116,35 @@ function opdat(path,id) {
   document.forms[0].submit();
 }
 
-function Round( x ) {
+function Round_( x ) {
 	var y = x;
 	var n = 0;
 	var limit = 10000.0;
 	if(y<-limit||limit<y){while(y<-limit||limit<y){y *= .1;n++;}}
-	else{while(-limit<y&&y<limit){y *= 10.0;n--;}}
+	else{
+		while(-limit<y&&y<limit){y *= 10.0;n--;}
+	}
+
 	y = Math.floor(y+0.5);
-	y = Exp( y, n );
 	//return(x);
-	return(y);
+	return(Exp( y, n ));
 }
+
+    function Round5(x) {
+        var y = x;
+        var n = 0;
+        var limit = 10000.0;
+        if (y < -limit || limit < y) { while (y < -limit || limit < y) { y *= .1; n++; } }
+        else {
+            while (-limit < y && y < limit) { y *= 10.0; n--; }
+        }
+
+        y = Math.floor(y + 0.5);
+        //return(x);
+        return (Exp(y, n));
+    }
+
+
 
 function Exp( y, n ) {
 	if(n>=0) for(var i=n;i>0;i--){y *= 10.0;}
@@ -50,12 +152,52 @@ function Exp( y, n ) {
 	return(y);
 }
 
+
+
 function Log( y ) {
 var n = 0;
 	if((y*y)>1){while(y*y>100.0){y *= .1;n++;}}
 	else{while(y*y<.01){y *= 10.0;n--;}}
 	return(n);
 }
+
+function Round6(x) {
+    return (RoundN(x, 6));
+}
+
+function Round(x) {
+    return (RoundN(x, 6));
+}
+
+
+function RoundN(x, n) {
+    var y = x;
+    var f = 1;
+    if (x == 0)
+	return(0);
+    var m = Log(x);
+    if (m < 0)
+        m -= 1;
+    if (n > m) {
+        for (var i = 0; i < n - m - 1; i++) {
+            f *= 10
+        }
+        y *= f;
+        y = Math.floor(y + 0.5);
+        y /= f;
+        return (y);
+    }
+    else {
+        for (var i = 0; i < m - n + 1; i++) {
+            f *= 10
+        }
+        y /= f;
+        y = Math.floor(y + 0.5);
+        y *= f;
+        return (y);
+    }
+}
+
 
 function Log1000( y ) {
 var n = 0;
@@ -68,6 +210,9 @@ var n = 0;
 function V_kugle( r ) {
 	return((4.0/3.0)*PI*r*r*r);
 }
+function A_tvarsnit_kugle( r ) {
+	return(PI*r*r);
+}
 
 function E( V ) {
 	return((M*G/R)*rho*V);
@@ -78,6 +223,161 @@ function E2( V ) {
 
 function Ekin( m, v ) {
 	return(m*v*v*0.5);
+}
+
+function rho_h( rho0, h ){
+    if (h > 0)
+    {
+	return(rho0 * Math.pow(e, -0.000127*h));
+    }
+    return rho0;
+}
+
+function Log_(x)
+{
+return Math.log(x);
+}
+
+function vmax( d, h )
+{
+	var rholuft = rho_h( rho0luft, h);
+	return vmax2( d ,rholuft);
+}
+
+function vmax2( d, rholuft )
+{
+	return Math.sqrt((V_kugle(d/2.0) * rho * 9.82)/(0.5* rholuft *0.47*A_tvarsnit_kugle(d/2.0)));
+	//     Math.sqrt((V              * rho * 9.82)/(0.5* 0.5     *0.47*A_tvarsnit_kugle(d/2.0)));
+}
+
+function Fg( m, r ) {
+	return(GM*m/(r*r));
+}
+function Fd( r, rholuft, diameter ) {
+    var v0 = Math.sqrt(2*G*M/r);
+    var f = -0.5*rholuft*Cd*A_tvarsnit_kugle(diameter/2.0)*v0*v0;
+	return(f);
+}
+
+
+//function V_kugle( r ) {	return((4.0/3.0)*PI*r*r*r);}
+//A_tvarsnit_kugle( r ) {	return(PI*r*r);}
+
+
+
+function deltav( d, h, v0, ds ) {
+    if (v0 == 0.0)
+    {
+        return(0);
+    }
+    var r = R + h;
+    var rholuft = rho_h( rho0luft, h );
+    return(ds * acc(d, r, rholuft, v0) / v0 );
+}
+
+function integrate_v( d ) {
+//Find hastigheden ved jord overfladen, ved at integrere udtrykket for dens acceleration
+//  korrigeret for luftmodstanden. Vi starter i 100 km højde (heroppe er luftmodstanden ubetydelig)
+	    var diameter = d;	    
+            var mmH = 100000.0;
+	    var mmN = 60;
+            var mmDS = (100000 - 40000)/mmN;
+            var mmDeltaV = 0.0;
+	    var mmV = vr(R + mmH);
+            for (var i = 0; i <= mmN; i++) {
+                var mmH2 = mmH - mmDS;
+ 		if (mmV > 0)
+		{
+		    var r = R + mmH;
+		    var rholuft = rho_h( rho0luft, mmH );
+		    mmDeltaV = mmDS * acc(diameter, r, rholuft, mmV) / mmV;
+		}
+		mmV += mmDeltaV;
+		//self.document.write("h = " + (RoundN(mmH/1000, 5)).toString(10) + " km, dv = " + (RoundN(mmDeltaV, 5)).toString(10) + " m/s, v = " + (RoundN(mmV, 5)).toString(10) + " m/s<br/>");
+		mmH = mmH2;
+            }
+	    var mmN = 1000;
+            var mmDS = mmH/mmN;
+            var mmDeltaV = 0.0;
+            for (var i = 0; i <= mmN; i++) {
+		if (mmH < 1.0)
+		{
+	            mmDS -= 1.0 - mmH;
+		    mmH = 1.0;
+		}
+		if (mmV > 0)
+		{
+		    var r = R + mmH;
+		    var rholuft = rho_h( rho0luft, mmH );
+		    mmDeltaV = mmDS * acc(diameter, r, rholuft, mmV) / mmV;
+		}
+		mmV += mmDeltaV;
+		//self.document.write("h = " + (RoundN(mmH/1000, 5)).toString(10) + " km, dv = " + (RoundN(mmDeltaV, 5)).toString(10) + " m/s, v = " + (RoundN(mmV, 5)).toString(10) + " m/s<br/>");
+		mmH -= mmDS;
+            }
+    return( mmV );
+}
+
+function acc( d, r, rholuft, v0) {
+    return(GM/(r*r) - 0.75*rholuft*Cd*v0*v0/(d*rho));
+}
+
+function integrate_v2( d ) {
+            var mmH = 100000.0;
+	    var mmN = 80;
+            var mmDS = (100000 - 20000)/mmN;
+            var mmDeltaV = 0.0;
+	    var mmV = vr(R + mmH);
+            for (var i = 0; i <= mmN; i++) {
+		if (mmV > 0)
+		{
+		    var r = R + mmH;
+		    var rholuft = rho_h( rho0luft, mmH );
+		    mmDeltaV = mmDS * acc(d, r, rholuft, mmV) / mmV;
+		}
+		mmV += mmDeltaV;
+		//self.document.write(Out2("h = " + (RoundN(mmH/1000, 5)).toString(10) + " km, dv = " + (RoundN(mmDeltaV, 5)).toString(10) + " m/s, v = " + (RoundN(mmV, 5)).toString(10) + " m/s<br/>");
+		mmH -= mmDS;
+            }
+	    var mmN = 10000;
+            var mmDS = mmH/mmN;
+            var mmDeltaV = 0.0;
+	    var mmV = vr(R + mmH);
+            for (var i = 0; i <= mmN; i++) {
+		if (mmH < 1.0)
+		{
+	            mmDS -= 1.0 - mmH;
+		    mmH = 1.0;
+		}
+		if (mmV > 0)
+		{
+		    var r = R + mmH;
+		    var rholuft = rho_h( rho0luft, mmH );
+		    mmDeltaV = mmDS * acc(d, r, rholuft, mmV) / mmV;
+		}
+		mmV += mmDeltaV;
+		//self.document.write(Out2("h = " + (RoundN(mmH/1000, 5)).toString(10) + " km, dv = " + (RoundN(mmDeltaV, 5)).toString(10) + " m/s, v = " + (RoundN(mmV, 5)).toString(10) + " m/s<br/>");
+		mmH -= mmDS;
+            }
+    return( mmV );
+}
+
+
+function vr( r ) {
+    return(Math.sqrt(2*GM/r));
+}
+
+
+function SatelitRadius( T ) {
+    return( Math.pow((T*T*GM/(4*PI*PI)),(1.0/3.0)));
+}
+
+function SatelitOmloebstid( r ) {
+    return (Math.sqrt(4 * PI * PI * r * r * r / GM));
+}
+
+function SatelitHastighed(r) {
+    return (Math.sqrt(GM / r));
 }
 
 function PrintE( e ) {
@@ -95,12 +395,54 @@ var s = "";
 	return( s );
 }
 
+function PrintE2( e ) {
+var s0 = "";
+    switch (Log1000(e)) {
+        case -3: s0 = (e*1000.0).toString(10) + " m";break;
+        case 0:  s0 = (e/1.0).toString(10) + " ";break;
+        case 3:  s0 = (e/1000.0).toString(10) + " k";break;
+        case 6:  s0 = (e/1000000.0).toString(10) + " M";break;
+        case 9:  s0 = (e/1000000000.0).toString(10) + " G";break;
+        case 12: s0 = (e/1000000000000.0).toString(10) + " T";break;
+        case 15: s0 = (e/1000000000000.0).toString(10) + " T";break;
+        default: s0 = (e/1000000000.0).toString(10) + " G";break;
+    }
+	return( s0 );
+}
+
+function Out(spre,f,spost)
+{
+	return( spre + (RoundN(f, 6)).toString(10) + spost );
+}
+function Out2(spre, f, spost) {
+    return (spre + (RoundN(f, 5)).toString(10) + spost);
+}
 
 function Prin( d ) {
 var s = "";
 var v = Math.sqrt(2*G*M/R);
 var V = V_kugle(d/2.0);
-	s = "<p>Astroide på " + d.toString(10) + " m i diameter</br>";
+var m = V*rho;
+var K = -0.5*1.3*0.47;
+var v2 = Math.sqrt((V * rho * 9.82)/(0.5*0.5*0.47*A_tvarsnit_kugle(d/2.0)));
+var vluft =integrate_v(d);
+
+    s = "<p>Astroide på " + d.toString(10) + " m i diameter<br/>";
+
+    s += "Fg=" + PrintE2(Round(Fg(m, (R + 100000.0)))) + "N&nbsp;";
+    s += "Fd=" + PrintE2(Round(Fd((R + 100000.0), 0.0000039665, d))) + "N&nbsp;&nbsp;100km<br/>";
+	s += "Fg=" + PrintE2(Round(Fg( m, (R+30000.0) ))) + "N&nbsp;";
+	s += "Fd=" + PrintE2(Round(Fd( (R+30000.0), 0.018, d ))) + "N&nbsp;&nbsp;30km<br/>";
+	s += "Fg=" + PrintE2(Round(Fg( m, (R+5000.0) ))) + "N&nbsp;";
+	s += "Fd=" + PrintE2(Round(Fd( (R+5000.0), 0.74, d ))) + "N&nbsp;&nbsp;5km<br/>";
+	s += "Fg=" + PrintE2(Round(Fg( m, (R+2000.0) ))) + "N&nbsp;";
+	s += "Fd=" + PrintE2(Round(Fd( (R+2000.0), 1.0, d ))) + "N&nbsp;&nbsp;2km<br/>";
+	s += "Fg=" + PrintE2(Round(Fg( m, R))) + "N&nbsp;";
+	s += "Fd=" + PrintE2(Round(Fd( R, 1.3, d ))) + "N&nbsp;&nbsp;0km<br/>";
+
+	s += "vmax=" + (Round(v2)).toString(10) + " m/s&nbsp;" + (Round(v2*3.6)).toString(10) + "km/t</br>";
+
+	s += "vluft=" + (Round(vluft)).toString(10) + " m/s&nbsp;" + (Round(vluft*3.6)).toString(10) + "km/t</br>";
 	s += "v=" + (Round(v)).toString(10) + " m/s&nbsp;" + (Round(v*3.6)).toString(10) + "km/t</br>";
 	s += "V=" + (Round(V)).toString(10) + " m^3&nbsp;</br>m=" + (Round(V*rho)).toString(10) + " kg</br>";
 	s += "Energi " + (PrintE( Round(E2(V)/tTNT) )) + "&nbsp;" + "</p>";
@@ -108,7 +450,7 @@ var V = V_kugle(d/2.0);
 }
 
 
-var adr = rens_url(document.URL);
+//var adr = rens_url(document.URL);
 
 
 var ch_nr = adr.indexOf('#',0);
@@ -120,47 +462,575 @@ max_tal=parseInt(argument,10);if(! max_tal>0) max_tal=100;
 </SCRIPT>
 </head><body>
 <h3>Energiafgivelse ved meteornedslag (minimum)</h3>
-<h4>Minimum energien, da den jo også har en hastighed inden den infanges af jordens gravitationsfelt, som ikke har talt med her.</h4>
-<table>
-<tr><td>M</td><td>Jordens masse</td><td>5,974*10^24 kg</td></tr>
-<tr><td>R</td><td>Jordens middelradius</td><td>6.371e+6 m</td></tr>
-<tr><td>G</td><td>Gravitationskonstanten</td><td>6,6720*10^-11 Nm^2/kg^2</td></tr>
-<tr><td>&rho;</td><td>Jordens massefylden ved jordoverfladen</td><td>2600 kg/m^3</td></tr>
-<tr><td>Mt</td><td>Megaton of TNT</td><td>4.184*10^15 J</td></tr>
-<tr><td>d</td><td>Astroidens diameter</td><td>10000 m</td></tr>
-</table>
-<p>
-Gravitationsfelt F=G*M*m/r^2</br>
-F=-dE/ds</br>
-E=-G*M*m/R</br>
-Volumen af en kugle V=3/4 PI r^3</br>
-Tyngde accelerationen g = F/m=G*M/r^2</br>
-Centripetal acceleration  a = v^2/r = 4 PI^2 r/T^2</br>
-Ligning for cirkulære kredsløb om jorden G*M/r^2 = v^2/r = 4 PI^2 r/T^2
-</p>
-<SCRIPT>
-//<!--
-self.document.write("");
-var s = "";
-d=10000;
-self.document.write(Prin(d));//150km krater
-d=1000;
-self.document.write(Prin(d));
-d=100;
-self.document.write(Prin(d));
-d=80;
-self.document.write(Prin(d));//50000 aar siden
-d=10;
-self.document.write(Prin(d));
-d=1.0;
-self.document.write(Prin(d));
-d=.1;
-self.document.write(Prin(d));
-//-->
-</SCRIPT>
-<!--table>
-<tr><td>Url: </td><td><input size="50" type="text" name="url" id="url" value="" /></td></tr>
-<tr><td>v<input type="button" value="EnCode" onClick="document.getElementById('encurl').value=escape(document.getElementById('url').value)" /></td><td>^<input type="button" value="DeCode" onClick="document.getElementById('url').value=unescape(document.getElementById('encurl').value)" /></td></tr>
-<tr><td>Encoded Url: </td><td><input size="50" type="text" name="encurl" id="encurl" value="" onChange="document.getElementById('url').value=unescape(document.getElementById('encurl').value)"/></td></tr>
-</table-->
+    <h4>Minimum energien, da den jo også har en hastighed inden den infanges af jordens gravitationsfelt, som ikke er talt med her.</h4>
+    <table>
+        <tr><td>M</td><td>Jordens masse</td><td>5,974*10<sup>24</sup> kg</td></tr>
+        <tr><td>R</td><td>Jordens middelradius</td><td>6.371 10<sup>6</sup> m</td></tr>
+        <tr><td>G</td><td>Gravitationskonstanten</td><td>6,6720*10<sup>-11</sup> Nm<sup>2</sup>/kg<sup>2</sup></td></tr>
+        <tr><td>&rho;</td><td>Jordens massefylden ved jordoverfladen</td><td>2600 kg/m<sup>3</sup></td></tr>
+        <tr><td>M<sub>t</sub></td><td>Megaton of TNT</td><td>4.184*10<sup>15</sup> J</td></tr>
+        <tr><td>d</td><td>Astroidens diameter i meter (m)</td><td></td></tr>
+        <tr>&nbsp;<td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td>Fd</td><td>Luftmodstanden</td><td>- &#189;&rho;AC<sub>d</sub>v<sup>2</sup></td></tr>
+        <tr><td>A</td><td>Tværsnit af det faldende legme (her en kugle)</td><td>&#0960;r<sup>2</sup></td></tr>
+        <tr>
+            <td>V</td>
+            <td>Volumen af det faldende legme (her en kugle)</td>
+            <td>
+
+                <math>
+                    <mfrac>
+                        <mrow>
+                            <mi>4</mi>
+                        </mrow>
+                        <mrow>
+                            <mi>3</mi>
+                        </mrow>
+                    </mfrac>
+                </math> &#0960;<!-- pi -->r<sup>3</sup>
+
+            </td>
+        </tr>
+        <tr><td>C<sub>d</sub></td><td>Drag coefficient (formfaktor) (her en kugle)</td><td>0,47</td></tr>
+        <tr><td>&rho;<sub>0</sub></td><td>Luftens massefylden ved jordoverfladen (troposfæren)</td><td>1,3 kg/m<sup>3</sup></td></tr>
+        <tr><td>&rho;</td><td>Luftens massefylden i 2km højde (troposfæren)</td><td>1,0 kg/m<sup>3</sup></td></tr>
+        <tr><td>&rho;</td><td>Luftens massefylden i 5km højde (troposfæren)</td><td>0,74 kg/m<sup>3</sup></td></tr>
+        <tr><td>&rho;</td><td>Luftens massefylden i 30km højde (stratosfæren)</td><td>0,018 kg/m<sup>3</sup></td></tr>
+        <tr><td>&rho;</td><td>Luftens massefylden tilnærmet i højden h</td><td>&rho;<sub>0</sub> e<sup>-0,000127 h</sup> kg/m<sup>3</sup></td></tr>
+    </table>
+
+
+    <p>
+
+        Gravitationsfelt F=GMm/r<sup>2</sup></br>
+        Luftmodstandskraft F=-&#189;&rho;AC<sub>d</sub>v<sup>2</sup></br>
+
+        F = GMm/(r<sup>2</sup>) - &#189;&rho;AC<sub>d</sub>v<sup>2</sup><br/>
+
+        F=-dE/ds</br>
+        E=-GMm/R</br>
+        <table class="maths"><tr><td rowspan="2">Volumen af en kugle V&nbsp;=&nbsp;</td><td class="solidus">4</td><td rowspan="2">&#0960;r<sup>3</sup></td></tr><tr><td>3</td></tr></table><br/>
+        Volumen af en kugle V = 4/3 &#0960;r<sup>3</sup><br/>
+
+        Tværsnit af en kugle A=&#0960;r<sup>2</sup>
+        Tyngde accelerationen g = F/m=G*M/r<sup>2</sup><br/>
+        Centripetal acceleration  a = v<sup>2</sup>/r = 4 &#0960;<sup>2</sup>r/T<sup>2</sup><br/>
+        For cirkulære kredsløb om jorden:
+
+        <math>
+            <mfrac>
+                <mrow>
+                    <mi>G</mi>
+                    <mi>M</mi>
+                </mrow>
+                <mrow>
+                    <msup>
+                        <mo>r</mo>
+                        <mn>2</mn>
+                    </msup>
+                </mrow>
+            </mfrac>
+            <mo>=</mo>
+            <mfrac>
+                <mrow>
+                    <msup>
+                        <mi>v</mi>
+                        <mn>2</mn>
+                    </msup>
+                </mrow>
+                <mrow>
+                    <mo>r</mo>
+                </mrow>
+            </mfrac>
+            <mo>=</mo>
+            <mfrac>
+                <mrow>
+                    <mi>4</mi>
+                    <msup>
+                        <mi>&#0960;<!-- pi --></mi>
+                        <mn>2</mn>
+                    </msup>
+                    <mo>r</mo>
+                </mrow>
+                <mrow>
+                    <msup>
+                        <mi>T</mi>
+                        <mn>2</mn>
+                    </msup>
+                </mrow>
+            </mfrac>
+        </math>
+
+
+        er lig G*M/r<sup>2</sup><br/>
+
+        Omløbstiden
+
+        <math>
+            <mi>T</mi>
+            <mo>=</mo>
+            <msqrt>
+                <mfrac>
+                    <mrow>
+                        <mi>4</mi>
+                        <msup>
+                            <mi>&#0960;<!-- pi --></mi>
+                            <mn>2</mn>
+                        </msup>
+                        <msup>
+                            <mi>r</mi>
+                            <mn>3</mn>
+                        </msup>
+                    </mrow>
+                    <mrow>
+                        <mi>G</mi>
+                        <mi>M</mi>
+                    </mrow>
+                </mfrac>
+            </msqrt>
+        </math><br/>
+
+        Omløbshastigheden
+
+        <math>
+            <mi>v</mi>
+            <mo>=</mo>
+            <mfrac>
+                <mrow>
+                    <mi>2</mi>
+                    <mi>&#0960;<!-- pi --></mi>
+                    <mi>r</mi>
+                </mrow>
+                <mrow>
+                    <mi>T</mi>
+                </mrow>
+            </mfrac>
+            <mo>=</mo>
+            <msqrt>
+                <mfrac>
+                    <mrow>
+                        <mi>G</mi>
+                        <mi>M</mi>
+                    </mrow>
+                    <mrow>
+                        <mi>r</mi>
+                    </mrow>
+                </mfrac>
+            </msqrt>
+        </math><br/>
+
+        Geostationære bane (T = 24 timer = 86400 s)<br/>
+
+        <math>
+            <msub>
+                <mi>r</mi>
+                <mn>g</mn>
+            </msub>
+            <mo>=</mo>
+            <mroot>
+                <mfrac>
+                    <mrow>
+                        <msup>
+                            <mi>T</mi>
+                            <mn>2</mn>
+                        </msup>
+                        <mi>G</mi>
+                        <mi>M</mi>
+                    </mrow>
+                    <mrow>
+                        <mi>4</mi>
+                        <msup>
+                            <mi>&#0960;<!-- pi --></mi>
+                            <mn>2</mn>
+                        </msup>
+                    </mrow>
+                </mfrac>
+                <mn>3</mn>
+            </mroot>
+        </math>km<br/>
+        <br/>
+		<div class="orb">
+		<div class="jord">&nbsp;</div>
+		</div>
+		<br/>
+        <SCRIPT>
+            //<!--
+            self.document.write(Out2("r<sub>geo</sub>= ", SatelitRadius((24.0 * 60.0 * 60.0)) / 1000.0, " km, T=1 døgn = 86400 s<br/>"));
+            self.document.write(Out2("r<sub>månen</sub>= ", SatelitRadius((27.0 * 24.0 * 60.0 * 60.0)) / 1000.0, " km, T=27 døgn = 2332800 s<br/><br/>"));
+
+
+            self.document.write(Out2("T<sub>geo</sub>= ", SatelitOmloebstid(42240000), " s (1 døgn)"));
+            self.document.write(Out2(", v<sub>geo</sub>= ", SatelitHastighed(42240000), " m/s"));
+            self.document.write(Out2(", v<sub>geo</sub>= ", (2 * PI * 42240000 / (24.0 * 60.0 * 60.0)), " m/s"));
+            self.document.write(Out2(", r<sub>geo</sub>= ", (42240000), " m<br/>"));
+
+            self.document.write(Out2("T<sub>surface</sub>= ", SatelitOmloebstid(R), " s  (ca. 1,4 timer)"));
+            self.document.write(Out2(", v<sub>surface</sub>= ", SatelitHastighed(R), " m/s"));
+            self.document.write(Out2(", r<sub>surface</sub>= ", R, " m<br/>"));
+
+            self.document.write(Out2("T<sub>10km</sub>= ", SatelitOmloebstid(R + 10000), " s  (ca. 1,4 timer)"));
+            self.document.write(Out2(", v<sub>10km</sub>= ", SatelitHastighed(R + 10000), " m/s"));
+            self.document.write(Out2(", r<sub>10km</sub>= ", (R + 10000), " m<br/>"));
+
+            self.document.write(Out2("T<sub>100km</sub>= ", SatelitOmloebstid(R + 100000), " s  (ca. 1,4 timer)"));
+            self.document.write(Out2(", v<sub>100km</sub>= ", SatelitHastighed(R + 100000), " m/s"));
+            self.document.write(Out2(", r<sub>100km</sub>= ", (R + 100000), " m<br/><br/>"));
+
+            //self.document.write(Out2("v = ", integrate_v2( 0.1), " m/s<br/><br/>"));
+            if (1 == 0) {
+                //Find hastigheden vedjord overfladen, ved at integrere udtrykket for dens acceleration
+                //  korrigeret for luftmodstanden. Vi starter i 100 km højde (heroppe er luftmodstanden ubetydelig)
+                var diameter = 0.1;
+                var mmH = 100000.0;
+                var mmN = 60;
+                var mmDS = (100000 - 40000) / mmN;
+                var mmDeltaV = 0.0;
+                var mmV = vr(R + mmH);
+                for (var i = 0; i <= mmN; i++) {
+                    var mmH2 = mmH - mmDS;
+                    if (mmV > 0) {
+                        var r = R + mmH;
+                        var rholuft = rho_h(rho0luft, mmH);
+                        mmDeltaV = mmDS * acc(diameter, r, rholuft, mmV) / mmV;
+                    }
+                    mmV += mmDeltaV;
+                    self.document.write("h = " + (RoundN(mmH / 1000, 5)).toString(10) + " km, dv = " + (RoundN(mmDeltaV, 5)).toString(10) + " m/s, v = " + (RoundN(mmV, 5)).toString(10) + " m/s<br/>");
+                    mmH = mmH2;
+                }
+                var mmN = 1000;
+                var mmDS = mmH / mmN;
+                var mmDeltaV = 0.0;
+                for (var i = 0; i <= mmN; i++) {
+                    if (mmH < 1.0) {
+                        mmDS -= 1.0 - mmH;
+                        mmH = 1.0;
+                    }
+                    if (mmV > 0) {
+                        var r = R + mmH;
+                        var rholuft = rho_h(rho0luft, mmH);
+                        mmDeltaV = mmDS * acc(diameter, r, rholuft, mmV) / mmV;
+                    }
+                    mmV += mmDeltaV;
+                    self.document.write("h = " + (RoundN(mmH / 1000, 5)).toString(10) + " km, dv = " + (RoundN(mmDeltaV, 5)).toString(10) + " m/s, v = " + (RoundN(mmV, 5)).toString(10) + " m/s<br/>");
+                    mmH -= mmDS;
+                }
+            }
+
+            //self.document.write(Out2(" 11111111 = ", RoundN(11111111, 4), ""));self.document.write(Out(" Log(11111111) = ", Log(11111111), "<br/>"));
+            //self.document.write(Out2(" 1111111.1 = ", RoundN(1111111.1, 4), ""));self.document.write(Out(" Log(1111111.1) = ", Log(1111111.1), "<br/>"));
+            //self.document.write(Out2(" 111111.11 = ", RoundN(111111.11, 4), ""));self.document.write(Out(" Log(111111.11) = ", Log(111111.11), "<br/>"));
+            //self.document.write(Out2(" 11111.111 = ", RoundN(11111.111,4), ""));self.document.write(Out(" Log(11111.111) = ", Log(11111.111), "<br/>"));
+            //self.document.write(Out2(" 1111.1111 = ", RoundN(1111.1111,4), ""));self.document.write(Out(" Log(1111.1111) = ", Log(1111.1111), "<br/>"));
+            //self.document.write(Out2(" 111.11111 = ", RoundN(111.11111,4), ""));self.document.write(Out(" Log(111.11111) = ", Log(111.11111), "<br/>"));
+            //self.document.write(Out2(" 11.111111 = ", RoundN(11.111111,4), ""));self.document.write(Out(" Log(11.111111) = ", Log(11.111111), "<br/>"));
+            //self.document.write(Out2(" 1.1111111 = ", RoundN(1.1111111,4), ""));self.document.write(Out(" Log(1.1111111) = ", Log(1.1111111), "<br/>"));
+            //self.document.write(Out2(" 0.11111111 = ", RoundN(0.11111111,4), ""));self.document.write(Out(" Log(0.11111111) = ", Log(0.11111111), "<br/>"));
+            //self.document.write(Out2(" 0.011111111 = ", RoundN(0.011111111,4), ""));self.document.write(Out(" Log(0.011111111) = ", Log(0.011111111), "<br/>"));
+            //self.document.write(Out2(" 0.0011111111 = ", RoundN(0.0011111111,4), ""));self.document.write(Out(" Log(0.0011111111) = ", Log(0.0011111111), "<br/>"));
+            //self.document.write(Out2(" 0.00011111111 = ", RoundN(0.00011111111, 4), ""));self.document.write(Out(" Log(0.00011111111) = ", Log(0.00011111111), "<br/>"));
+            //self.document.write(Out2(" 0.000011111111 = ", RoundN(0.000011111111, 4), ""));self.document.write(Out(" Log(0.000011111111) = ", Log(0.000011111111), "<br/><br/>"));
+
+
+            self.document.write(Out("v0    =", Math.sqrt(2 * GM / R), " m/s<br/>"));
+            self.document.write(Out("v100km =", Math.sqrt(2 * GM / (R + 100000)), " m/s<br/>"));
+
+
+
+            self.document.write(Out2("  v0     =", rho_h(rho0luft, 0.0), " "));
+            self.document.write(Out2(", v2km   =", rho_h(rho0luft, 2000.0), " "));
+            self.document.write(Out2(", v5km   =", rho_h(rho0luft, 5000.0), " "));
+            self.document.write(Out2(", v7.5km   =", rho_h(rho0luft, 7500.0), " "));
+            self.document.write(Out2(", v30km  =", rho_h(rho0luft, 30000.0), " "));
+            self.document.write(Out2(", v50km  =", rho_h(rho0luft, 50000.0), " "));
+            self.document.write(Out2(", v100km =", rho_h(rho0luft, 100000.0), " <br/>"));
+
+            self.document.write(Out2("  v0.1m  =", vmax2(0.1, 0.5), " "));
+            self.document.write(Out2(", v1m    =", vmax2(1.0, 0.5), " "));
+            self.document.write(Out2(", v10m   =", vmax2(10.0, 0.5), " "));
+            self.document.write(Out2(", v100m  =", vmax2(100.0, 0.5), " "));
+            self.document.write(Out2(", v1km   =", vmax2(1000.0, 0.5), " "));
+            self.document.write(Out2(", v10km  =", vmax2(10000.0, 0.5), " <br/>"));
+
+            self.document.write(Out("  log(1) =",   Math.sqrt(10.0), "<br/>"));
+
+            self.document.write(Out("d=1  v0       =", vmax(1.0, 0.0), " m/s"));
+            self.document.write(Out(", v5km   =", vmax(1.0, 5000.0), " m/s"));
+            self.document.write(Out(", v10km  =", vmax(1.0, 10000.0), " m/s"));
+            self.document.write(Out(", v20km  =", vmax(1.0, 20000.0), " m/s"));
+            self.document.write(Out(", v50km  =", vmax(1.0, 50000.0), " m/s"));
+            self.document.write(Out(", v100km =", vmax(1.0, 100000.0), " m/s<br/>"));
+            self.document.write(Out("d=10  v0      =", vmax(10.0, 0.0), " m/s"));
+            self.document.write(Out(", v5km   =", vmax(10.0, 5000.0), " m/s"));
+            self.document.write(Out(", v10km  =", vmax(10.0, 10000.0), " m/s"));
+            self.document.write(Out(", v20km  =", vmax(10.0, 20000.0), " m/s"));
+            self.document.write(Out(", v50km  =", vmax(10.0, 50000.0), " m/s"));
+            self.document.write(Out(", v100km =", vmax(10.0, 100000.0), " m/s<br/>"));
+            self.document.write(Out("d=100  v0     =", vmax(100.0, 0.0), " m/s"));
+            self.document.write(Out(", v5km   =", vmax(100.0, 5000.0), " m/s"));
+            self.document.write(Out(", v10km  =", vmax(100.0, 10000.0), " m/s"));
+            self.document.write(Out(", v20km  =", vmax(100.0, 20000.0), " m/s"));
+            self.document.write(Out(", v50km  =", vmax(100.0, 50000.0), " m/s"));
+            self.document.write(Out(", v100km =", vmax(100.0, 100000.0), " m/s<br/>"));
+            self.document.write(Out("d=1000  v0    =", vmax(1000.0, 0.0), " m/s"));
+            self.document.write(Out(", v5km   =", vmax(1000.0, 5000.0), " m/s"));
+            self.document.write(Out(", v10km  =", vmax(1000.0, 10000.0), " m/s"));
+            self.document.write(Out(", v20km  =", vmax(1000.0, 20000.0), " m/s"));
+            self.document.write(Out(", v50km  =", vmax(1000.0, 50000.0), " m/s"));
+            self.document.write(Out(", v100km =", vmax(1000.0, 100000.0), " m/s<br/>"));
+
+
+
+
+            //-->
+        </SCRIPT>
+    </p>
+    <SCRIPT>
+        //<!--
+        self.document.write("");
+        var s = "";
+        d = 10000;
+        self.document.write(Prin(d));//150km krater
+        d = 1000;
+        self.document.write(Prin(d));
+        d = 100;
+        self.document.write(Prin(d));
+        d = 80;
+        self.document.write(Prin(d));//50000 aar siden
+        d = 10;
+        self.document.write(Prin(d));
+        d = 1.0;
+        self.document.write(Prin(d));
+        d = .1;
+        self.document.write(Prin(d));
+        //-->
+    </SCRIPT>
+    <!--table>
+    <tr><td>Url: </td><td><input size="50" type="text" name="url" id="url" value="" /></td></tr>
+    <tr><td>v<input type="button" value="EnCode" onClick="document.getElementById('encurl').value=escape(document.getElementById('url').value)" /></td><td>^<input type="button" value="DeCode" onClick="document.getElementById('url').value=unescape(document.getElementById('encurl').value)" /></td></tr>
+    <tr><td>Encoded Url: </td><td><input size="50" type="text" name="encurl" id="encurl" value="" onChange="document.getElementById('url').value=unescape(document.getElementById('encurl').value)"/></td></tr>
+    </table-->
+    Luftmodstand links:
+    <br/><a href="http://phys.au.dk/hvor-stor-bliver-farten-af-kugler-der-falder-frit/">Hvor stor bliver farten af kugler der falder frit? (Helge Knudsen)</a>
+    <br/><a href="https://da.wikipedia.org/wiki/Luftmodstand">Luftmodstand (Wikipedia)</a>
+    <br/><a href="http://www.insideracingtechnology.com/tech102drag.htm">drag coefficeient</a>
+    <br/><a href="http://vthoroe.dk/Teknologi/Biler/Microsoft%20Word%20-%20Luftmodstand.pdf">Luftmodstand (Valle Thorø)</a>
+    <br/><a href="https://orbitbhtx.systime.dk/index.php?id=167">Densitet</a>
+
+    <br/><a href="https://da.wikipedia.org/wiki/Barometrisk_h%C3%B8jdeformel">Barometrisk_højdeformel</a>
+    <br/><a href="http://www.soldata.dk/PDF/Hydrostatisk-ligning.PDF">Hydrostatisk-ligning</a>
+
+    <br/><a href="https://www.researchgate.net/figure/Figure-1-3-Temperature-height-profile-for-45N-1966-US-Standard-Atmosphere_fig3_303074239">Temperatur variationer</a>
+    <br/><a href="https://illvid.dk/fysik/fysik-faenomener/hvorfor-er-det-koldt-hoejt-oppe">Hvorfor er det koldt hoejt oppe</a>
+    <br/>
+
+    <!--
+    &frac14;
+    &frac34;
+    &frac12;&#189;
+    &frac13;
+    PI=&#0960;
+    -->
+    Luftens molmasse M<sub>m</sub> = N<sub>a</sub>*m<br/>
+    Avogadros tal N<sub>a</sub> molekyler per mol<br/>
+
+
+
+    p = p0 e<sup>-(gM<sub>m</sub>/R<sub>g</sub>T)h</sup>   , R<sub>g</sub> er Gaskonstanten,   R<sub>g</sub> = N<sub>a</sub>k, hvor k er Boltzmanskonstant<br/>
+
+
+    gM<sub>m</sub>/R<sub>g</sub>T  = mN<sub>a</sub>/(kTN<sub>a</sub>) = mg / kT<br/>
+
+
+    p = p0e^(gM<sub>m</sub>/R<sub>g</sub>T)<br/>
+
+
+    http://www.soldata.dk/PDF/Hydrostatisk-ligning.PDF<br/>
+
+    rho = M/V<br/>
+
+    pV=nRbT , Idealgas ligningen hvor n er antal mol<br/>
+
+    rho = M/V = n * Na * m / (nNa k T/p) = mp/kT<br/>
+
+    ved jordoverfladen giver det:<br/>
+    rho0 = m*p/(k*T) = 4,8097 E-26 kg   * 101325 N/m^2 /(1,381 E-23 J/K  * 273 K)<br/>
+    = (4,8097 * 101325/(1,381 * 273))*(E-26/E-23) kgN/(m^2 J)    , J=Nm (kraft gange vej)<br/>
+    = 1292,64 E-3 kg/m^3 = 1,292 kg/m^3<br/>
+
+
+    For at kunne regne trykket højere oppe har vi brug for temperaturen:<br/>
+    Vores formler bygger på en isotermiske atmosfæremodel.<br/>
+    Det passer fint i stratosfæren og op efter (10-13km),<br/>
+    Idet at den franske fysiker Teisserence de Bort i 1898 opdagede<br/>
+    at temperaturen her holdt op med at falde.<br/>
+    Se<br/>
+    I Troposfæren derimod falder temperaturen ca. éngrad celcius for hver hundrede meter stigning.<br/>
+
+    N/m^2<br/>
+
+
+    mg/kT = 4,8097 E-26 kg   * 9,816 m/s^2 /(1,381 E-23 J/K  * 273 K)<br/>
+    =  (4,8097 * 9,816/(1,381 * 273))*(E-26/E-23) N/(Nm)<br/>
+
+    = 0,000125 /m<br/>
+
+
+
+    <a href="https://www.studieportalen.dk/forums/thread.aspx?id=1675158" >Hvorfor aftager luftens densitet med højden over overfladen?</a><br/>
+    p   =   p0 *e-0.000127*h<br/>
+    rho = rho0 *e-0.000127*h<br/>
+
+    rho1 = rho0 * (1.3 * e-0.000127*h1)<br/>
+
+    rho1/rho2 = e-(0.000127*h1)/e-(0.000127*h2)=e ^(-(0.000127*h1) +(0.000127*h2))=e^(-0.000127*(h1-h2))<br/>
+    ln(rho1/rho2) = -0.000127*(h1-h2)<br/>
+
+    ln(rho1/rho2)/0.000127 = h2-h1<br/>
+
+
+    rho1=2*rho2 => h2-h1 = ln(2*rho2/rho2)/0.000127 = ln(2)/0.000127 = 5458 m<br/>
+
+
+    Amerikanerne har regnet den ud til 5600 som nok giver en bedre gennemsnitsværdi<br/>
+
+
+
+    <br/><a href="https://www.lmfk.dk/artikler/data/artikler/0604/0604_28.pdf">Vores atmosfæres masse</a><br/>
+
+    <!--
+
+
+    Massen af vores atmosfære:
+    Trykket ved jordoverfladen er 1atm som svarer til 10m vandsøjle
+    (hvis vi dykker 10 meter ned er trykket 2atm)
+
+    Så den vægt der trykker på os er 10 m vandsøjle.
+    Så den vægt der trykker på en kvadrat meter 1m^2 meter
+    er det samme som 10 m^3 vand 10m * 1000 kg/m^3 = 10000kg/m^2
+
+    Jordens overflade er lig 4*PI*R*R m^2
+    Så dens masse er :
+    4*PI*R*R m^2 *10000 kg/m^2 = 4 * 3.1415 * 6371001 m * 6371001 m * 10000 kg/m^2
+    = 5,100 10^18 kg
+
+
+    -->
+    <p>
+        These pages provide you with information on how to <a
+		href="https://www.w3.org/Math/#learn" >learn and use MathML</a>, on <a
+		href="https://www.w3.org/Math/#software" >available software</a>, and news from the <a
+		href="https://www.w3.org/Math/#news" >MathML community</a>.
+    </p><p>
+
+        <math>
+            <mrow>
+                <mfenced>
+                    <mtable>
+                        <mtr><mtd><mi> a </mi></mtd> <mtd><mi> b </mi></mtd></mtr>
+                        <mtr><mtd><mi> c </mi></mtd> <mtd><mi> d </mi></mtd></mtr>
+                    </mtable>
+                </mfenced>
+                <mo> &#x2062;<!--INVISIBLE TIMES--> </mo>
+                <mfenced>
+                    <mtable>
+                        <mtr><mtd><mi> x </mi></mtd></mtr>
+                        <mtr><mtd><mi> y </mi></mtd></mtr>
+                    </mtable>
+                </mfenced>
+            </mrow>
+            <mo> = </mo>
+            <mfenced>
+                <mtable>
+                    <mtr><mtd><mi> e </mi></mtd></mtr>
+                    <mtr><mtd><mi> f </mi></mtd></mtr>
+                </mtable>
+            </mfenced>
+        </math>
+        and another:
+        <math>
+            <mfenced open="{" close="">
+                <mtable>
+                    <mtr>
+                        <mtd>
+                            <mrow>
+                                <mrow><mi>a</mi><mo>&#x2062;</mo><mi>x</mi></mrow>
+                                <mo>+</mo>
+                                <mrow><mi>b</mi><mo>&#x2062;</mo><mi>y</mi></mrow>
+                            </mrow>
+                            <mo> = </mo>
+                            <mi> e </mi>
+                        </mtd>
+                    </mtr>
+                    <mtr>
+                        <mtd>
+                            <mrow>
+                                <mrow><mi>c</mi><mo>&#x2062;</mo><mi>x</mi></mrow>
+                                <mo>+</mo>
+                                <mrow><mi>d</mi><mo>&#x2062;</mo><mi>y</mi></mrow>
+                            </mrow>
+                            <mo> = </mo>
+                            <mi> f </mi>
+                        </mtd>
+                    </mtr>
+                </mtable>
+            </mfenced>
+        </math>
+    </p>
+    <p>
+        <table class="maths">
+            <tr>
+                <td rowspan="2">s&nbsp;=&nbsp;</td>
+                <td class="solidus">2&#0960;<sup>5</sup><i>k</i><sup>4</sup></td>
+            </tr>
+            <tr>
+                <td>15<i>h</i><sup>3</sup><i>c</i><sup>2</sup></td>
+            </tr>
+        </table>
+
+
+
+
+
+        <table class="maths">
+            <tr>
+                <td rowspan="2">s&nbsp;=&nbsp;</td>
+                <td class="solidus">2&#0960;<sup>5</sup><i>k</i><sup>4</sup></td>
+            </tr>
+            <tr>
+                <td>15<i>h</i><sup>3</sup><i>c</i><sup>2</sup></td>
+            </tr>
+        </table><table class="maths">
+            <tr>
+                <td rowspan="2">s&nbsp;=&nbsp;</td>
+                <td class="solidus">2&#0960;<sup>5</sup><i>k</i><sup>4</sup></td>
+            </tr>
+            <tr>
+                <td>15<i>h</i><sup>3</sup><i>c</i><sup>2</sup></td>
+            </tr>
+        </table>
+
+    </p>
+    <p>
+        Luftens massefylden &rho; i forskellige højder (troposfæren)
+        <table border="1">
+            <tr><td>Højde (km)</td><td>Navn</td><td>&rho;  (kg/m<sup>3</sup>)</td></tr>
+            <SCRIPT>
+                self.document.write(Out2("<tr><td>0</td><td>Jordoverfladen</td><td>", rho_h(rho0luft, 0.0), "</td></tr>"));
+                self.document.write(Out2("<tr><td>1</td><td>(troposfæren)</td><td>", rho_h(rho0luft, 1000.0), "</td></tr>"));
+                self.document.write(Out2("<tr><td>2</td><td>(troposfæren)</td><td>", rho_h(rho0luft, 2000.0), "</td></tr>"));
+                self.document.write(Out2("<tr><td>3</td><td>(troposfæren)</td><td>", rho_h(rho0luft, 3000.0), "</td></tr>"));
+                self.document.write(Out2("<tr><td>4</td><td>(troposfæren)</td><td>", rho_h(rho0luft, 4000.0), "</td></tr>"));
+                self.document.write(Out2("<tr><td>5</td><td>(troposfæren)</td><td>", rho_h(rho0luft, 5000.0), "</td></tr>"));
+                self.document.write(Out2("<tr><td>10</td><td>(troposfæren)</td><td>", rho_h(rho0luft, 10000.0), "</td></tr>"));
+                self.document.write(Out2("<tr><td>30</td><td>(stratosfæren)</td><td>", rho_h(rho0luft, 30000.0), "</td></tr>"));
+                self.document.write(Out2("<tr><td>50</td><td>(mesosfæren)</td><td>", rho_h(rho0luft, 50000.0), "</td></tr>"));
+                self.document.write(Out2("<tr><td>60</td><td>(mesosfæren)</td><td>", rho_h(rho0luft, 60000.0), "</td></tr>"));
+                self.document.write(Out2("<tr><td>80</td><td>(mesosfæren)</td><td>", rho_h(rho0luft, 80000.0), "</td></tr>"));
+                self.document.write(Out2("<tr><td>100</td><td>(termosfæren)</td><td>", rho_h(rho0luft, 100000.0), "</td></tr>"));
+                self.document.write(Out2("<tr><td>110</td><td>(termosfæren)</td><td>", rho_h(rho0luft, 110000.0), "</td></tr>"));
+            </SCRIPT>
+        </table>
+    </p>
+
 </body></html>
