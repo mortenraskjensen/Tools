@@ -63,6 +63,89 @@ sup sup { vertical-align: 0.50em !important; }
 </style>
 
 <SCRIPT>
+class Vector{
+	constructor(x0,y0,z0){
+		this.x = x0;
+		this.y = y0;
+		this.z = z0;
+	}
+}
+
+const DotProduct = (a,b) => {
+	return a.x*b.x + a.y*b.y + a.z*b.z;
+}
+
+const VSub = (a,b) => {
+	return new Vector(a.x - b.x, a.y - b.y, a.z - b.z);
+}
+
+const Normed = (a) => {
+	const len = Math.sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
+	if (len = 0)
+		return a;
+
+	return new Vector(a.x/len, a.y/len, a.z/len);
+}
+
+const ArcCos = (a) => {
+	const len = Math.sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
+	if ((a + 1.0)*(a + 1.0) < 0.0001)
+		return Math.acos(-1.0);;
+
+	if ((a - 1.0)*(a - 1.0) < 0.0001)
+		return Math.acos(1.0);;
+
+	if (a >= -1.0 && a <= 1.0)
+		return Math.acos(a);
+
+	return Math.acos(a);
+}
+
+
+const VLength = (a) => {
+	return Math.sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
+}
+
+const VLength2 = (a,b) => {
+	return Math.sqrt(
+	((a.x*a.x + a.y*a.y + a.z*a.z) * (b.x*b.x + b.y*b.y + b.z*b.z))
+	- ((a.x*b.x + a.y*b.y + a.z*b.z) * (a.x*b.x + a.y*b.y + a.z*b.z))
+	);
+}
+
+const CrossProduct = (a,b) => {
+  //axb
+  return new Vector(
+	a.y*b.z - a.z*b.y,
+	a.z*b.x - a.x*b.z,
+	a.x*b.y - a.y*b.x
+	);
+}
+
+const DCrossProduct = (a,b,c) => {
+  //ax(bxc)
+  const ADotC = DotProduct(a,c);
+  const ADotB = DotProduct(a,b);
+  const x0 = ADotC*b.x - ADotB*c.x;
+  const y0 = ADotC*b.y - ADotB*c.y;
+  const z0 = ADotC*b.z - ADotB*c.z;
+  const len = Math.sqrt(x0*x0 + y0*y0 + z0*z0);
+  if (len > 0.0)
+    return new Vector(x0/len, y0/len, z0/len);
+
+  return new Vector(x0, y0, z0);
+}
+
+const NCrossProduct = (a,b) => {
+  const x0 = a.y*b.z - a.z*b.y;
+  const y0 = a.z*b.x - a.x*b.z;
+  const z0 = a.x*b.y - a.y*b.x;
+  const len = Math.sqrt(x0*x0 + y0*y0 + z0*z0);
+  if (len > 0.0)
+    return new Vector(x0/len, y0/len, z0/len);
+
+  return new Vector(x0, y0, z0);
+}
 
 function Log( y ) {
 var n = 0;
@@ -70,6 +153,44 @@ var n = 0;
 	else{while(y*y<.01){y *= 10.0;n--;}}
 	return(n);
 }
+
+const Round0 = (x) => {
+	return Math.floor(x + 0.5);
+}
+
+const VorldCorners = (x) => {
+  const f = Math.floor(x / 360);
+  if (x < 0.0)
+  {
+	x += 360.0;
+  }
+  if (x > 360.0)
+  {
+	x -= 360.0;
+  }
+  const corner = Round0(16.0*x/360.0);// 360/16=22.5
+  switch (corner)
+  {
+	case 0 : return "N";  //348.75-  0.0- 11.25 
+	case 1 : return "NNE";// 11.25- 22.5- 33.75
+	case 2 : return "NE"; // 33.75- 45.0- 56.25
+	case 3 : return "ENE";// 56.25- 67.5- 78.75
+	case 4 : return "E";  // 78.75- 90.0-101.25
+	case 5 : return "ESE";//101.25-112.5-123.75
+	case 6 : return "SE"; //123.75-135.0-146.25
+	case 7 : return "SSE";//146.25-157.5-168.75
+	case 8 : return "S";  //168.75-180.0-191.25
+	case 9 : return "SSW";//191.25-202.5-213.75
+	case 10: return "SW"; //213.75-225.0-236.25
+	case 11: return "WSW";//236.25-247.5-258.75
+	case 12: return "W";  //258.75-270.0-281.25
+	case 13: return "WNW";//281.25-292.5-103.75
+	case 14: return "NW"; //103.75-315.0-326.25
+	case 15: return "NNW";//326.25-337.5-348.75 
+	default: return "N";
+  }
+}
+
 
 function RoundN(x, n) {
     var y = x;
@@ -126,6 +247,21 @@ function RoundDecimal(x) {
     return Math.floor(100.0*x + 0.5)/100.0;
 }
 
+function RoundF(x,n) {
+	switch(n)
+	{
+		case -1: return Math.floor(x/10.0 + 0.5)*10.0;
+		case 0: return Math.floor(x + 0.5);
+		case 1: return Math.floor(10.0*x + 0.5)/10.0;
+		case 2: return RoundDecimal(x);
+		case 3: return Math.floor(1000.0*x + 0.5)/1000.0;
+		case 4: return Math.floor(10000.0*x + 0.5)/10000.0;
+		case 5: return Math.floor(100000.0*x + 0.5)/100000.0;
+		case 6: return Math.floor(1000000.0*x + 0.5)/1000000.0;
+	}
+    return Math.floor(100000.0*x + 0.5)/100000.0;
+}
+
 function RoundN(x, n) {
     var y = x;
     var f = 1;
@@ -170,15 +306,47 @@ max_tal=parseInt(argument,10);if(! max_tal>0) max_tal=100;
 var rm = 6371001;
 var cosalpha = 0.0
 
-function calc(latitude1, longitude1, latitude2, longitude2) {
-  let theta1 = Math.PI *(90.0 - latitude1)/180.0;
-  let theta2 = Math.PI *(90.0 - latitude2)/180.0;
-  let phi1 = Math.PI * longitude1 / 180.0;
-  let phi2 = Math.PI * longitude2 / 180.0;
+const GetDirection = (v1,v12) => {
+  let northV = new Vector(0.0,0.0,1.0);
+  // vector v1 is the direction from earth center to position 1.
+  // vectoe v12 is the dirction from position 1 to position 2 (it goes through the earth not along the surface)
+  // We want to find the angle between a meridan and the travelDirection both in point 1.
+  // The vectors above i both placed in the plane that "tangere" the point 1 on the earth surface.
+  // This plane is ortogonal på the vector v1.
+  // We start with another plane containing both v1 and v12. 
+  // It also contains the earth surface where the travel will happen, and ofcause our travelDirection.
+  // (v12 x v1) is orthogonal to this plane and if I cross it with v1 (is orthogonal with the tangent plane) 
+  // I guess I get the travelDirection
+  // Now I do something semilar, where I look at thired plane that contains the vector that goes from the earth center 
+  // towards the north pole (reprecented by the vector northV). It also contains the position 1 (vector v1).
+  // (northV x v1) is orthogonal to this plane and if I cross it with v1 (is orthogonal with the tangent plane) 
+  // I guess I get the meridian
+  let travelDirection = DCrossProduct(v1,v12,v1); // v1 x (v12 x v1)
+  let meridian = DCrossProduct(v1,northV,v1); // v1 x (northV x v1)
 
-  let cosalpha = (Math.sin(theta1)*Math.cos(phi1)*Math.sin(theta2)*Math.cos(phi2)) + (Math.sin(theta1)*Math.sin(phi1)*Math.sin(theta2)*Math.sin(phi2)) + (Math.cos(theta1)*Math.cos(theta2));
+  let angle = 180.0*ArcCos(DotProduct(travelDirection,meridian))/Math.PI;
 
-  return (rm*Math.acos(cosalpha))
+  let difference = VLength(VSub(NCrossProduct(travelDirection, meridian),v1));
+  //We know that both travelDirection and meridian is in a plane that are ortogonal with v1
+  //So NCrossProduct(travelDirection, meridian) will be eithe +v1 or -v1.
+  // so if NCrossProduct(travelDirection, meridian) = -v1 I change the sign of the angle.
+  
+  if (difference > 0.00001 && angle > 0.0001)
+	angle = 360 - angle;
+  return angle;
+}
+
+const GetVectorFromLatitudeAndLongitude = (latitude, longitude) => {
+  let theta = Math.PI *(90.0 - latitude)/180.0;
+  let phi = Math.PI * longitude / 180.0;
+  let x0 = Math.sin(theta)*Math.cos(phi);
+  let y0 = Math.sin(theta)*Math.sin(phi);
+  let z0 = Math.cos(theta);
+  return new Vector(x0,y0,z0);
+}
+
+const GetDistance = (v1, v2) => {
+  return (rm*Math.acos(DotProduct(v1,v2)))
 }
 
 function loadGoogle(id, lat, long) {
@@ -193,11 +361,28 @@ function loadGoogle(id, lat, long) {
 }
 
 function opdat(id) {
-  let dist = calc(
-	document.getElementById('Latitude1').value,
-	document.getElementById('Longitude1').value, 
-	document.getElementById('Latitude2').value,
-	document.getElementById('Longitude2').value);
+  const v1 = GetVectorFromLatitudeAndLongitude(
+				document.getElementById('Latitude1').value,
+				document.getElementById('Longitude1').value
+				);
+  const v2 = GetVectorFromLatitudeAndLongitude(
+				document.getElementById('Latitude2').value,
+				document.getElementById('Longitude2').value
+				);
+
+  document.getElementById('x1').innerHTML=Round0(rm*v1.x/1000.0) + " km";
+  document.getElementById('y1').innerHTML=Round0(rm*v1.y/1000.0) + " km";
+  document.getElementById('z1').innerHTML=Round0(rm*v1.z/1000.0) + " km";
+  document.getElementById('x2').innerHTML=Round0(rm*v2.x/1000.0) + " km";
+  document.getElementById('y2').innerHTML=Round0(rm*v2.y/1000.0) + " km";
+  document.getElementById('z2').innerHTML=Round0(rm*v2.z/1000.0) + " km";
+
+  let direction1 = GetDirection(v1,VSub(v2, v1));
+  let direction2 = GetDirection(v1,VSub(v1, v2));
+  document.getElementById('Direction1').innerHTML=RoundF(direction1,1) + " (" + VorldCorners(direction1) + ")";
+  document.getElementById('Direction2').innerHTML=RoundF(direction2,1) + " (" + VorldCorners(direction2) + ")";
+  
+  dist = GetDistance(v1,v2);
   document.getElementById('Resultat').innerHTML=RoundN(dist/1000.0, 6);
 }
 
@@ -903,8 +1088,9 @@ Og med jordens omkreds <math><msub><mi>O</mi><mtext>earth</mtext></msub></math>
 
 <p>
 </p>
-<form onReset="setAll();" >Find afstanden imellem de 2 positioner <span id="Resultat"></span> km<br/>
-
+<form onReset="setAll();" >Afstanden imellem de 2 positioner er <span id="Resultat"></span> km<br/>
+Og kompas kursen i punkt 1 imod punkt 2 er <span id="Direction1"></span></br>
+Og kompas kursen i punkt 2 imod punkt 1 er <span id="Direction2"></span></br>
 Position 1 <input name="Latitude1" id="Latitude1" onChange="opdat('Latitude1');" SIZE="4"/> (nordlig) bredde (lattitude)
 <input name="Longitude1" id="Longitude1" onChange="opdat('Longitude1');" SIZE="4"/> (østlig) længde (longitude)
 <input name="Google1" id="Google1" onChange="loadGoogle(this, 'Latitude1', 'Longitude1');" SIZE="4"/><br/>
@@ -914,7 +1100,15 @@ Position 2 <input name="Latitude2" id="Latitude2" onChange="opdat('Latitude2');"
 <a href="https://www.mathforengineers.com/math-calculators/angle-between-two-vectors-in-spherical-coordinates.html#google_vignette">Same as</a>
 </form>
 <span id="val1"></span><span id="val2"></span>
-
+<table>
+<tr><td>          </td><td>x</td><td>y</td><td>z</td><td></td></tr>
+<tr><td>Position-1</td><td><span id="x1"></span></td><td><span id="y1"></span></td><td><span id="z1"></span></td><td></td></tr>
+<tr><td>Position-2</td><td><span id="x2"></span></td><td><span id="y2"></span></td><td><span id="z2"></span></td><td></td></tr>
+<tr><td></td><td><span id="x3"></span></td><td><span id="y3"></span></td><td><span id="z3"></span></td><td><span id="Direction3"></span></td></tr>
+<tr><td></td><td><span id="x4"></span></td><td><span id="y4"></span></td><td><span id="z4"></span></td><td><span id="Direction4"></span></td></tr>
+<tr><td></td><td><span id="x5"></span></td><td><span id="y5"></span></td><td><span id="z5"></span></td><td><span id="Direction3"></span></td></tr>
+<tr><td></td><td><span id="x6"></span></td><td><span id="y6"></span></td><td><span id="z6"></span></td><td><span id="Direction4"></span></td></tr>
+</table>
 <br/>
 <figure><img src="images/spherical_volume.png" height="200" /><figcaption><a href="https://tikz.net/spherical_volume/">tikz.net</a></figcaption></figure>
 
@@ -1076,7 +1270,7 @@ const On = 1;
 let ShowMoon = Off;
 let ShowEath = On;
 let ShowOutput = On;
-let NoOf1000Seconds = 301;
+let NoOf1000Seconds = 1;
 
 //
 

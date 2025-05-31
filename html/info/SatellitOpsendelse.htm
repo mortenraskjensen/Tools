@@ -260,6 +260,10 @@ static GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
 	}
 }
 
+const GetEarthDistance = (t, rho) => {
+  return ((rho - SatelliteOrbitData.omega0*t) % (2.0*Math.PI))*r0;
+};	
+
 class SimulationSetup{
 	constructor(angleTimeList, angleValueList, burnTimes, orbitData){
 	//Boundery values
@@ -297,7 +301,7 @@ const GetSatelliteOrbitData = (orbit1) => {
 
 const DoWrite4 = (Sat1) => {
 		let tableRow = "<tr>";
-		var earthPoint = ((Sat1.rho - SatelliteOrbitData.omega0*Sat1.t) % (2.0*Math.PI))*r0
+		var earthPoint = GetEarthDistance(Sat1.t, Sat1.rho);
 	    var st = stage(Sat1.t);
 		var VOrbit = Math.sqrt(GM/Sat1.r);
 		let Eorbit = (Sat1.v*Sat1.v + Sat1.vc*Sat1.vc -GM/Sat1.r)/2.0;
@@ -392,7 +396,7 @@ const DoWrite2 = (Sat1) => {
 const DoWrite = (Sat1) => {
     var st = stage(Sat1.t);
     if (
-	//st == 1 || st == 2 || st == 3 || st == 3 || 
+	st == 3 || st == 3 || st == 3 || st == 3 || 
 		Sat1.t % 100 < 0.0001
 		//|| (Sat1.r < (6371000.0 + 100000) && Sat1.t > 200.0 )
 	)
@@ -916,7 +920,7 @@ function RoundN(x, n) {
       </mrow>
       <mrow>
           <msup>
-            <mi> dx </mi>
+            <mi> dt </mi>
             <mn> 2 </mn>
           </msup>
       </mrow>
@@ -935,7 +939,7 @@ function RoundN(x, n) {
         <mi> &phi; </mi> 
       </mrow>
       <mrow>
-        <mi> dx </mi>
+        <mi> dt </mi>
       </mrow>
     </mfrac>
   </mrow>
@@ -968,7 +972,7 @@ function RoundN(x, n) {
       </mrow>
       <mrow>
           <msup>
-            <mi> dx </mi>
+            <mi> dt </mi>
             <mn> 2 </mn>
           </msup>
       </mrow>
@@ -978,14 +982,15 @@ function RoundN(x, n) {
     <mi> = </mi>
   </mrow>
   <mrow>
-    <mfrac>
+    <mi> r </mi>
+    <!--mfrac>
       <mrow>
         <mi> 1 </mi> 
       </mrow>
       <mrow>
         <mi> r </mi> 
       </mrow>
-    </mfrac>
+    </mfrac-->
   </mrow>
   <mrow>
     <msup>
@@ -996,7 +1001,7 @@ function RoundN(x, n) {
             <mi> &phi; </mi> 
           </mrow>
           <mrow>
-            <mi> dx </mi>
+            <mi> dt </mi>
           </mrow>
         </mfrac>
       </mrow>
@@ -1047,7 +1052,7 @@ the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
       </mrow>
       <mrow>
           <msup>
-            <mi> dx </mi>
+            <mi> dt </mi>
             <mn> 2 </mn>
           </msup>
       </mrow>
@@ -1092,7 +1097,7 @@ the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
         <mi> &phi; </mi> 
       </mrow>
       <mrow>
-        <mi> dx </mi>
+        <mi> dt </mi>
       </mrow>
     </mfrac>
   </mrow>
@@ -1125,7 +1130,7 @@ the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
       </mrow>
       <mrow>
           <msup>
-            <mi> dx </mi>
+            <mi> dt </mi>
             <mn> 2 </mn>
           </msup>
       </mrow>
@@ -1135,14 +1140,15 @@ the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
     <mi> = </mi>
   </mrow>
   <mrow>
-    <mfrac>
+    <mi> r </mi>
+    <!--mfrac>
       <mrow>
         <mi> 1 </mi> 
       </mrow>
       <mrow>
         <mi> r </mi> 
       </mrow>
-    </mfrac>
+    </mfrac-->
   </mrow>
   <mrow>
     <msup>
@@ -1153,7 +1159,7 @@ the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
             <mi> &phi; </mi> 
           </mrow>
           <mrow>
-            <mi> dx </mi>
+            <mi> dt </mi>
           </mrow>
         </mfrac>
       </mrow>
@@ -1228,7 +1234,7 @@ the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
       </mrow>
       <mrow>
           <msup>
-            <mi> dx </mi>
+            <mi> dt </mi>
             <mn> 2 </mn>
           </msup>
       </mrow>
@@ -1273,7 +1279,7 @@ the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
         <mi> &phi; </mi> 
       </mrow>
       <mrow>
-        <mi> dx </mi>
+        <mi> dt </mi>
       </mrow>
     </mfrac>
   </mrow>
@@ -1326,7 +1332,7 @@ the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
             <mi> &phi; </mi> 
           </mrow>
           <mrow>
-            <mi> dx </mi>
+            <mi> dt </mi>
           </mrow>
         </mfrac>
       </mrow>
@@ -1352,7 +1358,7 @@ the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
       </mrow>
       <mrow>
           <msup>
-            <mi> dx </mi>
+            <mi> dt </mi>
             <mn> 2 </mn>
           </msup>
       </mrow>
@@ -1362,14 +1368,15 @@ the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
     <mi> = </mi>
   </mrow>
   <mrow>
-    <mfrac>
+    <mi> r </mi>
+    <!--mfrac>
       <mrow>
         <mi> 1 </mi> 
       </mrow>
       <mrow>
         <mi> r </mi> 
       </mrow>
-    </mfrac>
+    </mfrac-->
   </mrow>
   <mrow>
     <msup>
@@ -1380,7 +1387,7 @@ the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
             <mi> &phi; </mi> 
           </mrow>
           <mrow>
-            <mi> dx </mi>
+            <mi> dt </mi>
           </mrow>
         </mfrac>
       </mrow>
@@ -1473,14 +1480,15 @@ the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
 	</button><br/>
     <!--button onclick="Test()" class="F">Test</button><br/-->
     <button onclick="TestOldData()" class="F">Old data</button><br/>
-    <button onclick="TestEscapeData()" class="F">Escape</button><br/>&nbsp;<br/>
+    <button onclick="TestEscapeData()" class="F">Escape</button><br/>
+    <button onclick="TestNew()" class="F">New</button><br/>&nbsp;<br/>
     <button onclick="toggleObject('allPlot')" class="F">Plot on/off</button><br/>
     <button onclick="toggleObject('data')" class="F">Data on/off</button>
 </td><td>
 <FORM>
 <input id="b1" type="checkbox" class="C"/>Air drag&nbsp;<input id="b2" type="checkbox" class="C"/>Draw Moon&nbsp;<input id="b3" type="checkbox" class="C"/>Draw Earth&nbsp;<input id="b4" type="checkbox" class="C"/>
 <br/><table><tr><td></td>
-     <td>r - r0</td><td>v</td><td>&rho;</td><td>&omega; - &omega;0</td><td>&#x03B1;</td><td></td><td></td><td></td><td></td><td></td><td></td><td>x1000 seconds</td>
+     <td>r - r0</td><td>v</td><td>&phi;</td><td>&omega; - &omega;0</td><td>&#x03B1;</td><td></td><td></td><td></td><td></td><td></td><td></td><td>x1000 seconds</td>
 </tr><tr><td>Start</td>
      <td class="F"><input id="bt1" type="text" value="500"    class="F"/></td><td class="F"><input id="bt2" type="text" value="" class="F"/></td><td class="F"><input id="bt3" type="text" value="" class="F"/></td><td class="F"><input id="bt4" type="text" value="" class="F"/></td>
      <td class="F"><input id="bt5" type="text" value=""       class="F"/></td><td class="F"><input id="bt6" type="text" value="" class="F"/></td><td class="F"><input id="bt7" type="text" value="" class="F"/></td><td class="F"><input id="bt8" type="text" value="" class="F"/></td>
@@ -1615,11 +1623,12 @@ const GetDefaultOrbitStart = () => {
 
 const GetEscapeData = () => {
 	return new SimulationSetup(
-		[0, 140.0, 171.0, 172.0, 375.0, 481.0, 596.0, 597.0, 1000.0, 1200.0, 1000000.0],
-		//[0,   4.0,  17.0,  20.0,  60.4,  86.9,  90.0,  78.0,   90.0,   90.0,     90.0],
-		//[0,   5.0,  17.0,  35.0,  65.4,  86.9,  90.0,  78.0,   90.0,   90.0,     90.0],
-		[0,   6.0,  25.0,  35.0,  75.4,  86.9,  90.0,  78.0,   90.0,   90.0,     90.0],
-		[170.3, 426.64, 505.0, 1000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 1.0],
+		//[0, 140.0, 171.0, 172.0, 375.0, 481.0, 596.0, 597.0, 1000.0, 1200.0, 1000000.0],
+		//[0,   6.0,  25.0,  35.0,  75.4,  86.9,  90.0,  78.0,   90.0,   90.0,     90.0],
+		//[170.3, 426.64, 505.0, 1000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 1.0],
+		[0, 3.0, 51.0, 100.0, 375.0, 481.0, 596.0, 597.0, 1000.0, 1200.0, 100000.0],
+		[0, 20.0, 27.0, 44.0,  73.0,  73.0,  84.0,  84.0,   85.0,   85.0,     90.0],
+		[170.3, 426.64, 418.0, 1000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0],
 		GetDefaultOrbitStart(),
 	);
 }
@@ -1629,6 +1638,15 @@ const GetOldData = () => {
 		[0, 140.0, 171.0, 172.0, 375.0, 481.0, 596.0, 597.0, 1000.0, 1200.0, 100000.0],
 		[0,   4.0,  17.0,  20.0,  60.4,  86.9,  90.0,  78.0,   90.0,   90.0,     90.0],
 		[170.3, 426.64, 505.0, 1000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0],
+		GetDefaultOrbitStart(),
+	);
+}
+
+const GetNewData = () => {
+	return new SimulationSetup(
+		[0, 3.0, 51.0, 100.0, 375.0, 481.0, 596.0, 597.0, 1000.0, 1200.0, 100000.0],
+		[0, 20.0, 27.0, 44.0,  57.0,  52.0,  55.0,  55.0,   55.0,   55.0,     90.0],
+		[170.3, 426.64, 0.0, 368.0, 190.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0],
 		GetDefaultOrbitStart(),
 	);
 }
@@ -2273,6 +2291,8 @@ const GetFloat = (st) => {
 			(document.getElementById('outDat10')).innerHTML = RoundN(orbitLast.v, 5).toString(10) + " m/s";
 			(document.getElementById('outDat11')).innerHTML = RoundN(orbitLast.rho, 5).toString(10);
 			(document.getElementById('outDat12')).innerHTML = RoundN(orbitLast.omega, 5).toString(10);
+			(document.getElementById('outDat7')).innerHTML = RoundN(GetEarthDistance(orbitLast.t, orbitLast.rho)/1000.0, 5).toString(10) + " km";
+			
 			
 			traceList0.push(getRouteTrace(xVal1, yVal1));
 			if (ShowEath)
@@ -2311,6 +2331,10 @@ const GetFloat = (st) => {
 		
 		const TestEscapeData = () => {
 			SetupForm(GetEscapeData());
+		}
+
+		const TestNew = () => {
+			SetupForm(GetNewData());
 		}
 		
 		function plotGraph() {
