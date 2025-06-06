@@ -136,14 +136,20 @@ class Vector{
 		this.y = y0;
 		this.z = z0;
 	}
+	
+	Mul(k)
+	{
+		return new Vector(this.x * k, this.y * k, this.z * k);
+	}
+
+	Length()
+	{
+		return Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z);
+	}
 }
 
-const VLength = (a) => {
-	return Math.sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
-}
-
-const VVLength = (x,y,z) => {
-	return Math.sqrt(x*x + y*y + z*z);
+const VAdd = (a,b) => {
+	return new Vector(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
 const earth = new Vector(0.0, 0.0, 0.0);
@@ -165,15 +171,12 @@ class OrbitData{
 		this.acc = 0.0;
 		this.ac = 0.0;
 		this.ar = 0.0;
-		this.x = 0.0;
-		this.y = 0.0;
-		this.z = 0.0;
+		this.x = earth.x;
+		this.y = earth.y + SatelliteOrbitData.r0;
+		this.z = earth.z;
 		this.vx = 0.0;
 		this.vy = 0.0;
-		this.vz = 0.0;
-		this.rocketx = 0.0;
-		this.rockety = 0.0;
-		this.rocketz = 0.0;
+		this.vz = SatelliteOrbitData.vc0;
 	}
 }
 
@@ -210,9 +213,6 @@ static GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
 		this.vx = 0.0;
 		this.vy = 0.0;
 		this.vz = SatelliteOrbitData.vc0;
-		this.rocketx = 0.0;
-		this.rockety = Math.cos(alpha);
-		this.rocketz = Math.sin(alpha);
 	}
 
 	setOrbitData(data)
@@ -230,6 +230,12 @@ static GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
 		this.acc = data.acc;
 		this.ac = data.ac;
 		this.ar = data.ar;
+		this.x = data.x;
+		this.y = data.y;
+		this.z = data.z;
+		this.vx = data.vx;
+		this.vy = data.vy;
+		this.vz = data.vz;
 	}
 
 	getOrbitData()
@@ -250,9 +256,6 @@ static GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
 		data.vx = this.vx;
 		data.vy = this.vy;
 		data.vz = this.vz;
-		data.rocketx = this.rocketx;
-		data.rockety = this.rockety;
-		data.rocketz = this.rocketz;
 		return data;
 	}
 	
@@ -293,23 +296,21 @@ static GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
 			//this.y = this.r*Math.cos(this.rho);
 			//this.z = this.r*Math.sin(this.rho);
 
-			const rx = this.x - earth.x;
-			const ry = this.y - earth.y;
-			const rz = this.z - earth.z;
-			const rr = VVLength(rx, ry, rz);
+			const rVec = new Vector(this.x - earth.x, this.y - earth.y, this.z - earth.z);
+			const rr = rVec.Length();
+			
 			//Fixating the rocket movement in the x=0 plane (that requires that earth is in origo (0,0,0) :-( )
-			//rvinkelret = (1,0,0) x r = (1,0,0) x (rx,ry,rz) = (0,-rz,ry)
-			//rocket = r*Math.cos(alpha) + rvinkelret*Math.sin(alpha)
-			this.rocketx = 0.0;
-			this.rockety = (ry*Math.cos(alpha) - rz*Math.sin(alpha))/rr;
-			this.rocketz = (rz*Math.cos(alpha) + ry*Math.sin(alpha))/rr;
+			//rOrtVec = (1,0,0) x r = (1,0,0) x (rx,ry,rz) = (0,-rz,ry)
+			const rOrtVec = new Vector(0.0, -rVec.z, rVec.y);//(1,0,0) x rVec //rOrtVec is ortogonal on rVec
+			//rocket = rVec*Math.cos(alpha) + rOrtVec*Math.sin(alpha)
+			const rocketVec = VAdd(rVec.Mul(Math.cos(alpha)/rr), rOrtVec.Mul(Math.sin(alpha)/rr));
 			//this.setRocket(Math.cos(alpha), Math.sin(alpha));
-			const vxair = 0.0;
-			const vyair = -rz*SatelliteOrbitData.vc0/rr;
-			const vzair = ry*SatelliteOrbitData.vc0/rr;
-			const vxNew = this.vx + dV2(this.t,rr,rx,this.vx,vxair,this.rocketx*Trust(this.t), airPresure);
-			const vyNew = this.vy + dV2(this.t,rr,ry,this.vy,vyair,this.rockety*Trust(this.t), airPresure);
-			const vzNew = this.vz + dV2(this.t,rr,rz,this.vz,vzair,this.rocketz*Trust(this.t), airPresure);
+
+			const vVecAir = rOrtVec.Mul(SatelliteOrbitData.vc0/rr);
+			const vxNew = this.vx + dV2(this.t ,rr ,rVec.x ,this.vx ,vVecAir.x ,rocketVec.x * Trust(this.t), airPresure);
+			const vyNew = this.vy + dV2(this.t ,rr ,rVec.y ,this.vy ,vVecAir.y ,rocketVec.y * Trust(this.t), airPresure);
+			const vzNew = this.vz + dV2(this.t ,rr ,rVec.z ,this.vz ,vVecAir.z ,rocketVec.z * Trust(this.t), airPresure);
+			
 			const xNew = this.x + dy(this.vx);
 			const yNew = this.y + dy(this.vy);
 			const zNew = this.z + dy(this.vz);
@@ -385,6 +386,21 @@ const GetSatelliteOrbitData = (orbit1) => {
 	return sat1;
 }
 
+const GetRCell  = (r) => {
+	if (r < 1000 + r0 )
+		return "<td bgcolor=red>" + (RoundN((r-r0), 5)).toString(10) + " m</td>";
+	else if (r < 20000.0 + r0 )
+		return "<td bgcolor=red>" + (RoundN((r-r0)/1000.0, 5)).toString(10) + " km</td>";
+	else if (r < 100000.0 + r0 ) // Closer than 100 km from surface
+		return "<td bgcolor=yellow>" + (RoundN((r-r0)/1000.0, 5)).toString(10) + " km</td>";
+	else if (r < rGeo ) 
+		return "<td>" + (RoundN((r-r0)/1000.0, 5)).toString(10) + " km</td>";
+	else if (r < 380170000.0 ) //geo distance but closer than the moon
+		return "<td bgcolor=green>" + (RoundN(r/1000.0, 5)).toString(10) + " km</td>";
+	else //moon distance
+		return "<td bgcolor=green>" + (RoundN(r/1000.0, 5)).toString(10) + " km</td>";
+}
+
 const DoWrite4 = (Sat1) => {
 		let tableRow = "<tr>";
 		var earthPoint = GetEarthDistance(Sat1.t, Sat1.rho);
@@ -395,37 +411,13 @@ const DoWrite4 = (Sat1) => {
         tableRow += "<td>" + st.toString(10) + " "  + (RoundDecimal(stageT(Sat1.t))).toString(10) + "</td><td>"  + (Math.floor(100.0*Sat1.t + 0.5)/100.0).toString(10) + "";
         tableRow += "</td><td>" + (RoundN(Sat1.acc, 5)).toString(10) + "";
 		if (st < 4 || st == 5 || st == 7 || st == 9)
-			tableRow += "</td><td>" + (RoundN(Sat1.vinkel, 5)).toString(10) + "";
+			tableRow += "</td><td>" + (RoundN(Sat1.vinkel, 5)).toString(10) + "</td>";
 		else
-			tableRow += "</td><td>";
-		if (Sat1.r < 1000 + r0 )
-			tableRow += "</td><td bgcolor=red>" + (RoundN((Sat1.r-r0), 5)).toString(10) + " m";
-		else if (Sat1.r < 20000.0 + r0 )
-			tableRow += "</td><td bgcolor=red>" + (RoundN((Sat1.r-r0)/1000.0, 5)).toString(10) + " km";
-		else if (Sat1.r < 100000.0 + r0 ) 
-			tableRow += "</td><td bgcolor=yellow>" + (RoundN((Sat1.r-r0)/1000.0, 5)).toString(10) + " km";
-		else if (Sat1.r < rGeo ) 
-			tableRow += "</td><td>" + (RoundN((Sat1.r-r0)/1000.0, 5)).toString(10) + " km";
-		else if (Sat1.r < 380170000.0 ) //geo distance
-			tableRow += "</td><td bgcolor=green>" + (RoundN((Sat1.r)/1000.0, 5)).toString(10) + " km";
-		else //moon distance
-			tableRow += "</td><td bgcolor=green>" + (RoundN((Sat1.r)/1000.0, 5)).toString(10) + " km";
-		/*
-        tableRow += "</td><td>" + (RoundN(Sat1.v, 5)).toString(10) + "";
-        tableRow += "</td><td>" + (RoundN(Sat1.rho/(2.0*Math.PI), 5)).toString(10) + " turns";
-        tableRow += "</td><td>" + (RoundN(Sat1.omega, 5)).toString(10) + "";
-		if (Sat1.vc > 1000 + vc0 )
-			tableRow += "</td><td>" + (RoundN(Sat1.vc, 5)).toString(10) + "";
-		else
-			tableRow += "</td><td>" + (RoundN(Sat1.vc-vc0, 5)).toString(10) + "";
-        //tableRow += ShowValues([Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, drag_c + drag_r]);
-        tableRow += ShowValues([Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, VOrbit]);
-		*/
-		//const yy = Sat1.y*Math.cos(Sat1.vinkel*Math.PI/180.0) - Sat1.z*Math.sin(Sat1.vinkel*Math.PI/180.0);
-		//const zz = Sat1.z*Math.cos(Sat1.vinkel*Math.PI/180.0) + Sat1.y*Math.sin(Sat1.vinkel*Math.PI/180.0);
+			tableRow += "</td><td></td>";
+		tableRow += GetRCell(Sat1.r);
         tableRow += ShowValues([Sat1.v, Sat1.rho/(2.0*Math.PI), Sat1.omega, Sat1.vc, Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, VOrbit, earthPoint/1000.0]);
-        //tableRow += ShowValues([Sat1.v, Sat1.rho/(2.0*Math.PI), Sat1.omega, Sat1.vc, Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, VVLength(0.0,yy,zz)/VVLength(Sat1.x,Sat1.y,Sat1.z), 1.0]);
-        tableRow += "</td></tr>";
+        //tableRow += ShowValues([Sat1.v, Sat1.rho/(2.0*Math.PI), Sat1.omega, Sat1.vc, Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, Sat1.y, Sat1.z]);
+        tableRow += "</tr>";
 		return tableRow;
 }
 
@@ -439,32 +431,22 @@ const DoWrite3 = (Sat1) => {
         self.document.write("<td>" + st.toString(10) + " "  + (RoundDecimal(stageT(Sat1.t))).toString(10) + "</td><td>"  + (Math.floor(100.0*Sat1.t + 0.5)/100.0).toString(10) + "");
         self.document.write("</td><td>" + (RoundN(Sat1.acc, 5)).toString(10) + "");
 		if (st < 4 || st == 5 || st == 7 || st == 9)
-			self.document.write("</td><td>" + (RoundN(Sat1.vinkel, 5)).toString(10) + "");
+			self.document.write("</td><td>" + (RoundN(Sat1.vinkel, 5)).toString(10) + "</td>");
 		else
-			self.document.write("</td><td>");
-		if (Sat1.r < 1000 + r0 )
-			self.document.write("</td><td bgcolor=red>" + (RoundN((Sat1.r-r0), 5)).toString(10) + " m");
-		else if (Sat1.r < 20000.0 + r0 )
-			self.document.write("</td><td bgcolor=red>" + (RoundN((Sat1.r-r0)/1000.0, 5)).toString(10) + " km");
-		else if (Sat1.r < 100000.0 + r0 ) 
-			self.document.write("</td><td bgcolor=yellow>" + (RoundN((Sat1.r-r0)/1000.0, 5)).toString(10) + " km");
-		else if (Sat1.r < rGeo ) 
-			self.document.write("</td><td>" + (RoundN((Sat1.r-r0)/1000.0, 5)).toString(10) + " km");
-		else if (Sat1.r < 380170000.0 ) //geo distance
-			self.document.write("</td><td bgcolor=green>" + (RoundN((Sat1.r)/1000.0, 5)).toString(10) + " km");
-		else //moon distance
-			self.document.write("</td><td bgcolor=green>" + (RoundN((Sat1.r)/1000.0, 5)).toString(10) + " km");
-        self.document.write("</td><td>" + (RoundN(Sat1.v, 5)).toString(10) + "");
+			self.document.write("</td><td></td>");
+
+		self.document.write(GetRCell(Sat1.r));
+		self.document.write("<td>" + (RoundN(Sat1.v, 5)).toString(10) + "");
         self.document.write("</td><td>" + (RoundN(Sat1.rho/(2.0*Math.PI), 5)).toString(10) + " turns");
         self.document.write("</td><td>" + (RoundN(Sat1.omega, 5)).toString(10) + "");
 		if (Sat1.vc > 1000 + vc0 )
-			self.document.write("</td><td>" + (RoundN(Sat1.vc, 5)).toString(10) + "");
+			self.document.write("</td><td>" + (RoundN(Sat1.vc, 5)).toString(10) + "</td>");
 		else
-			self.document.write("</td><td>" + (RoundN(Sat1.vc-vc0, 5)).toString(10) + "");
+			self.document.write("</td><td>" + (RoundN(Sat1.vc-vc0, 5)).toString(10) + "</td>");
         //self.document.write(ShowValues([Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, drag_c + drag_r]));
         self.document.write(ShowValues([Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, VOrbit, 0.0]));
 
-        self.document.write("</td></tr>");
+        self.document.write("</tr>");
 	}
 }
 
@@ -2187,7 +2169,7 @@ const ShowValues = (valueList) => {
   let str = "";
   for (val of valueList)
   {
-	str = str + "</td><td>" + (RoundN(val, 5)).toString(10) + "";
+	str = str + "<td>" + (RoundN(val, 5)).toString(10) + "</td>";
   }
   return str;
 };	
