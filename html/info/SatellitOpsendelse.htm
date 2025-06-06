@@ -130,6 +130,24 @@ td.F
 //------------------------------------------
 const pi = Math.PI;
 //------------------------------------------
+class Vector{
+	constructor(x0,y0,z0){
+		this.x = x0;
+		this.y = y0;
+		this.z = z0;
+	}
+}
+
+const VLength = (a) => {
+	return Math.sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
+}
+
+const VVLength = (x,y,z) => {
+	return Math.sqrt(x*x + y*y + z*z);
+}
+
+const earth = new Vector(0.0, 0.0, 0.0);
+
 class OrbitData{
 	constructor(t00,r00,v00,rho00,omega00,vinkel){
 	//Boundery values
@@ -147,6 +165,15 @@ class OrbitData{
 		this.acc = 0.0;
 		this.ac = 0.0;
 		this.ar = 0.0;
+		this.x = 0.0;
+		this.y = 0.0;
+		this.z = 0.0;
+		this.vx = 0.0;
+		this.vy = 0.0;
+		this.vz = 0.0;
+		this.rocketx = 0.0;
+		this.rockety = 0.0;
+		this.rocketz = 0.0;
 	}
 }
 
@@ -176,6 +203,16 @@ static GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
 		this.acc = -GM/(SatelliteOrbitData.r0*SatelliteOrbitData.r0);
 		this.ac = 0.0;
 		this.ar = 0.0;
+		const alpha = this.vinkel*Math.PI/180.0;
+		this.x = earth.x;
+		this.y = earth.y + SatelliteOrbitData.r0;
+		this.z = earth.z;
+		this.vx = 0.0;
+		this.vy = 0.0;
+		this.vz = SatelliteOrbitData.vc0;
+		this.rocketx = 0.0;
+		this.rockety = Math.cos(alpha);
+		this.rocketz = Math.sin(alpha);
 	}
 
 	setOrbitData(data)
@@ -204,6 +241,18 @@ static GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
 		data.acc = this.acc;
 		data.ac = this.ac;
 		data.ar = this.ar;
+		//data.x = 0.0;
+		//data.y = this.r*Math.cos(this.rho);
+		//data.z = this.r*Math.sin(this.rho);
+		data.x = this.x;
+		data.y = this.y;
+		data.z = this.z;
+		data.vx = this.vx;
+		data.vy = this.vy;
+		data.vz = this.vz;
+		data.rocketx = this.rocketx;
+		data.rockety = this.rockety;
+		data.rocketz = this.rocketz;
 		return data;
 	}
 	
@@ -240,6 +289,37 @@ static GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
 			this.rho = rhoNew;
 			this.omega = omegaNew;
 			this.vc = vcNew;
+			//this.x = 0.0;
+			//this.y = this.r*Math.cos(this.rho);
+			//this.z = this.r*Math.sin(this.rho);
+
+			const rx = this.x - earth.x;
+			const ry = this.y - earth.y;
+			const rz = this.z - earth.z;
+			const rr = VVLength(rx, ry, rz);
+			//Fixating the rocket movement in the x=0 plane (that requires that earth is in origo (0,0,0) :-( )
+			//rvinkelret = (1,0,0) x r = (1,0,0) x (rx,ry,rz) = (0,-rz,ry)
+			//rocket = r*Math.cos(alpha) + rvinkelret*Math.sin(alpha)
+			this.rocketx = 0.0;
+			this.rockety = (ry*Math.cos(alpha) - rz*Math.sin(alpha))/rr;
+			this.rocketz = (rz*Math.cos(alpha) + ry*Math.sin(alpha))/rr;
+			//this.setRocket(Math.cos(alpha), Math.sin(alpha));
+			const vxair = 0.0;
+			const vyair = -rz*SatelliteOrbitData.vc0/rr;
+			const vzair = ry*SatelliteOrbitData.vc0/rr;
+			const vxNew = this.vx + dV2(this.t,rr,rx,this.vx,vxair,this.rocketx*Trust(this.t), airPresure);
+			const vyNew = this.vy + dV2(this.t,rr,ry,this.vy,vyair,this.rockety*Trust(this.t), airPresure);
+			const vzNew = this.vz + dV2(this.t,rr,rz,this.vz,vzair,this.rocketz*Trust(this.t), airPresure);
+			const xNew = this.x + dy(this.vx);
+			const yNew = this.y + dy(this.vy);
+			const zNew = this.z + dy(this.vz);
+
+			this.x = xNew;
+			this.y = yNew;
+			this.z = zNew;
+			this.vx = vxNew;
+			this.vy = vyNew;
+			this.vz = vzNew;
 		}
 		else
 		{
@@ -256,7 +336,13 @@ static GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
 			this.Etot = -SatelliteOrbitData.GM/this.r;
 			this.Effect = 0.0;
 			this.Effect2 = 0.0;
+			this.x = 0.0;
+			this.y = this.r*Math.cos(this.rho);
+			this.z = this.r*Math.sin(this.rho);
 		}
+	}
+	setRocket(cosAlpha, sinAlpha)
+	{
 	}
 }
 
@@ -335,7 +421,10 @@ const DoWrite4 = (Sat1) => {
         //tableRow += ShowValues([Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, drag_c + drag_r]);
         tableRow += ShowValues([Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, VOrbit]);
 		*/
+		//const yy = Sat1.y*Math.cos(Sat1.vinkel*Math.PI/180.0) - Sat1.z*Math.sin(Sat1.vinkel*Math.PI/180.0);
+		//const zz = Sat1.z*Math.cos(Sat1.vinkel*Math.PI/180.0) + Sat1.y*Math.sin(Sat1.vinkel*Math.PI/180.0);
         tableRow += ShowValues([Sat1.v, Sat1.rho/(2.0*Math.PI), Sat1.omega, Sat1.vc, Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, VOrbit, earthPoint/1000.0]);
+        //tableRow += ShowValues([Sat1.v, Sat1.rho/(2.0*Math.PI), Sat1.omega, Sat1.vc, Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, VVLength(0.0,yy,zz)/VVLength(Sat1.x,Sat1.y,Sat1.z), 1.0]);
         tableRow += "</td></tr>";
 		return tableRow;
 }
@@ -408,6 +497,7 @@ const DoWrite = (Sat1) => {
 const SimulationRun = (numberOfPeriods, numberOfSeconds, orbit0) => {
 	let dataArray = [];
 	let sat0 = GetSatelliteOrbitData(orbit0);
+	dataArray.push(sat0.getOrbitData());
 	for (var ii=0;ii<numberOfPeriods;ii++)
 	{
 		for(var jj=0;jj<numberOfSeconds;jj++)
@@ -2023,6 +2113,24 @@ function dV(t,r,v,rho,omega,rocketTrust, airPresure)
 	return hsixth*(k1 + 2.0*k2 + 2.0*k3 + k4);
 }
 
+function dV2(t, r, rVectorCordinate, vVectorCordinate, vAirCordinate, rocketTrust, airPresure)
+{
+	//Air close to the surface follows the eath in its rotation
+	let v = vVectorCordinate - vAirCordinate;
+	let M1 = Mass(t);
+	let M2 = Mass(t+hhalf);
+	let M3 = Mass(t+h);
+	let rrr = r*r*r;
+	let dragConst = getDragConstant(t, airPresure, v);
+
+	let k1 = rocketTrust/M1 - rVectorCordinate*GM/rrr - v*v*dragConst/M1;
+	let k2 = rocketTrust/M2 - rVectorCordinate*GM/rrr - (v + hhalf*k1)*(v + hhalf*k1)*dragConst/M2;
+	let k3 = rocketTrust/M2 - rVectorCordinate*GM/rrr - (v + hhalf*k2)*(v + hhalf*k2)*dragConst/M2;
+	let k4 = rocketTrust/M3 - rVectorCordinate*GM/rrr - (v + h*k3)*(v + h*k3)*dragConst/M3;
+	
+	return hsixth*(k1 + 2.0*k2 + 2.0*k3 + k4);
+}
+
 function dy(y){
 	//k1 = y;
 	//k2 = y;
@@ -2258,6 +2366,8 @@ const GetFloat = (st) => {
 			let traceList0 = [];
 			let xVal1 = [];
 			let yVal1 = [];
+			let xVal2 = [];
+			let yVal2 = [];
 
 			var simulationValues = GetFormValues();
 			
@@ -2280,6 +2390,8 @@ const GetFloat = (st) => {
 			{
 				xVal1.push(dataArray2[ii].r*Math.cos(dataArray2[ii].rho)/1000000.0);
 				yVal1.push(dataArray2[ii].r*Math.sin(dataArray2[ii].rho)/1000000.0);
+				xVal2.push(dataArray2[ii].y/1000000.0);
+				yVal2.push(dataArray2[ii].z/1000000.0);
 				//xVal1.push(-dataArray2[ii].r*Math.sin(dataArray2[ii].rho)/1000000.0);
 				//yVal1.push(dataArray2[ii].r*Math.cos(dataArray2[ii].rho)/1000000.0);
 				tabelData += DoWrite(dataArray2[ii]);
@@ -2299,6 +2411,7 @@ const GetFloat = (st) => {
 				traceList0.push(getCircleTrace(r0/1000000.0, 0.0, 0.0, 'Jorden'));
 			if (ShowMoon)
 				traceList0.push(getCircleTrace(r0Moon/1000000.0, distanceMoon/1000000.0, moonPosition*Math.PI/180.0, 'Månen'));
+			traceList0.push(getRouteTrace(xVal2, yVal2));
 			plotNewRoute(traceList0);
 		}
 
