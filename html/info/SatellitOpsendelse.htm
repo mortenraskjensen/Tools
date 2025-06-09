@@ -297,19 +297,28 @@ static GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
 			//this.z = this.r*Math.sin(this.rho);
 
 			const rVec = new Vector(this.x - earth.x, this.y - earth.y, this.z - earth.z);
-			const rr = rVec.Length();
+			const rLength = rVec.Length();
 			
 			//Fixating the rocket movement in the x=0 plane (that requires that earth is in origo (0,0,0) :-( )
 			//rOrtVec = (1,0,0) x r = (1,0,0) x (rx,ry,rz) = (0,-rz,ry)
 			const rOrtVec = new Vector(0.0, -rVec.z, rVec.y);//(1,0,0) x rVec //rOrtVec is ortogonal on rVec
 			//rocket = rVec*Math.cos(alpha) + rOrtVec*Math.sin(alpha)
-			const rocketVec = VAdd(rVec.Mul(Math.cos(alpha)/rr), rOrtVec.Mul(Math.sin(alpha)/rr));
+			const rocketVec = VAdd(rVec.Mul(Trust(this.t)*Math.cos(alpha)/rLength), rOrtVec.Mul(Trust(this.t)*Math.sin(alpha)/rLength));
 			//this.setRocket(Math.cos(alpha), Math.sin(alpha));
 
-			const vVecAir = rOrtVec.Mul(SatelliteOrbitData.vc0/rr);
-			const vxNew = this.vx + dV2(this.t ,rr ,rVec.x ,this.vx ,vVecAir.x ,rocketVec.x * Trust(this.t), airPresure);
-			const vyNew = this.vy + dV2(this.t ,rr ,rVec.y ,this.vy ,vVecAir.y ,rocketVec.y * Trust(this.t), airPresure);
-			const vzNew = this.vz + dV2(this.t ,rr ,rVec.z ,this.vz ,vVecAir.z ,rocketVec.z * Trust(this.t), airPresure);
+			//Air close to the surface follows the eath in its rotation
+			//So air drag should be the movement relatively to the air
+			//And therefore I subtract the earth surface movement
+			const vVecAdjusted = new Vector(
+				this.vx - rOrtVec.x*SatelliteOrbitData.vc0/rLength,
+				this.vy - rOrtVec.y*SatelliteOrbitData.vc0/rLength,
+				this.vz - rOrtVec.z*SatelliteOrbitData.vc0/rLength
+			);
+			
+			const vLength = vVecAdjusted.Length();
+			const vxNew = this.vx + dV2(this.t, rLength, vLength, rVec.x ,vVecAdjusted.x, rocketVec.x, airPresure);
+			const vyNew = this.vy + dV2(this.t, rLength, vLength, rVec.y ,vVecAdjusted.y, rocketVec.y, airPresure);
+			const vzNew = this.vz + dV2(this.t, rLength, vLength, rVec.z ,vVecAdjusted.z, rocketVec.z, airPresure);
 			
 			const xNew = this.x + dy(this.vx);
 			const yNew = this.y + dy(this.vy);
@@ -346,6 +355,37 @@ static GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
 	{
 	}
 }
+
+const GetRho1 = (s) => {
+  if (s.y > 0.0 && s.z > 0.0)
+     return Math.atan(s.z/s.y);
+  if (s.y < 0.0 && s.z > 0.0)
+     return Math.atan(s.z/s.y) + Math.PI;
+  if (s.y < 0.0 && s.z < 0.0)
+     return  Math.atan(s.z/s.y) + Math.PI;
+  if (s.y > 0.0 && s.z < 0.0)
+     return  Math.atan(s.z/s.y) + 2.0*Math.PI;
+  if (s.z > 0.0)
+     return  0.5*Math.PI;
+  if (s.z < 0.0)
+     return  1.5*Math.PI;
+  //if (s.y > 0.0)
+     //return  0.0;
+  if (s.z < 0.0)
+     return  Math.PI;
+	 
+  return 0.0;
+};	
+
+const GetRho = (s, rhoOld) => {
+  let rho = GetRho1(s);
+
+  for (var i = 0; i < 100.0 && rhoOld - rho > 0.1; i++) {
+            rho += 2.0*Math.PI;
+        }
+	 
+  return rho;
+};	
 
 const GetEarthDistance = (t, rho) => {
   return ((rho - SatelliteOrbitData.omega0*t) % (2.0*Math.PI))*r0;
@@ -415,8 +455,12 @@ const DoWrite4 = (Sat1) => {
 		else
 			tableRow += "</td><td></td>";
 		tableRow += GetRCell(Sat1.r);
-        tableRow += ShowValues([Sat1.v, Sat1.rho/(2.0*Math.PI), Sat1.omega, Sat1.vc, Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, VOrbit, earthPoint/1000.0]);
-        //tableRow += ShowValues([Sat1.v, Sat1.rho/(2.0*Math.PI), Sat1.omega, Sat1.vc, Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, Sat1.y, Sat1.z]);
+        //tableRow += ShowValues([Sat1.v, Sat1.rho/(2.0*Math.PI), Sat1.omega, Sat1.vc, Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, VOrbit, earthPoint/1000.0]);
+		const ydiff = Sat1.y - Sat1.r*Math.cos(Sat1.rho);
+		const zdiff = Sat1.z - Sat1.r*Math.sin(Sat1.rho);
+		//const zdiff = Sat1.rho - GetRho(new Vector(Sat1.x, Sat1.y, Sat1.z),  Sat1.rho);
+        tableRow += ShowValues([Sat1.v, Sat1.rho/(2.0*Math.PI), Sat1.omega, Sat1.vc, Sat1.ac, Sat1.Etot/1000.0, Sat1.Effect2/1000.0, ydiff, zdiff]);
+
         tableRow += "</tr>";
 		return tableRow;
 }
@@ -484,7 +528,7 @@ const SimulationRun = (numberOfPeriods, numberOfSeconds, orbit0) => {
 	{
 		for(var jj=0;jj<numberOfSeconds;jj++)
 		{
-			for(var kk=0;kk<100;kk++)
+			for(var kk=0;kk<hInv;kk++)
 			{
 				sat0.Iterate();
 			}
@@ -975,7 +1019,10 @@ function RoundN(x, n) {
     <h1>Satellit opsendelse</h1>
 <!-- =========================================================================================== -->
 <br/>
-<p>Equatioons without rocket engine</p>
+<h4>Equatioons without rocket engine</h4>
+<p>
+In polar coordinates:
+</p>
 <p>
 <math>
 <mrow>
@@ -1101,13 +1148,67 @@ function RoundN(x, n) {
 </mrow>
 </math>
 </p>
+<p>
+In cartesian coordinates where <math><mrow mathvariant='bold'><mover><mi>r</mi><mo>&rarr;</mo></mover></mrow></math> is the vector from the center of the eart to the satelite:
+</p>
+<p>
+<math>
+<mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <msup>
+            <mi> d </mi>
+            <mn> 2 </mn>
+          </msup>
+        </mrow>
+		<mrow mathvariant='bold'><mover><mi>r</mi><mo>&rarr;</mo></mover></mrow>
+      </mrow>
+      <mrow>
+          <msup>
+            <mi> dt </mi>
+            <mn> 2 </mn>
+          </msup>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mrow>
+	<mi> - </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> GM </mi> 
+      </mrow>
+      <mrow>
+        <mrow>
+          <msup>
+            <mrow><mi> || </mi>
+			<mrow mathvariant='bold'><mover><mi>r</mi><mo>&rarr;</mo></mover></mrow>
+			<mi> || </mi></mrow>
+            <mn> 3 </mn>
+          </msup>
+		</mrow>
+      </mrow>
+    </mfrac>
+    <mrow mathvariant='bold'><mover><mi>r</mi><mo>&rarr;</mo></mover></mrow>
+  </mrow>
+</mrow>
+</math>
+</p>
 <br/>
-<p>Equatioons where rocket engine is added  
+<h4>Equatioons where rocket engine is added  
 The rocket engine trust force <math><mrow><msub><mi> F </mi><mn> Rocket </mn></msub></mrow></math>,
 the rocket mass <math><mrow><msub><mi> m </mi><mn> Rocket </mn></msub></mrow></math> and
-the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
-</p>
+the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket</h4>
 <!--                                             -->
+<p>
+In polar coordinates:
+</p>
 <p>
 <math>
 <mrow>
@@ -1285,11 +1386,70 @@ the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
 </mrow>
 </math>
 </p>
-<br/>
 <p>
-    Last we can add the air drag: F=-&#189;&rho;AC<sub>d</sub>v<sup>2</sup></br>
+In cartesian coordinates:
 </p>
+<p>
+<math>
+<mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <msup>
+            <mi> d </mi>
+            <mn> 2 </mn>
+          </msup>
+        </mrow>
+		<mrow mathvariant='bold'><mover><mi>r</mi><mo>&rarr;</mo></mover></mrow>
+      </mrow>
+      <mrow>
+          <msup>
+            <mi> dt </mi>
+            <mn> 2 </mn>
+          </msup>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mfrac>
+    <mrow mathvariant='bold'><msub><mover><mi> F </mi> <mo>&rarr;</mo></mover><mn> Rocket </mn></msub></mrow>
+    <msub><mi> m </mi><mn> Rocket </mn></msub>
+  </mfrac>
+  <mrow>
+	<mi> - </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> GM </mi> 
+      </mrow>
+      <mrow>
+        <mrow>
+          <msup>
+            <mrow><mi> || </mi>
+			<mrow mathvariant='bold'><mover><mi>r</mi><mo>&rarr;</mo></mover></mrow>
+			<mi> || </mi></mrow>
+            <mn> 3 </mn>
+          </msup>
+		</mrow>
+      </mrow>
+    </mfrac>
+    <mrow mathvariant='bold'><mover><mi>r</mi><mo>&rarr;</mo></mover></mrow>
+  </mrow>
+</mrow>
+</math>
+</p>
+<br/>
+<h4>
+    Last we can add the air drag: F=-&#189;&rho;AC<sub>d</sub>v<sup>2</sup></br>
+</h4>
 <!--                                             -->
+<p>
+In polar coordinates:
+</p>
 <p>
 <math>
 <mrow>
@@ -1546,6 +1706,114 @@ the angle tilt <math><mrow><mi> &#x03B1; </mi></mrow></math> of the rocket
 </mrow>
 </math>
 </p>
+<p>
+In cartesian coordinates:
+</p>
+<p>
+<math>
+<mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <msup>
+            <mi> d </mi>
+            <mn> 2 </mn>
+          </msup>
+        </mrow>
+		<mrow mathvariant='bold'><mover><mi>r</mi><mo>&rarr;</mo></mover></mrow>
+      </mrow>
+      <mrow>
+          <msup>
+            <mi> dt </mi>
+            <mn> 2 </mn>
+          </msup>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mi> = </mi>
+  </mrow>
+  <mfrac>
+    <mrow mathvariant='bold'><msub><mover><mi> F </mi> <mo>&rarr;</mo></mover><mn> Rocket </mn></msub></mrow>
+    <msub><mi> m </mi><mn> Rocket </mn></msub>
+  </mfrac>
+  <mrow>
+	<mi> - </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mi> GM </mi> 
+      </mrow>
+      <mrow>
+        <mrow>
+          <msup>
+            <mrow><mi> || </mi>
+			<mrow mathvariant='bold'><mover><mi>r</mi><mo>&rarr;</mo></mover></mrow>
+			<mi> || </mi></mrow>
+            <mn> 3 </mn>
+          </msup>
+		</mrow>
+      </mrow>
+    </mfrac>
+    <mrow mathvariant='bold'><mover><mi>r</mi><mo>&rarr;</mo></mover></mrow>
+  </mrow>
+  <mrow>
+	<mi> - </mi>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mrow>
+          <mi> &rho;A </mi> 
+        </mrow>
+        <mrow>
+          <msub>
+            <mi> C </mi>
+            <mn> d </mn>
+          </msub>
+        </mrow>
+        <mrow>
+		  <mi> || </mi>
+	      <mrow mathvariant='bold'><mover><mi>v</mi><mo>&rarr;</mo></mover></mrow>
+		  <mi> || </mi>
+		</mrow>
+      </mrow>
+      <mrow>
+        <mi> 2 </mi>
+        <mrow>
+          <msub>
+            <mi> m </mi>
+            <mn> Rocket </mn>
+          </msub>
+        </mrow>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow mathvariant='bold'><mover><mi>v</mi><mo>&rarr;</mo></mover></mrow>
+</mrow>
+</math>
+</p>
+<br/>
+<h3>Runge-Kutta 4th Order Method to Solve Differential Equation</h3>
+<p>
+For <math><mfrac><mi>dy</mi><mi>dx</mi></mfrac></math> = f(x, y), y(0) = y<sub>0</sub>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</br>
+K<sub>1</sub> = hf(x<sub>n</sub>, y<sub>n</sub>)</br>
+K<sub>2</sub> = hf(x<sub>n</sub>+<math><mfrac><mi>h</mi><mn>2</mn></mfrac></math>, y<sub>n</sub>+<math><mfrac><msub><mi>k</mi><mn>1</mn></msub><mn>2</mn></mfrac></math>)</br>
+K<sub>3</sub> = hf(x<sub>n</sub>+<math><mfrac><mi>h</mi><mn>2</mn></mfrac></math>, y<sub>n</sub>+<math><mfrac><msub><mi>k</mi><mn>2</mn></msub><mn>2</mn></mfrac></math>)</br>
+K<sub>4</sub> = hf(x<sub>n</sub>+h, y<sub>n</sub>+k<sub>3</sub>)</br>
+<math>
+<msub><mi>y</mi><mi>n+1</mi></msub>
+<mi> = </mi><msub><mi>y</mi><mi>n</mi></msub>
+<mi> + </mi><mfrac><msub><mi>k</mi><mn>1</mn></msub><mn>6</mn></mfrac>
+<mi> + </mi><mfrac><msub><mi>k</mi><mn>2</mn></msub><mn>3</mn></mfrac>
+<mi> + </mi><mfrac><msub><mi>k</mi><mn>3</mn></msub><mn>3</mn></mfrac>
+<mi> + </mi><mfrac><msub><mi>k</mi><mn>4</mn></msub><mn>6</mn></mfrac>
+<mi> + O(</mi><msup><mi>h</mi><mn>5</mn></msup><mi>)</mi>
+</math></p>
+
+
 <table><tr><td>
     <button onclick="Run()" class="F">
 	Simulate
@@ -1698,9 +1966,9 @@ const GetEscapeData = () => {
 		//[0, 140.0, 171.0, 172.0, 375.0, 481.0, 596.0, 597.0, 1000.0, 1200.0, 1000000.0],
 		//[0,   6.0,  25.0,  35.0,  75.4,  86.9,  90.0,  78.0,   90.0,   90.0,     90.0],
 		//[170.3, 426.64, 505.0, 1000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 1.0],
-		[0, 3.0, 51.0, 100.0, 375.0, 481.0, 596.0, 597.0, 1000.0, 1200.0, 100000.0],
-		[0, 20.0, 27.0, 44.0,  73.0,  73.0,  84.0,  84.0,   85.0,   85.0,     90.0],
-		[170.3, 426.64, 418.0, 1000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0],
+		[0, 3.0, 59.0, 100.0, 375.0, 481.0, 596.0, 597.0, 1000.0, 1200.0, 100000.0],
+		[0, 17.0, 25.0, 44.0,  73.0,  73.0,  84.0,  84.0,   86.0,   86.0,     90.0],
+		[170.3, 426.64, 420.55, 1000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1000000.0, 0.0],
 		GetDefaultOrbitStart(),
 	);
 }
@@ -1903,6 +2171,7 @@ stageTimeO = escapeC;
 //self.document.write("" + (RoundN(burnStage3 - burn1, 5)).toString(10) + "</br>");
 
 var h = 0.01;
+var hInv = 100;//h*hInv == 1
 var hhalf = h/2.0;
 var hsixth = h/6.0;
 
@@ -2062,7 +2331,6 @@ function dOmega(t,r,v,rho,omega,rocketTrust, airPresure) {
 	//Luften raketten stiger op igennem foelger med jordens rotation (omega0) 
 	//saa det er kun en højere eller lavere hastighed end jorden der giver luft modstand
 	let omegaAir = omega-SatelliteOrbitData.omega0;
-	let dragConst = getDragConstant(t, airPresure,omegaAir);
 
 	//drag_c = (vc-vc0)*(vc-vc0)*dragConst/(Mass(t));
 	//var k1 = tPerM1*sinAlpha-vc*v/r - LuftModstand*drag_c;
@@ -2072,11 +2340,18 @@ function dOmega(t,r,v,rho,omega,rocketTrust, airPresure) {
 	//vcNew = vc + hsixth*(k1 + 2.0*k2 + 2.0*k3 + k4);
 	//omegaNew = vcNew/r;
 
-	var k1 = rocketTrust/(M1*r) -2*omega*v/r -(omegaAir)*(omegaAir)*r*dragConst/M1;
-	var k2 = rocketTrust/(M2*r) -2*(omega+(hhalf*k1))*v/r -(omegaAir+(hhalf*k1))*(omegaAir+(hhalf*k1))*r*dragConst/M2;
-	var k3 = rocketTrust/(M2*r) -2*(omega+(hhalf*k2))*v/r -(omegaAir+(hhalf*k1))*(omegaAir+(hhalf*k2))*r*dragConst/M2;
-	var k4 = rocketTrust/(M3*r) -2*(omega+(h*k3))*v/r -((omegaAir+(h*k3)))*((omegaAir+(h*k3)))*r*dragConst/M3;
+	//let dragConst = getDragConstant(t, airPresure, omegaAir);
+	//var k1 = rocketTrust/(M1*r) -2*omega*v/r -(omegaAir)*(omegaAir)*r*dragConst/M1;
+	//var k2 = rocketTrust/(M2*r) -2*(omega+(hhalf*k1))*v/r -(omegaAir+(hhalf*k1))*(omegaAir+(hhalf*k1))*r*dragConst/M2;
+	//var k3 = rocketTrust/(M2*r) -2*(omega+(hhalf*k2))*v/r -(omegaAir+(hhalf*k2))*(omegaAir+(hhalf*k2))*r*dragConst/M2;
+	//var k4 = rocketTrust/(M3*r) -2*(omega+(h*k3))*v/r -((omegaAir+(h*k3)))*((omegaAir+(h*k3)))*r*dragConst/M3;
 
+	let dragConst = Math.sqrt(omegaAir*r*omegaAir*r + v*v)*0.5*airPresure*ACrossSectionRocket(t)*Cd*LuftModstand;
+	var k1 = rocketTrust/(M1*r) -2*omega*v/r -(omegaAir)*dragConst/M1;
+	var k2 = rocketTrust/(M2*r) -2*(omega+(hhalf*k1))*v/r -(omegaAir+(hhalf*k1))*dragConst/M2;
+	var k3 = rocketTrust/(M2*r) -2*(omega+(hhalf*k2))*v/r -(omegaAir+(hhalf*k2))*dragConst/M2;
+	var k4 = rocketTrust/(M3*r) -2*(omega+(h*k3))*v/r -((omegaAir+(h*k3)))*dragConst/M3;
+	
 	return hsixth*(k1 + 2.0*k2 + 2.0*k3 + k4);
 }
 
@@ -2085,30 +2360,41 @@ function dV(t,r,v,rho,omega,rocketTrust, airPresure)
 	let M1 = Mass(t);
 	let M2 = Mass(t+hhalf);
 	let M3 = Mass(t+h);
-	let dragConst = getDragConstant(t, airPresure,v);
 
-	let k1 = omega*omega*r + rocketTrust/M1 - GM/(r*r) - v*v*dragConst/M1;
-	let k2 = omega*omega*r + rocketTrust/M2 - GM/(r*r) - (v + hhalf*k1)*(v + hhalf*k1)*dragConst/M2;
-	let k3 = omega*omega*r + rocketTrust/M2 - GM/(r*r) - (v + hhalf*k2)*(v + hhalf*k2)*dragConst/M2;
-	let k4 = omega*omega*r + rocketTrust/M3 - GM/(r*r) - (v + h*k3)*(v + h*k3)*dragConst/M3;
+	//let dragConst = getDragConstant(t, airPresure,v);
+	//let k1 = omega*omega*r + rocketTrust/M1 - GM/(r*r) - v*v*dragConst/M1;
+	//let k2 = omega*omega*r + rocketTrust/M2 - GM/(r*r) - (v + hhalf*k1)*(v + hhalf*k1)*dragConst/M2;
+	//let k3 = omega*omega*r + rocketTrust/M2 - GM/(r*r) - (v + hhalf*k2)*(v + hhalf*k2)*dragConst/M2;
+	//let k4 = omega*omega*r + rocketTrust/M3 - GM/(r*r) - (v + h*k3)*(v + h*k3)*dragConst/M3;
 
+	let omegaAir = omega-SatelliteOrbitData.omega0;
+	let dragConst = Math.sqrt(omegaAir*r*omegaAir*r + v*v)*0.5*airPresure*ACrossSectionRocket(t)*Cd*LuftModstand;
+	let k1 = omega*omega*r + rocketTrust/M1 - GM/(r*r) - v*dragConst/M1;
+	let k2 = omega*omega*r + rocketTrust/M2 - GM/(r*r) - (v + hhalf*k1)*dragConst/M2;
+	let k3 = omega*omega*r + rocketTrust/M2 - GM/(r*r) - (v + hhalf*k2)*dragConst/M2;
+	let k4 = omega*omega*r + rocketTrust/M3 - GM/(r*r) - (v + h*k3)*dragConst/M3;
+	
 	return hsixth*(k1 + 2.0*k2 + 2.0*k3 + k4);
 }
 
-function dV2(t, r, rVectorCordinate, vVectorCordinate, vAirCordinate, rocketTrust, airPresure)
+function dV2(t, r, v, rVecCordinate, vVecCordinate, rocketTrust, airPresure)
 {
-	//Air close to the surface follows the eath in its rotation
-	let v = vVectorCordinate - vAirCordinate;
 	let M1 = Mass(t);
 	let M2 = Mass(t+hhalf);
 	let M3 = Mass(t+h);
 	let rrr = r*r*r;
-	let dragConst = getDragConstant(t, airPresure, v);
 
-	let k1 = rocketTrust/M1 - rVectorCordinate*GM/rrr - v*v*dragConst/M1;
-	let k2 = rocketTrust/M2 - rVectorCordinate*GM/rrr - (v + hhalf*k1)*(v + hhalf*k1)*dragConst/M2;
-	let k3 = rocketTrust/M2 - rVectorCordinate*GM/rrr - (v + hhalf*k2)*(v + hhalf*k2)*dragConst/M2;
-	let k4 = rocketTrust/M3 - rVectorCordinate*GM/rrr - (v + h*k3)*(v + h*k3)*dragConst/M3;
+	//let dragConst = getDragConstant(t, airPresure, v);
+	//let k1 = rocketTrust/M1 - rVecCordinate*GM/rrr - vVecCordinate*vVecCordinate*dragConst/M1;
+	//let k2 = rocketTrust/M2 - rVecCordinate*GM/rrr - (vVecCordinate + hhalf*k1)*(vVecCordinate + hhalf*k1)*dragConst/M2;
+	//let k3 = rocketTrust/M2 - rVecCordinate*GM/rrr - (vVecCordinate + hhalf*k2)*(vVecCordinate + hhalf*k2)*dragConst/M2;
+	//let k4 = rocketTrust/M3 - rVecCordinate*GM/rrr - (vVecCordinate + h*k3)*(vVecCordinate + h*k3)*dragConst/M3;
+	
+	let dragConst = v*0.5*airPresure*ACrossSectionRocket(t)*Cd*LuftModstand;
+	let k1 = rocketTrust/M1 - rVecCordinate*GM/rrr - vVecCordinate*dragConst/M1;
+	let k2 = rocketTrust/M2 - rVecCordinate*GM/rrr - (vVecCordinate + hhalf*k1)*dragConst/M2;
+	let k3 = rocketTrust/M2 - rVecCordinate*GM/rrr - (vVecCordinate + hhalf*k2)*dragConst/M2;
+	let k4 = rocketTrust/M3 - rVecCordinate*GM/rrr - (vVecCordinate + h*k3)*dragConst/M3;
 	
 	return hsixth*(k1 + 2.0*k2 + 2.0*k3 + k4);
 }
