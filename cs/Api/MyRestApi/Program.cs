@@ -1,4 +1,21 @@
+using Microsoft.AspNetCore.Cors;
+
 var builder = WebApplication.CreateBuilder(args);
+
+string strict = "StrictPolicy";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(strict, policy =>
+    {
+        policy.WithOrigins("https://mortenr.azurewebsites.net/") // Replace with your allowed origin(s)
+              .AllowAnyMethod()                  // Allow all HTTP methods (GET, POST, etc.)
+              .AllowAnyHeader()                  // Allow all headers
+              //.AllowCredentials()               // Allow cookies/authentication headers
+              .AllowAnyOrigin()
+              .WithExposedHeaders("Custom-Header");
+    });
+});
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -15,6 +32,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(strict);
 
 var summaries = new[]
 {
@@ -43,7 +62,15 @@ app.MapGet("/hello", () => new { Message = "Hello World" })
 app.MapGet("/hello2", () => TypedResults.Ok(new Message() { Text = "Hello World!" }));
 app.MapGet("/text", () => Results.Text("This is some text"));
 app.MapGet("/mul", (int a, int b) =>
-{    
+{
+    int result = a * b;
+    Result[] res = [new Result() { Value = result }];
+
+    return new { results = res };
+});
+
+app.MapGet("/mul2", (int a, int b) =>
+{
     int result = a * b;
     return new { Result = result };
 });
@@ -58,4 +85,9 @@ record Message
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}
+
+record Result
+{
+    public int Value { get; set; }
 }
