@@ -1841,18 +1841,19 @@ K<sub>4</sub> = hf(x<sub>n</sub>+h, y<sub>n</sub>+k<sub>3</sub>)</br>
     <button onclick="toggleObject('data')" class="F">Data on/off</button>
 </td><td>
 <FORM>
-<input id="b1" type="checkbox" class="C"/>Air drag&nbsp;<input id="b2" type="checkbox" class="C"/>Draw Moon&nbsp;<input id="b3" type="checkbox" class="C"/>Draw Earth&nbsp;<input id="b4" type="checkbox" class="C"/>
+<input id="b1" type="checkbox" class="C"/>Air drag&nbsp;<input id="b2" type="checkbox" class="C"/>Draw Moon&nbsp;<input id="b3" type="checkbox" class="C"/>Draw Earth&nbsp;<input id="b4" type="checkbox" class="C"/>&nbsp;<input id="b5" type="checkbox" class="C" onclick="toggleApollo()"/>Apollo&nbsp;
 <br/><table><tr><td></td>
-     <td>r - r0</td><td>v</td><td>&phi;</td><td>&omega; - &omega;0</td><td>&#x03B1;</td><td></td><td></td><td></td><td></td><td></td><td></td><td>x1000 seconds</td>
+     <td>r - r0</td><td>v</td><td>&phi;</td><td>&omega; - &omega;0</td><td>&#x03B1;</td><td>mFull</td><td>mEmpty</td><td></td><td></td><td></td><td></td><td>x1000 seconds</td>
 </tr><tr><td>Start</td>
      <td class="F"><input id="bt1" type="text" value="500"    class="F"/></td><td class="F"><input id="bt2" type="text" value="" class="F"/></td><td class="F"><input id="bt3" type="text" value="" class="F"/></td><td class="F"><input id="bt4" type="text" value="" class="F"/></td>
      <td class="F"><input id="bt5" type="text" value=""       class="F"/></td><td class="F"><input id="bt6" type="text" value="" class="F"/></td><td class="F"><input id="bt7" type="text" value="" class="F"/></td><td class="F"><input id="bt8" type="text" value="" class="F"/></td>
      <td class="F"><input id="bt9" type="text" value=""       class="F"/></td><td class="F"><input id="bt10" type="text" value="" class="F"/></td><td class="F"><input id="bt11" type="text" value="" class="F"/></td><td class="F"><input id="bt12" type="text" value="11" class="F"/></td>
-</tr><tr><td>On      </td>
-     <td class="F"></td><td class="F"></td><td class="F"></td><td class="F"></td>
-     <td class="F"><input id="b5" type="checkbox" class="F"/></td><td class="F"><input id="b6" type="checkbox" class="F"/></td><td class="F"><input id="b7" type="checkbox" class="F"/></td><td class="F"><input id="b8" type="checkbox" class="F"/></td>
+</tr><!--tr><td>On      </td>
+     <td class="F"></td><td class="F"></td><td class="F"></td><td class="F"></td><td class="F"></td>
+	 <td class="F"><input id="b6" type="checkbox" class="F"/></td><td class="F"><input id="b7" type="checkbox" class="F"/></td><td class="F"><input id="b8" type="checkbox" class="F"/></td>
      <td class="F"><input id="b9" type="checkbox" class="F"/></td><td class="F"><input id="b10" type="checkbox" class="F"/></td><td class="F"><input id="b11" type="checkbox" class="F"/></td><td class="F"><input id="b12" type="checkbox" class="F"/></td>
-</tr><tr><td>Sekunder</td>
+</tr-->
+<tr><td>Sekunder</td>
      <td class="F"><input id="at1" type="text" value=""       class="F"/></td><td class="F"><input id="at2" type="text" value="" class="F"/></td><td class="F"><input id="at3" type="text" value="" class="F"/></td><td class="F"><input id="at4" type="text" value="" class="F"/></td>
      <td class="F"><input id="at5" type="text" value=""       class="F"/></td><td class="F"><input id="at6" type="text" value="" class="F"/></td><td class="F"><input id="at7" type="text" value="" class="F"/></td><td class="F"><input id="at8" type="text" value="" class="F"/></td>
      <td class="F"><input id="at9" type="text" value=""       class="F"/></td><td class="F"><input id="at10" type="text" value="" class="F"/></td><td class="F"><input id="at11" type="text" value="" class="F"/></td><td class="F"><input id="at12" type="text" value="" class="F"/></td>
@@ -1860,17 +1861,29 @@ K<sub>4</sub> = hf(x<sub>n</sub>+h, y<sub>n</sub>+k<sub>3</sub>)</br>
      <td class="F"><input id="aa1" type="text" value=""       class="F"/></td><td class="F"><input id="aa2" type="text" value="" class="F"/></td><td class="F"><input id="aa3" type="text" value="" class="F"/></td><td class="F"><input id="aa4" type="text" value="" class="F"/></td>
      <td class="F"><input id="aa5" type="text" value=""       class="F"/></td><td class="F"><input id="aa6" type="text" value="" class="F"/></td><td class="F"><input id="aa7" type="text" value="" class="F"/></td><td class="F"><input id="aa8" type="text" value="" class="F"/></td>
      <td class="F"><input id="aa9" type="text" value=""       class="F"/></td><td class="F"><input id="aa10" type="text" value="" class="F"/></td><td class="F"><input id="aa11" type="text" value="" class="F"/></td><td class="F"><input id="aa12" type="text" value="" class="F"/></td>
-</tr><tr><td></td>
+</tr>
+<tr><td></td>
      <td>Stage I</td><td>Stage II</td><td>Stage III</td><td>Pause 1</td><td>Stage III</td><td>Pause 2</td><td>Stage III</td><td>Pause3</td><td>Stage III</td><td>Pause 4</td><td>Stage III</td><td>Pause 5</td>
-</tr><tr><td>Pause</td>
+</tr>
+<tr id="ApolloData"><td>Apollo</td>
      <td class="F"><input id="bp1" type="text" value="100000" class="B"/></td><td class="F"><input id="bp2" type="text" value="" class="B"/></td><td class="F"><input id="bp3" type="text" value="" class="B"/></td><td class="F"><input id="bp4" type="text" value="" class="F"/></td>
      <td class="F"><input id="bp5" type="text" value=""       class="B"/></td><td class="F"><input id="bp6" type="text" value="" class="F"/></td><td class="F"><input id="bp7" type="text" value="" class="B"/></td><td class="F"><input id="bp8" type="text" value="" class="F"/></td>
      <td class="F"><input id="bp9" type="text" value=""       class="B"/></td><td class="F"><input id="bp10" type="text" value="" class="F"/></td><td class="F"><input id="bp11" type="text" value="" class="B"/></td><td class="F"><input id="bp12" type="text" value="" class="F"/></td>
-</tr><tr><td></td>
+</tr>
+<tr id="GenericData"><td></td>
+     <td class="F"><input id="bg1" type="text" value="" class="B"/></td><td class="F"><input id="bg2" type="text" value="" class="F"/></td>
+	 <td class="F"><input id="bg3" type="text" value="" class="B"/></td><td class="F"><input id="bg4" type="text" value="" class="F"/></td>
+     <td class="F"><input id="bg5" type="text" value="" class="B"/></td><td class="F"><input id="bg6" type="text" value="" class="F"/></td>
+	 <td class="F"><input id="bg7" type="text" value="" class="B"/></td><td class="F"><input id="bg8" type="text" value="" class="F"/></td>
+     <td class="F"><input id="bg9" type="text" value="" class="B"/></td><td class="F"><input id="bg10" type="text" value="" class="F"/></td>
+	 <td class="F"><input id="bg11" type="text" value="" class="B"/></td><td class="F"><input id="bg12" type="text" value="" class="F"/></td>
+</tr>
+<tr><td></td>
      <td>Last E/m</td><td><span id="LastEnergy"></span></td><td><span id="outDat3"></span></td><td><span id="outDat4"></span></td>
 	 <td><span id="outDat5"></span></td><td><span id="outDat6"></span></td><td><span id="outDat7"></span></td><td><span id="outDat8"></span></td>
 	 <td><span id="outDat9"></span></td><td><span id="outDat10"></span></td><td><span id="outDat11"></span></td><td><span id="outDat12"></span></td>
-</tr></table>
+</tr>
+</table>
 </FORM>
 </td></tr></table>
 <div>
@@ -1882,18 +1895,20 @@ K<sub>4</sub> = hf(x<sub>n</sub>+h, y<sub>n</sub>+k<sub>3</sub>)</br>
 
 const GetLines = () => {
 return [
-[document.getElementById('b1'),document.getElementById('b2'),document.getElementById('b3'),document.getElementById('b4'),document.getElementById('b5'),document.getElementById('b6'),document.getElementById('b7'),document.getElementById('b8'),document.getElementById('b9'),document.getElementById('b10'),document.getElementById('b11'),document.getElementById('b12')],
+[document.getElementById('b1'),document.getElementById('b2'),document.getElementById('b3'),document.getElementById('b4'),document.getElementById('b5')], //,document.getElementById('b6'),document.getElementById('b7'),document.getElementById('b8'),document.getElementById('b9'),document.getElementById('b10'),document.getElementById('b11'),document.getElementById('b12')],
 [document.getElementById('at1'),document.getElementById('at2'),document.getElementById('at3'),document.getElementById('at4'),document.getElementById('at5'),document.getElementById('at6'),document.getElementById('at7'),document.getElementById('at8'),document.getElementById('at9'),document.getElementById('at10'),document.getElementById('at11'),document.getElementById('at12')],
 [document.getElementById('aa1'),document.getElementById('aa2'),document.getElementById('aa3'),document.getElementById('aa4'),document.getElementById('aa5'),document.getElementById('aa6'),document.getElementById('aa7'),document.getElementById('aa8'),document.getElementById('aa9'),document.getElementById('aa10'),document.getElementById('aa11'),document.getElementById('aa12')],
 [document.getElementById('bt1'),document.getElementById('bt2'),document.getElementById('bt3'),document.getElementById('bt4'),document.getElementById('bt5'),document.getElementById('bt6'),document.getElementById('bt7'),document.getElementById('bt8'),document.getElementById('bt9'),document.getElementById('bt10'),document.getElementById('bt11'),document.getElementById('bt12')],
-[document.getElementById('bp1'),document.getElementById('bp2'),document.getElementById('bp3'),document.getElementById('bp4'),document.getElementById('bp5'),document.getElementById('bp6'),document.getElementById('bp7'),document.getElementById('bp8'),document.getElementById('bp9'),document.getElementById('bp10'),document.getElementById('bp11'),document.getElementById('bp12')]
+[document.getElementById('bp1'),document.getElementById('bp2'),document.getElementById('bp3'),document.getElementById('bp4'),document.getElementById('bp5'),document.getElementById('bp6'),document.getElementById('bp7'),document.getElementById('bp8'),document.getElementById('bp9'),document.getElementById('bp10'),document.getElementById('bp11'),document.getElementById('bp12')],
+[document.getElementById('bg1'),document.getElementById('bg2'),document.getElementById('bg3'),document.getElementById('bg4'),document.getElementById('bg5'),document.getElementById('bg6'),document.getElementById('bg7'),document.getElementById('bg8'),document.getElementById('bg9'),document.getElementById('bg10'),document.getElementById('bg11'),document.getElementById('bg12')]
 ];
 }
-const Line1 = [document.getElementById('b1'),document.getElementById('b2'),document.getElementById('b3'),document.getElementById('b4'),document.getElementById('b5'),document.getElementById('b6'),document.getElementById('b7'),document.getElementById('b8'),document.getElementById('b9'),document.getElementById('b10'),document.getElementById('b11'),document.getElementById('b12')];
+const Line1 = [document.getElementById('b1'),document.getElementById('b2'),document.getElementById('b3'),document.getElementById('b4'),document.getElementById('b5')];//,document.getElementById('b6'),document.getElementById('b7'),document.getElementById('b8'),document.getElementById('b9'),document.getElementById('b10'),document.getElementById('b11'),document.getElementById('b12')];
 const Line2 = [document.getElementById('at1'),document.getElementById('at2'),document.getElementById('at3'),document.getElementById('at4'),document.getElementById('at5'),document.getElementById('at6'),document.getElementById('at7'),document.getElementById('at8'),document.getElementById('at9'),document.getElementById('at10'),document.getElementById('at11'),document.getElementById('at12')];
 const Line3 = [document.getElementById('aa1'),document.getElementById('aa2'),document.getElementById('aa3'),document.getElementById('aa4'),document.getElementById('aa5'),document.getElementById('aa6'),document.getElementById('aa7'),document.getElementById('aa8'),document.getElementById('aa9'),document.getElementById('aa10'),document.getElementById('aa11'),document.getElementById('aa12')];
 const Line4 = [document.getElementById('bt1'),document.getElementById('bt2'),document.getElementById('bt3'),document.getElementById('bt4'),document.getElementById('bt5'),document.getElementById('bt6'),document.getElementById('bt7'),document.getElementById('bt8'),document.getElementById('bt9'),document.getElementById('bt10'),document.getElementById('bt11'),document.getElementById('bt12')];
 const Line5 = [document.getElementById('bp1'),document.getElementById('bp2'),document.getElementById('bp3'),document.getElementById('bp4'),document.getElementById('bp5'),document.getElementById('bp6'),document.getElementById('bp7'),document.getElementById('bp8'),document.getElementById('bp9'),document.getElementById('bp10'),document.getElementById('bp11'),document.getElementById('bp12')];
+const Line6 = [document.getElementById('bg1'),document.getElementById('bg2'),document.getElementById('bg3'),document.getElementById('bg4'),document.getElementById('bg5'),document.getElementById('bg6'),document.getElementById('bg7'),document.getElementById('bg8'),document.getElementById('bg9'),document.getElementById('bg10'),document.getElementById('bg11'),document.getElementById('bg12')];
 
 /*
 let allLines = GetLines();
@@ -1922,13 +1937,15 @@ const SetFormValues = (burnTimes, angle0Times, angle0Values, orbit0) => {
 	Line4[2].value = (orbit0.rho).toString(10);
 	Line4[3].value = (orbit0.omega - SatelliteOrbitData.omega0).toString(10);
 	Line4[4].value = (orbit0.vinkel).toString(10);
+	//Line4[6].value = 0.0;
 }
 
-const SetCheck = (luftModstand, showMoon, showEath, showOutput) => {
+const SetCheck = (luftModstand, showMoon, showEath, showOutput, isApollo) => {
 	if (luftModstand == 1) Line1[0].checked = true; else Line1[0].checked = false;
 	if (showMoon == 1) Line1[1].checked = true; else Line1[1].checked = false;
 	if (showEath == 1) Line1[2].checked = true; else Line1[2].checked = false;
 	if (showOutput == 1) Line1[3].checked = true; else Line1[3].checked = false;
+	if (isApollo == 1) Line1[4].checked = true; else Line1[4].checked = false;
 }
 
 const GetCheck = () => {
@@ -1936,11 +1953,13 @@ const GetCheck = () => {
 	let showMoon = 0;
 	let showEath = 0;
 	let showOutput = 0;
+	let isApollo = 0;
 	if (Line1[0].checked) luftModstand = 1; else luftModstand = 0;
 	if (Line1[1].checked) showMoon = 1; else showMoon = 0;
 	if (Line1[2].checked) showEath = 1; else showEath = 0;
 	if (Line1[3].checked) showOutput = 1; else showOutput = 0;
-	return [luftModstand, showMoon, showEath, showOutput];
+	if (Line1[4].checked) isApollo = 1; else isApollo = 0;
+	return [luftModstand, showMoon, showEath, showOutput, isApollo];
 }
 
 const GetFormValues = () => {
@@ -2012,7 +2031,8 @@ const SetupForm = (defaultData) => {
 	//(document.getElementById('bt1')).value = "509";
 	//(document.getElementById('bp1')).value = "100009";
 	SetFormValues(defaultData.BurnTimes, defaultData.AngleTimeList, defaultData.AngleValueList, defaultData.StartValue);
-	SetCheck(1,0,1,1);
+	SetCheck(1,0,1,1,1);
+	//MRocketFullkg MRocketEmptykg TBurnMax
 }
 
 //const Moon = new SimulationSetup(
@@ -2137,6 +2157,7 @@ let LuftModstand = On;
 let ShowMoon = Off;
 let ShowEath = On;
 let ShowOutput = On;
+let IsApollo = On;
 let NoOfSeconds = 1000;
 let NoOf1000Seconds = 3;//+100 svarer til 1 døgn, 3 timer, 46 minutter og 40 sekunder
 
@@ -2169,6 +2190,12 @@ const MStage2 = 1075733.0 + MBetween2And3;
 const MUsage2 = 2317.192;
 const MStage3 = 262317.0;
 const MUsage3 = 456.0;
+let MRocketFullkg = 2281305.6;//5029418*kgPerLbs 
+let MRocketEmptykg = 2118106.7;//(5029418 - 27420*170,3)*kgPerLbs = 4669626*kgPerLbs = 
+let MRocketLoad = 1.0;
+let TBurnMax = 170.3;
+let MUsageKg = (MRocketFullkg - MRocketEmptykg)/TBurnMax;
+
 
 let stageTimeO = [];
 let angleTimeO = [];
@@ -2203,6 +2230,8 @@ var GM = 3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
 
 
 function stage(tt) {
+	//if (IsApollo == Off)
+		//return 1;
 	var ttt = stageTimeO[0];
 	for (var ii=1;ii<=stageTimeO.length;ii++)
 	{
@@ -2215,6 +2244,8 @@ function stage(tt) {
 }
 
 function stageT(tt) {
+	//if (IsApollo == Off)
+		//return tt;
 	var ttt = 0.0;
 	for (var ii=0;ii<stageTimeO.length;ii++)
 	{
@@ -2227,6 +2258,11 @@ function stageT(tt) {
 }
 
 function Mass(tt) {
+	//if (IsApollo == Off)
+	{
+		//return (MRocketFull - (tt * ((MRocketFull -MRocketEmpty)/tEmpty)));
+	}
+
 	switch (stage(tt))
 	{
 		case 1:  return (MTotal - (tt * MUsage1))* kgPerLbs; break;
@@ -2630,6 +2666,24 @@ else
 	document.getElementById(id).style.visibility = "hidden";
 }
 
+function toggleApollo() {
+var id = "ApolloData";
+var id2 = "GenericData";
+if (document.getElementById(id2).style.visibility == "hidden")
+{
+	document.getElementById(id).style.visibility = "hidden";
+	document.getElementById(id2).style.visibility = "visible";
+	document.getElementById('b5').checked = false;
+}
+else
+{
+	document.getElementById(id).style.visibility = "visible";
+	document.getElementById(id2).style.visibility = "hidden";
+	document.getElementById('b5').checked = true;
+}
+}
+
+
 const GetFloat = (st) => {
 	if (st == "")
 		return 0.0;
@@ -2658,6 +2712,7 @@ const GetFloat = (st) => {
 			ShowMoon = checks[1];
 			ShowEath = checks[2];
 			ShowOutput = checks[3];
+			IsApollo = checks[4];
 			
 			//const orbit1 = new OrbitData(0,SatelliteOrbitData.r0,0,0,SatelliteOrbitData.omega0,0);
 			dataArray2 = SimulationRun(noOf1000Seconds, NoOfSeconds, orbit0);
