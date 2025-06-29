@@ -154,6 +154,51 @@ const VAdd = (a,b) => {
 
 const earth = new Vector(0.0, 0.0, 0.0);
 
+class Rocket{
+	constructor(tt, angleTimeArray, angleValueArray, massTimeArray, massValueArray){
+		this.AngleTimeArray = [];
+		this.AngleValueArray = [];
+		this.MassTimeArray = [];
+		this.MassValueArray = [];
+		this.t = tt;
+		this.t0 = 0.0;
+		this.Angle = 0.0;
+		this.MassFull = 0.0;
+		this.MassUsage = 0.0;
+		this.Stage = 1.0
+	}
+	setValues()
+	{
+		let massTNext = 0.0;
+		let massNext = 0.0;
+		let angleT0 = 0.0;
+		let angleTNext = 0.0;
+		let angleNext = 0.0;
+		for (var ii=0;ii<angleTimeArray.length && ii<angleValueArray.length;ii++)
+		{
+			AngleTimeArray.push(angleTimeArray[ii]);
+			AngleValueArray.push(angleValueArray[ii]);
+			if (ii > 0 && tt >= angleTimeArray[ii-1])
+			{
+				angleT0 = angleTNext;
+				this.Angle = angelNext;
+				angleTNext = angleTimeArray[ii];
+				angelNext = angleValueArray[ii];
+			}
+		}
+		for (var ii=0;ii<massTimeArray.length && ii<massValueArray.length;ii++)
+		{
+			MassTimeArray.push(massTimeArray[ii]);
+			MassValueArray.push(massValueArray[ii]);
+			if (tt > 0 && (tt - 1) >= massTimeArray[ii])
+				massNext = this.MassFull;
+			if (tt >= massTimeArray[ii])
+				this.MassFull = massValueArray[ii];
+		}
+		
+	}
+}
+
 class OrbitData{
 	constructor(t00,r00,v00,rho00,omega00,vinkel){
 	//Boundery values
@@ -189,8 +234,13 @@ class OrbitData{
 	}
 	AccP()
 	{
+		let MasT = Mass1(this.t);
+		//if (IsApollo == Off)
+		{
+			//return (mas0 - ((tt - t0) * dMas));
+		}
 		const airPresure = getAirPresure(rho0luft, (this.r-r0));
-		return (this.omega*this.omega*this.r - GM/(this.r*this.r) - this.v*this.v*getDragConstant(this.t, airPresure,this.v)/Mass(this.t));
+		return (this.omega*this.omega*this.r - GM/(this.r*this.r) - this.v*this.v*getDragConstant(this.t, airPresure,this.v)/MasT);
 	}
 }
 
@@ -274,6 +324,11 @@ static GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
 		let rdiff = this.r-SatelliteOrbitData.r0;
 		if (rdiff > -1.0)
 		{//Not crashed yet
+			let MasT = Mass1(this.t);
+			//if (IsApollo == Off)
+			{
+				//return (mas0 - ((tt - t0) * dMas));
+			}
 			const alpha = this.vinkel*Math.PI/180.0;
 			const TrustRocketVertical = Trust(this.t)*Math.cos(alpha); //force in newton and Trust(t) is a not diferential stepfunction
 			const TrustRocketHorisontal = Trust(this.t)*Math.sin(alpha);
@@ -286,12 +341,12 @@ static GM=3.986005e+14;//G = 6.67 x 10 −11 N • m 2 /kg 2
 			const vNew = this.v + dV(this.t,this.r,this.v,this.rho,this.omega,TrustRocketVertical, airPresure);
 			const rNew = this.r + dy(this.v);
 
-			//var1 = v*v*getDragConstant(t, airPresure,v)/Mass(t);//drag_r;
-			//let Effect0 = (TrustRocketHorisontal*this.vc + TrustRocketVertical*this.v)/Mass(this.t);
+			//var1 = v*v*getDragConstant(t, airPresure,v)/MasT;//drag_r;
+			//let Effect0 = (TrustRocketHorisontal*this.vc + TrustRocketVertical*this.v)/MasT;
 			this.Effect2 = (vNew*vNew -this.v*this.v)/(2.0*h) + (vcNew*vcNew - this.vc*this.vc)/(2.0*h)  + (GM/this.r - GM/rNew)/h;
 			this.Effect2 = (vcNew*vcNew - this.vc*this.vc)/(2.0*h);//Only the kinetic energy change and only of the horisontal part
 			//let Etot0 = (vNew*vNew + omegaNew*omegaNew*rNew*rNew)/2.0 -GM/rNew;
-			let acc0 = omegaNew*omegaNew*rNew - GM/(rNew*rNew) - vNew*vNew*getDragConstant(this.t, airPresure,vNew)/Mass(this.t);
+			let acc0 = omegaNew*omegaNew*rNew - GM/(rNew*rNew) - vNew*vNew*getDragConstant(this.t, airPresure,vNew)/MasT;
 			this.vinkel = GetAngle(tNew, acc0);
 			this.ac = (vcNew - this.vc)/h;
 			this.ar = (vNew - this.v)/h;
@@ -2257,7 +2312,7 @@ function stageT(tt) {
 	return tt - ttt;
 }
 
-function Mass(tt) {
+function Mass1(tt) {
 	//if (IsApollo == Off)
 	{
 		//return (MRocketFull - (tt * ((MRocketFull -MRocketEmpty)/tEmpty)));
@@ -2277,6 +2332,26 @@ function Mass(tt) {
 	    default: return (MTotal - MStage1 - MStage2 - MStage3)* kgPerLbs; break;
 	}
 }
+/*
+function Mass0(tt, t0, mas0, dMas) {
+	if (IsApollo == Off)
+	{
+		return (mas0 - ((tt - t0) * dMas));
+	}
+	switch (stage(tt))
+	{
+		case 1:  return (MTotal - (tt * MUsage1))* kgPerLbs; break;
+		case 2:  return (MTotal - MStage1                           - (MUsage2 * (tt -stageTimeO[0]) ))* kgPerLbs; break;
+		case 3:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (tt -stageTimeO[0] -stageTimeO[1])))* kgPerLbs; break;
+		case 4:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (stageTimeO[2])))* kgPerLbs; break;
+		case 5:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (tt -stageTimeO[0] -stageTimeO[1] -stageTimeO[3])))* kgPerLbs; break;
+		case 6:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (stageTimeO[2] + stageTimeO[4])))* kgPerLbs; break;
+		case 7:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (tt -stageTimeO[0] -stageTimeO[1] -stageTimeO[3] -stageTimeO[5])))* kgPerLbs; break;
+		case 8:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (stageTimeO[2] + stageTimeO[4] + stageTimeO[6])))* kgPerLbs; break;
+		case 9:  return (MTotal - MStage1 - MStage2 - (MUsage3 * (tt -stageTimeO[0] -stageTimeO[1] -stageTimeO[3] -stageTimeO[5] -stageTimeO[7])))* kgPerLbs; break;
+	    default: return (MTotal - MStage1 - MStage2 - MStage3)* kgPerLbs; break;
+	}
+}*/
 
 function ACrossSectionRocket(tt)
 {
@@ -2364,9 +2439,14 @@ function GetAngle(tt, accc)
 	// Using for...of loop
 	//for (const [key, value] of myMap) {
 	//  console.log(`${key}: ${value}`);	
-		
+	let MasT = Mass1(tt);
+	//if (IsApollo == Off)
+	{
+		//return (mas0 - ((tt - t0) * dMas));
+	}
+	
 	var aMinimum = 0.2; //-0.01;//6	2580	0.042022		4027.8km	3839.3	2.4999	0.00059876	6226.4	-11577	-19166
-	var temp = Mass(tt)*(aMinimum - accc)/Trust(tt);
+	var temp = MasT*(aMinimum - accc)/Trust(tt);
 
 		
 	if (0.0 <= temp && temp < 1.0)
@@ -2376,14 +2456,19 @@ function GetAngle(tt, accc)
 }
 
 function dOmega(t,r,v,rho,omega,rocketTrust, airPresure) {
-	let M1 = Mass(t);
-	let M2 = Mass(t+hhalf);
-	let M3 = Mass(t+h);
+	let M1 = Mass1(t);
+	let M2 = Mass1(t+hhalf);
+	let M3 = Mass1(t+h);
+	//if (IsApollo == Off)
+	{
+		//return (mas0 - ((tt - t0) * dMas));
+	}
+
 	//Luften raketten stiger op igennem foelger med jordens rotation (omega0) 
 	//saa det er kun en højere eller lavere hastighed end jorden der giver luft modstand
 	let omegaAir = omega-SatelliteOrbitData.omega0;
 
-	//drag_c = (vc-vc0)*(vc-vc0)*dragConst/(Mass(t));
+	//drag_c = (vc-vc0)*(vc-vc0)*dragConst/M1;
 	//var k1 = tPerM1*sinAlpha-vc*v/r - LuftModstand*drag_c;
 	//var k2 = tPerM2*sinAlpha-(vc+(hhalf*k1))*v/r - LuftModstand*drag_c;
 	//var k3 = tPerM2*sinAlpha-(vc+(hhalf*k2))*v/r - LuftModstand*drag_c;
@@ -2408,9 +2493,13 @@ function dOmega(t,r,v,rho,omega,rocketTrust, airPresure) {
 
 function dV(t,r,v,rho,omega,rocketTrust, airPresure)
 {
-	let M1 = Mass(t);
-	let M2 = Mass(t+hhalf);
-	let M3 = Mass(t+h);
+	let M1 = Mass1(t);
+	let M2 = Mass1(t+hhalf);
+	let M3 = Mass1(t+h);
+	//if (IsApollo == Off)
+	{
+		//return (mas0 - ((tt - t0) * dMas));
+	}
 
 	//let dragConst = getDragConstant(t, airPresure,v);
 	//let k1 = omega*omega*r + rocketTrust/M1 - GM/(r*r) - v*v*dragConst/M1;
@@ -2430,9 +2519,14 @@ function dV(t,r,v,rho,omega,rocketTrust, airPresure)
 
 function dV2(t, r, v, rVecCordinate, vVecCordinate, rocketTrust, airPresure)
 {
-	let M1 = Mass(t);
-	let M2 = Mass(t+hhalf);
-	let M3 = Mass(t+h);
+	let M1 = Mass1(t);
+	let M2 = Mass1(t+hhalf);
+	let M3 = Mass1(t+h);
+	//if (IsApollo == Off)
+	{
+		//return (mas0 - ((tt - t0) * dMas));
+	}
+	
 	let rrr = r*r*r;
 
 	//let dragConst = getDragConstant(t, airPresure, v);
